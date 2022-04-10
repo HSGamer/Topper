@@ -16,7 +16,7 @@ public final class TopEntry implements Comparable<TopEntry> {
     }
 
     public void update() {
-        topHolder.updateNewValue(uuid).thenAccept(value::lazySet);
+        topHolder.updateNewValue(uuid).thenAccept(optional -> optional.ifPresent(this::setValue));
     }
 
     public void save() {

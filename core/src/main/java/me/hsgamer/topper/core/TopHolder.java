@@ -18,7 +18,7 @@ public abstract class TopHolder implements Initializer {
         this.topStorage = topStorage;
     }
 
-    public abstract CompletableFuture<BigDecimal> updateNewValue(UUID uuid);
+    public abstract CompletableFuture<Optional<BigDecimal>> updateNewValue(UUID uuid);
 
     public void onCreateEntry(TopEntry entry) {
         // EMPTY
