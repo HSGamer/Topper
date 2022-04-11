@@ -8,6 +8,7 @@ import me.hsgamer.topper.core.TopStorage;
 import me.hsgamer.topper.spigot.TopperPlugin;
 import me.hsgamer.topper.spigot.config.AutoSaveConfig;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -55,8 +56,20 @@ public class YamlStorage implements TopStorage {
     @Override
     public CompletableFuture<Void> save(TopEntry topEntry, boolean onUnregister) {
         Config config = getConfig(topEntry.getTopHolder().getName());
-        config.set(topEntry.getUuid().toString(), topEntry.getValue().toString());
-        return CompletableFuture.completedFuture(null);
+        CompletableFuture<Void> future = new CompletableFuture<>();
+        BukkitRunnable runnable = new BukkitRunnable() {
+            @Override
+            public void run() {
+                config.set(topEntry.getUuid().toString(), topEntry.getValue().toString());
+                future.complete(null);
+            }
+        };
+        if (onUnregister) {
+            runnable.run();
+        } else {
+            runnable.runTask(instance);
+        }
+        return future;
     }
 
     @Override

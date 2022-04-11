@@ -43,7 +43,9 @@ public class AutoSaveConfig extends DecorativeConfig implements Runnable {
         if (!needSaving.get()) return;
         needSaving.set(false);
         isSaving.set(true);
-        save();
-        isSaving.set(false);
+        Bukkit.getScheduler().runTask(plugin, () -> {
+            save();
+            isSaving.set(false);
+        });
     }
 }
