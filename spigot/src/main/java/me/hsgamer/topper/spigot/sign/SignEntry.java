@@ -5,6 +5,7 @@ import me.hsgamer.topper.core.TopFormatter;
 import me.hsgamer.topper.core.TopHolder;
 import me.hsgamer.topper.spigot.TopperPlugin;
 import me.hsgamer.topper.spigot.config.SignConfig;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
@@ -12,7 +13,9 @@ import org.bukkit.block.Sign;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 public class SignEntry {
     public final Location location;
@@ -27,8 +30,17 @@ public class SignEntry {
         this.index = index;
     }
 
-    public static SignEntry deserialize(Map<String, Object> args) {
-        return new SignEntry(Location.deserialize(args), (String) args.get("holder"), (int) args.get("index"));
+    public static SignEntry deserialize(String rawValue) {
+        String[] split = rawValue.split(",");
+        Location location = new Location(
+                Bukkit.getWorld(split[0]),
+                Double.parseDouble(split[1]),
+                Double.parseDouble(split[2]),
+                Double.parseDouble(split[3])
+        );
+        String topHolderName = split[4];
+        int index = Integer.parseInt(split[5]);
+        return new SignEntry(location, topHolderName, index);
     }
 
     public void update() {
@@ -67,10 +79,14 @@ public class SignEntry {
         return lines;
     }
 
-    public Map<String, Object> serialize() {
-        Map<String, Object> map = new HashMap<>(location.serialize());
-        map.put("holder", topHolderName);
-        map.put("index", index);
-        return map;
+    public String serialize() {
+        return String.join(",",
+                location.getWorld().getName(),
+                Double.toString(location.getX()),
+                Double.toString(location.getY()),
+                Double.toString(location.getZ()),
+                topHolderName,
+                String.valueOf(index)
+        );
     }
 }

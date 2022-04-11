@@ -107,6 +107,11 @@
             <artifactId>hscore-builder</artifactId>
             <version>${core.version}</version>
         </dependency>
+        <dependency>
+            <groupId>me.hsgamer</groupId>
+            <artifactId>hscore-common</artifactId>
+            <version>${core.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>me.clip</groupId>

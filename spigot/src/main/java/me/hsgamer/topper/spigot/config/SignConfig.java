@@ -1,6 +1,7 @@
 package me.hsgamer.topper.spigot.config;
 
 import me.hsgamer.hscore.bukkit.config.BukkitConfig;
+import me.hsgamer.hscore.common.CollectionUtils;
 import me.hsgamer.hscore.config.Config;
 import me.hsgamer.hscore.config.PathableConfig;
 import me.hsgamer.hscore.config.path.AdvancedConfigPath;
@@ -13,7 +14,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 public class SignConfig extends PathableConfig {
@@ -24,20 +24,19 @@ public class SignConfig extends PathableConfig {
             "&6&m               "
     ));
     public static final IntegerConfigPath START_INDEX = new IntegerConfigPath("start-index", 1);
-    public static final AdvancedConfigPath<List<Map<String, Object>>, List<SignEntry>> SIGN_ENTRIES = new AdvancedConfigPath<List<Map<String, Object>>, List<SignEntry>>("sign-entries", Collections.emptyList()) {
+    public static final AdvancedConfigPath<List<String>, List<SignEntry>> SIGN_ENTRIES = new AdvancedConfigPath<List<String>, List<SignEntry>>("sign-entries", Collections.emptyList()) {
         @Override
-        public @NotNull List<Map<String, Object>> getFromConfig(@NotNull Config config) {
-            //noinspection unchecked
-            return ((List<Map<String, Object>>) config.getNormalized(getPath()));
+        public @NotNull List<String> getFromConfig(@NotNull Config config) {
+            return CollectionUtils.createStringListFromObject(config.get(getPath()), true);
         }
 
         @Override
-        public @NotNull List<SignEntry> convert(@NotNull List<Map<String, Object>> rawValue) {
+        public @NotNull List<SignEntry> convert(@NotNull List<String> rawValue) {
             return rawValue.stream().map(SignEntry::deserialize).collect(Collectors.toList());
         }
 
         @Override
-        public @NotNull List<Map<String, Object>> convertToRaw(@NotNull List<SignEntry> value) {
+        public @NotNull List<String> convertToRaw(@NotNull List<SignEntry> value) {
             return value.stream().map(SignEntry::serialize).collect(Collectors.toList());
         }
     };
