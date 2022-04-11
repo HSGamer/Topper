@@ -54,7 +54,7 @@ public class SetTopSignCommand extends Command {
             MessageUtils.sendMessage(sender, MessageConfig.SIGN_REQUIRED.getValue());
             return false;
         }
-        instance.getSignManager().addSign(new SignEntry(block.getLocation(), args[0], index));
+        instance.getSignManager().addSign(new SignEntry(block.getLocation(), args[0], index - 1));
         MessageUtils.sendMessage(sender, MessageConfig.SUCCESS.getValue());
         return true;
     }

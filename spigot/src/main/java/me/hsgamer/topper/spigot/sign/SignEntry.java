@@ -1,5 +1,6 @@
 package me.hsgamer.topper.spigot.sign;
 
+import me.hsgamer.hscore.bukkit.utils.MessageUtils;
 import me.hsgamer.topper.core.TopEntry;
 import me.hsgamer.topper.core.TopFormatter;
 import me.hsgamer.topper.core.TopHolder;
@@ -74,7 +75,7 @@ public class SignEntry {
         );
         String[] lines = new String[4];
         for (int i = 0; i < 4; i++) {
-            lines[i] = i < list.size() ? list.get(i) : "";
+            lines[i] = MessageUtils.colorize(i < list.size() ? list.get(i) : "");
         }
         return lines;
     }
