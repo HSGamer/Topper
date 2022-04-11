@@ -6,7 +6,7 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public interface TopStorage extends Initializer {
-    CompletableFuture<Map<UUID, BigDecimal>> load();
+    CompletableFuture<Map<UUID, BigDecimal>> load(String name);
 
-    void save(TopEntry topEntry, boolean onUnregister);
+    void save(TopEntry topEntry, String name, boolean onUnregister);
 }

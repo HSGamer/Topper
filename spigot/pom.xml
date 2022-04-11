@@ -87,6 +87,16 @@
             <artifactId>hscore-bukkit-baseplugin</artifactId>
             <version>${core.version}</version>
         </dependency>
+        <dependency>
+            <groupId>me.hsgamer</groupId>
+            <artifactId>hscore-bukkit-config</artifactId>
+            <version>${core.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>me.hsgamer</groupId>
+            <artifactId>hscore-config-path</artifactId>
+            <version>${core.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>me.clip</groupId>

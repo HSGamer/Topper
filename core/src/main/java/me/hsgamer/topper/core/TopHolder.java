@@ -79,19 +79,19 @@ public abstract class TopHolder implements Initializer {
     }
 
     public final void save(TopEntry entry) {
-        topStorage.save(entry, false);
+        topStorage.save(entry, name, false);
     }
 
     public final void register() {
         onRegister();
         topStorage.onRegister();
-        topStorage.load().thenAccept(valueEntryMap -> valueEntryMap.forEach((uuid, value) -> getOrCreateEntry(uuid).setValue(value)));
+        topStorage.load(name).thenAccept(valueEntryMap -> valueEntryMap.forEach((uuid, value) -> getOrCreateEntry(uuid).setValue(value)));
     }
 
     public final void unregister() {
         entryMap.values().forEach(entry -> {
             notifyRemoveEntry(entry);
-            topStorage.save(entry, true);
+            topStorage.save(entry, name, true);
         });
         topStorage.onUnregister();
         onUnregister();
