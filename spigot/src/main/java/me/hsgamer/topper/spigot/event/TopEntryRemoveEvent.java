@@ -9,7 +9,6 @@ public class TopEntryRemoveEvent extends Event {
     private final TopEntry topEntry;
 
     public TopEntryRemoveEvent(TopEntry topEntry) {
-        super(true);
         this.topEntry = topEntry;
     }
 

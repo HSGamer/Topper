@@ -9,7 +9,6 @@ public class TopEntryUpdateEvent extends Event {
     private final TopEntry topEntry;
 
     public TopEntryUpdateEvent(TopEntry topEntry) {
-        super(true);
         this.topEntry = topEntry;
     }
 
