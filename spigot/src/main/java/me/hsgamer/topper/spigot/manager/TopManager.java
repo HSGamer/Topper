@@ -1,5 +1,6 @@
 package me.hsgamer.topper.spigot.manager;
 
+import me.hsgamer.topper.core.TopFormatter;
 import me.hsgamer.topper.core.TopHolder;
 import me.hsgamer.topper.core.TopStorage;
 import me.hsgamer.topper.spigot.TopperPlugin;
@@ -7,6 +8,7 @@ import me.hsgamer.topper.spigot.builder.TopStorageBuilder;
 import me.hsgamer.topper.spigot.config.MainConfig;
 import me.hsgamer.topper.spigot.holder.PlaceholderTopHolder;
 import me.hsgamer.topper.spigot.storage.YamlStorage;
+import org.bukkit.Bukkit;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,6 +17,8 @@ import java.util.UUID;
 
 public class TopManager {
     private final Map<String, TopHolder> topHolders = new HashMap<>();
+    private final Map<String, TopFormatter> topFormatters = new HashMap<>();
+    private final TopFormatter defaultFormatter = new TopFormatter();
     private final TopperPlugin instance;
 
     public TopManager(TopperPlugin instance) {
@@ -28,15 +32,23 @@ public class TopManager {
             placeholderTopHolder.register();
             topHolders.put(key, placeholderTopHolder);
         });
+        defaultFormatter.addReplacer("name", (uuid, bigDecimal) -> Bukkit.getOfflinePlayer(uuid).getName());
+        topFormatters.putAll(MainConfig.FORMATTERS.getValue());
+        topFormatters.values().forEach(topFormatter -> topFormatter.addReplacer("name", (uuid, bigDecimal) -> Bukkit.getOfflinePlayer(uuid).getName()));
     }
 
     public void clear() {
         topHolders.values().forEach(TopHolder::unregister);
         topHolders.clear();
+        topFormatters.clear();
     }
 
     public Optional<TopHolder> getTopHolder(String name) {
         return Optional.ofNullable(topHolders.get(name));
+    }
+
+    public TopFormatter getTopFormatter(String name) {
+        return topFormatters.getOrDefault(name, defaultFormatter);
     }
 
     public void create(UUID uuid) {

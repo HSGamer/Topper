@@ -2,13 +2,13 @@ package me.hsgamer.topper.spigot.hook;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import me.hsgamer.topper.core.TopEntry;
+import me.hsgamer.topper.core.TopFormatter;
 import me.hsgamer.topper.core.TopHolder;
 import me.hsgamer.topper.spigot.TopperPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
-import java.math.BigDecimal;
 import java.util.Optional;
 
 public class TopPlaceholderExpansion extends PlaceholderExpansion {
@@ -45,6 +45,7 @@ public class TopPlaceholderExpansion extends PlaceholderExpansion {
         Optional<TopHolder> optionalHolder = instance.getTopManager().getTopHolder(args[0]);
         if (!optionalHolder.isPresent()) return null;
         TopHolder holder = optionalHolder.get();
+        TopFormatter formatter = instance.getTopManager().getTopFormatter(args[0]);
 
         switch (args[1]) {
             case "top_name": {
@@ -62,6 +63,7 @@ public class TopPlaceholderExpansion extends PlaceholderExpansion {
                         .map(OfflinePlayer::getName)
                         .orElse("");
             }
+            case "top_value_raw":
             case "top_value": {
                 int i = 1;
                 if (args.length > 2) {
@@ -73,15 +75,16 @@ public class TopPlaceholderExpansion extends PlaceholderExpansion {
                 }
                 return holder.getEntryByIndex(i - 1)
                         .map(TopEntry::getValue)
-                        .map(BigDecimal::toPlainString)
-                        .orElse("");
+                        .map(bigDecimal -> args[1].endsWith("raw") ? bigDecimal.toPlainString() : formatter.format(bigDecimal))
+                        .orElse("0");
             }
             case "top_rank":
                 return Integer.toString(holder.getTopIndex(player.getUniqueId()) + 1);
             case "value":
+            case "value_raw":
                 return holder.getEntry(player.getUniqueId())
                         .map(TopEntry::getValue)
-                        .map(BigDecimal::toPlainString)
+                        .map(bigDecimal -> args[1].endsWith("raw") ? bigDecimal.toPlainString() : formatter.format(bigDecimal))
                         .orElse("");
             default:
                 break;
