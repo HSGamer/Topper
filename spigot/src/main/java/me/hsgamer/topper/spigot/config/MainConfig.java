@@ -3,6 +3,7 @@ package me.hsgamer.topper.spigot.config;
 import me.hsgamer.hscore.bukkit.config.BukkitConfig;
 import me.hsgamer.hscore.config.PathableConfig;
 import me.hsgamer.hscore.config.path.BaseConfigPath;
+import me.hsgamer.hscore.config.path.impl.StringConfigPath;
 import org.bukkit.plugin.Plugin;
 
 import java.util.Collections;
@@ -18,6 +19,7 @@ public class MainConfig extends PathableConfig {
         }
         return map;
     });
+    public static final StringConfigPath STORAGE_TYPE = new StringConfigPath("storage-type", "yaml");
 
     public MainConfig(Plugin plugin) {
         super(new BukkitConfig(plugin, "config.yml"));

@@ -1,7 +1,9 @@
 package me.hsgamer.topper.spigot.manager;
 
 import me.hsgamer.topper.core.TopHolder;
+import me.hsgamer.topper.core.TopStorage;
 import me.hsgamer.topper.spigot.TopperPlugin;
+import me.hsgamer.topper.spigot.builder.TopStorageBuilder;
 import me.hsgamer.topper.spigot.config.MainConfig;
 import me.hsgamer.topper.spigot.holder.PlaceholderTopHolder;
 import me.hsgamer.topper.spigot.storage.YamlStorage;
@@ -21,7 +23,8 @@ public class TopManager {
 
     public void setup() {
         MainConfig.PLACEHOLDERS.getValue().forEach((key, value) -> {
-            PlaceholderTopHolder placeholderTopHolder = new PlaceholderTopHolder(instance, new YamlStorage(), key, value);
+            TopStorage storage = TopStorageBuilder.INSTANCE.build(MainConfig.STORAGE_TYPE.getValue(), instance).orElseGet(YamlStorage::new);
+            PlaceholderTopHolder placeholderTopHolder = new PlaceholderTopHolder(instance, storage, key, value);
             placeholderTopHolder.register();
             topHolders.put(key, placeholderTopHolder);
         });
