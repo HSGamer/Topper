@@ -6,6 +6,7 @@ import me.hsgamer.topper.spigot.TopperPlugin;
 import me.hsgamer.topper.spigot.config.MessageConfig;
 import me.hsgamer.topper.spigot.config.SignConfig;
 import me.hsgamer.topper.spigot.sign.SignEntry;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -16,7 +17,6 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
@@ -34,12 +34,7 @@ public class SignManager implements Listener {
     public void register() {
         instance.registerListener(this);
         signEntries.addAll(SignConfig.SIGN_ENTRIES.getValue());
-        task = new BukkitRunnable() {
-            @Override
-            public void run() {
-                signEntries.forEach(SignEntry::update);
-            }
-        }.runTaskTimer(instance, 20, 20);
+        task = Bukkit.getScheduler().runTaskTimer(instance, () -> signEntries.forEach(SignEntry::update), 20L, 20L);
     }
 
     public void unregister() {
