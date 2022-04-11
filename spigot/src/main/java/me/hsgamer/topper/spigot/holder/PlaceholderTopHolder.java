@@ -37,9 +37,11 @@ public class PlaceholderTopHolder extends AutoUpdateTopHolder {
     @Override
     public void onPostRegister() {
         if (Boolean.TRUE.equals(MainConfig.LOAD_ALL_OFFLINE_PLAYERS.getValue())) {
-            for (OfflinePlayer player : instance.getServer().getOfflinePlayers()) {
-                getOrCreateEntry(player.getUniqueId());
-            }
+            instance.getServer().getScheduler().scheduleSyncDelayedTask(instance, () -> {
+                for (OfflinePlayer player : instance.getServer().getOfflinePlayers()) {
+                    getOrCreateEntry(player.getUniqueId());
+                }
+            });
         }
     }
 }

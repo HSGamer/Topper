@@ -98,8 +98,15 @@ public abstract class TopHolder {
         onRegister();
         topStorage.onRegister(this);
         topStorage.load(this)
-                .thenAccept(valueEntryMap -> valueEntryMap.forEach((uuid, value) -> getOrCreateEntry(uuid).setValue(value)))
-                .thenAccept(v -> onPostRegister());
+                .whenComplete((entries, throwable) -> {
+                    if (throwable != null) {
+                        throwable.printStackTrace();
+                    }
+                    if (entries != null) {
+                        entries.forEach((uuid, value) -> getOrCreateEntry(uuid).setValue(value));
+                    }
+                    onPostRegister();
+                });
     }
 
     public final void unregister() {
