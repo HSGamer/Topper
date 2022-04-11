@@ -7,6 +7,8 @@ import me.hsgamer.topper.spigot.TopperPlugin;
 import me.hsgamer.topper.spigot.config.MainConfig;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Queue;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -30,25 +32,35 @@ public abstract class AutoUpdateTopHolder extends TopHolder {
 
         int updateDelay = MainConfig.TASK_UPDATE_DELAY.getValue();
         updateTask = instance.getServer().getScheduler().runTaskTimerAsynchronously(instance, () -> {
+            List<UUID> list = new ArrayList<>();
             for (int i = 0; i < MainConfig.TASK_UPDATE_ENTRY_PER_TICK.getValue(); i++) {
                 UUID uuid = updateQueue.poll();
-                if (uuid != null) {
-                    TopEntry entry = getOrCreateEntry(uuid);
-                    entry.update();
-                    updateQueue.add(uuid);
+                if (uuid == null) {
+                    break;
                 }
+                TopEntry entry = getOrCreateEntry(uuid);
+                entry.update();
+                list.add(uuid);
+            }
+            if (!list.isEmpty()) {
+                updateQueue.addAll(list);
             }
         }, updateDelay, updateDelay);
 
         int saveDelay = MainConfig.TASK_SAVE_DELAY.getValue();
         saveTask = instance.getServer().getScheduler().runTaskTimerAsynchronously(instance, () -> {
+            List<UUID> list = new ArrayList<>();
             for (int i = 0; i < MainConfig.TASK_SAVE_ENTRY_PER_TICK.getValue(); i++) {
                 UUID uuid = saveQueue.poll();
-                if (uuid != null) {
-                    TopEntry entry = getOrCreateEntry(uuid);
-                    entry.save();
-                    saveQueue.add(uuid);
+                if (uuid == null) {
+                    break;
                 }
+                TopEntry entry = getOrCreateEntry(uuid);
+                entry.save();
+                list.add(uuid);
+            }
+            if (!list.isEmpty()) {
+                saveQueue.addAll(list);
             }
         }, saveDelay, saveDelay);
     }
