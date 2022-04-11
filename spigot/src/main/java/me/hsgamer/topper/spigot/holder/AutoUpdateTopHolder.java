@@ -10,8 +10,6 @@ import me.hsgamer.topper.spigot.event.TopEntryUpdateEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Queue;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -19,8 +17,9 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public abstract class AutoUpdateTopHolder extends TopHolder {
     protected final TopperPlugin instance;
     private final Queue<UUID> updateQueue = new ConcurrentLinkedQueue<>();
-    private final Map<UUID, BukkitTask> saveTasks = new HashMap<>();
+    private final Queue<UUID> saveQueue = new ConcurrentLinkedQueue<>();
     private BukkitTask updateTask;
+    private BukkitTask saveTask;
     private BukkitTask snapshotTask;
 
     protected AutoUpdateTopHolder(TopperPlugin instance, TopStorage topStorage, String name) {
@@ -39,12 +38,21 @@ public abstract class AutoUpdateTopHolder extends TopHolder {
                 updateQueue.add(uuid);
             }
         }, 10, 10);
+        saveTask = instance.getServer().getScheduler().runTaskTimerAsynchronously(instance, () -> {
+            UUID uuid = saveQueue.poll();
+            if (uuid != null) {
+                TopEntry entry = getOrCreateEntry(uuid);
+                entry.save();
+                saveQueue.add(uuid);
+            }
+        }, 10, 10);
     }
 
     @Override
     public void onUnregister() {
         updateTask.cancel();
         snapshotTask.cancel();
+        saveTask.cancel();
     }
 
     @Override
@@ -55,14 +63,14 @@ public abstract class AutoUpdateTopHolder extends TopHolder {
     @Override
     public void onCreateEntry(TopEntry entry) {
         updateQueue.add(entry.getUuid());
-        saveTasks.put(entry.getUuid(), instance.getServer().getScheduler().runTaskTimerAsynchronously(instance, entry::save, 30L, 30L));
+        saveQueue.add(entry.getUuid());
         Bukkit.getPluginManager().callEvent(new TopEntryCreateEvent(entry));
     }
 
     @Override
     public void onRemoveEntry(TopEntry entry) {
-        Bukkit.getPluginManager().callEvent(new TopEntryRemoveEvent(entry));
         updateQueue.remove(entry.getUuid());
-        saveTasks.remove(entry.getUuid()).cancel();
+        saveQueue.remove(entry.getUuid());
+        Bukkit.getPluginManager().callEvent(new TopEntryRemoveEvent(entry));
     }
 }
