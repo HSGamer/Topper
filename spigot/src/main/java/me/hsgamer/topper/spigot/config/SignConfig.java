@@ -19,8 +19,8 @@ import java.util.stream.Collectors;
 public class SignConfig extends PathableConfig {
     public static final SimpleConfigPath<List<String>> SIGN_LINES = new SimpleConfigPath<>("sign-lines", Arrays.asList(
             "&6&m               ",
-            "&b#<index> &a<name>",
-            "&a<value> <suffix>",
+            "&b#{index} &a{name}",
+            "&a{value} {suffix}",
             "&6&m               "
     ));
     public static final IntegerConfigPath START_INDEX = new IntegerConfigPath("start-index", 1);
