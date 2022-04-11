@@ -22,7 +22,7 @@ public class PlaceholderTopHolder extends AutoUpdateTopHolder {
     @Override
     public CompletableFuture<Optional<BigDecimal>> updateNewValue(UUID uuid) {
         CompletableFuture<Optional<BigDecimal>> future = new CompletableFuture<>();
-        instance.getServer().getScheduler().scheduleSyncDelayedTask(instance, () -> {
+        instance.getServer().getScheduler().runTask(instance, () -> {
             OfflinePlayer player = instance.getServer().getOfflinePlayer(uuid);
             try {
                 String parsed = PlaceholderAPI.setPlaceholders(player, placeholder);
