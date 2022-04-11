@@ -5,6 +5,10 @@ import me.hsgamer.topper.core.TopEntry;
 import me.hsgamer.topper.core.TopHolder;
 import me.hsgamer.topper.core.TopStorage;
 import me.hsgamer.topper.spigot.TopperPlugin;
+import me.hsgamer.topper.spigot.event.TopEntryCreateEvent;
+import me.hsgamer.topper.spigot.event.TopEntryRemoveEvent;
+import me.hsgamer.topper.spigot.event.TopEntryUpdateEvent;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -54,13 +58,20 @@ public class PlaceholderTopHolder extends TopHolder {
     }
 
     @Override
+    public void onUpdateEntry(TopEntry entry) {
+        Bukkit.getPluginManager().callEvent(new TopEntryUpdateEvent(entry));
+    }
+
+    @Override
     public void onCreateEntry(TopEntry entry) {
         updateTasks.put(entry.getUuid(), instance.getServer().getScheduler().runTaskTimerAsynchronously(instance, entry::update, 20L, 20L));
         saveTasks.put(entry.getUuid(), instance.getServer().getScheduler().runTaskTimerAsynchronously(instance, entry::save, 30L, 30L));
+        Bukkit.getPluginManager().callEvent(new TopEntryCreateEvent(entry));
     }
 
     @Override
     public void onRemoveEntry(TopEntry entry) {
+        Bukkit.getPluginManager().callEvent(new TopEntryRemoveEvent(entry));
         updateTasks.remove(entry.getUuid()).cancel();
         saveTasks.remove(entry.getUuid()).cancel();
     }
