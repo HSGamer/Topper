@@ -22,8 +22,8 @@ public class PlaceholderTopHolder extends TopHolder {
     private final Map<UUID, BukkitTask> saveTasks = new HashMap<>();
     private BukkitTask snapshotTask;
 
-    public PlaceholderTopHolder(TopperPlugin instance, TopStorage topStorage, String placeholder) {
-        super(topStorage);
+    public PlaceholderTopHolder(TopperPlugin instance, TopStorage topStorage, String name, String placeholder) {
+        super(topStorage, name);
         this.instance = instance;
         this.placeholder = placeholder;
     }

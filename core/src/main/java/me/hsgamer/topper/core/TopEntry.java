@@ -16,7 +16,12 @@ public final class TopEntry implements Comparable<TopEntry> {
     }
 
     public void update() {
-        topHolder.updateNewValue(uuid).thenAccept(optional -> optional.ifPresent(this::setValue));
+        topHolder.updateNewValue(uuid).thenAccept(optional -> {
+            if (optional.isPresent()) {
+                setValue(optional.get());
+                topHolder.notifyUpdateEntry(this);
+            }
+        });
     }
 
     public void save() {
