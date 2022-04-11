@@ -9,8 +9,11 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.BiFunction;
+import java.util.function.Supplier;
 
 public class TopFormatter {
+    private static Supplier<String> nullValueSupplier = () -> "";
+    private static Supplier<String> nullUuidSupplier = () -> "";
     private final Map<String, BiFunction<UUID, BigDecimal, String>> replacers = new HashMap<>();
     private String displayName = "";
     private String prefix = "";
@@ -33,6 +36,14 @@ public class TopFormatter {
 
     public TopFormatter() {
         // EMPTY
+    }
+
+    public static void setNullValueSupplier(Supplier<String> supplier) {
+        nullValueSupplier = supplier;
+    }
+
+    public static void setNullUuidSupplier(Supplier<String> supplier) {
+        nullUuidSupplier = supplier;
     }
 
     public void addReplacer(String key, BiFunction<UUID, BigDecimal, String> replacer) {
@@ -120,10 +131,10 @@ public class TopFormatter {
     public String replace(String text, UUID uuid, BigDecimal value) {
         String replaced = text.replace("{prefix}", prefix)
                 .replace("{suffix}", suffix)
-                .replace("{uuid}", uuid != null ? uuid.toString() : "")
-                .replace("{value}", value != null ? format(value) : "")
-                .replace("{value_raw}", value != null ? value.toPlainString() : "")
-                .replace("{display-name}", displayName);
+                .replace("{uuid}", uuid != null ? uuid.toString() : nullUuidSupplier.get())
+                .replace("{value}", value != null ? format(value) : nullValueSupplier.get())
+                .replace("{value_raw}", value != null ? value.toPlainString() : nullValueSupplier.get())
+                .replace("{display_name}", displayName);
         for (Map.Entry<String, BiFunction<UUID, BigDecimal, String>> entry : replacers.entrySet()) {
             replaced = replaced.replace("{" + entry.getKey() + "}", entry.getValue().apply(uuid, value));
         }

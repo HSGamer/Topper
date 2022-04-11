@@ -28,9 +28,10 @@ public class TopManager {
             TopStorage storage = TopStorageBuilder.INSTANCE.build(MainConfig.STORAGE_TYPE.getValue(), instance).orElseGet(YamlStorage::new);
             addTopHolder(key, new PlaceholderTopHolder(instance, storage, key, value));
         });
-        defaultFormatter.addReplacer("name", (uuid, bigDecimal) -> Optional.ofNullable(uuid).map(Bukkit::getOfflinePlayer).map(OfflinePlayer::getName).orElse(""));
+        TopFormatter.setNullValueSupplier(MainConfig.NULL_DISPLAY_VALUE::getValue);
+        defaultFormatter.addReplacer("name", (uuid, bigDecimal) -> Optional.ofNullable(uuid).map(Bukkit::getOfflinePlayer).map(OfflinePlayer::getName).orElseGet(MainConfig.NULL_DISPLAY_NAME::getValue));
         topFormatters.putAll(MainConfig.FORMATTERS.getValue());
-        topFormatters.values().forEach(topFormatter -> topFormatter.addReplacer("name", (uuid, bigDecimal) -> Optional.ofNullable(uuid).map(Bukkit::getOfflinePlayer).map(OfflinePlayer::getName).orElse("")));
+        topFormatters.values().forEach(topFormatter -> topFormatter.addReplacer("name", (uuid, bigDecimal) -> Optional.ofNullable(uuid).map(Bukkit::getOfflinePlayer).map(OfflinePlayer::getName).orElseGet(MainConfig.NULL_DISPLAY_NAME::getValue)));
     }
 
     public void unregister() {
