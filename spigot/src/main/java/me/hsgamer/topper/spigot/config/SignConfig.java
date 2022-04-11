@@ -27,7 +27,12 @@ public class SignConfig extends PathableConfig {
     public static final AdvancedConfigPath<List<String>, List<SignEntry>> SIGN_ENTRIES = new AdvancedConfigPath<List<String>, List<SignEntry>>("sign-entries", Collections.emptyList()) {
         @Override
         public @NotNull List<String> getFromConfig(@NotNull Config config) {
-            return CollectionUtils.createStringListFromObject(config.get(getPath()), true);
+            Object raw = config.get(getPath());
+            if (raw == null) {
+                return Collections.emptyList();
+            } else {
+                return CollectionUtils.createStringListFromObject(raw, true);
+            }
         }
 
         @Override
