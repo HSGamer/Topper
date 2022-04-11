@@ -1,4 +1,4 @@
-package me.hsgamer.topper.spigot.hooks;
+package me.hsgamer.topper.spigot.hook;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import me.hsgamer.topper.core.TopEntry;

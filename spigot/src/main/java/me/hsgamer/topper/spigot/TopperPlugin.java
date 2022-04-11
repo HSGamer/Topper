@@ -2,7 +2,7 @@ package me.hsgamer.topper.spigot;
 
 import me.hsgamer.hscore.bukkit.baseplugin.BasePlugin;
 import me.hsgamer.topper.spigot.config.MainConfig;
-import me.hsgamer.topper.spigot.hooks.TopPlaceholderExpansion;
+import me.hsgamer.topper.spigot.hook.TopPlaceholderExpansion;
 import me.hsgamer.topper.spigot.listener.JoinListener;
 import me.hsgamer.topper.spigot.manager.TopManager;
 
