@@ -28,9 +28,7 @@ public class TopManager {
     public void setup() {
         MainConfig.PLACEHOLDERS.getValue().forEach((key, value) -> {
             TopStorage storage = TopStorageBuilder.INSTANCE.build(MainConfig.STORAGE_TYPE.getValue(), instance).orElseGet(YamlStorage::new);
-            PlaceholderTopHolder placeholderTopHolder = new PlaceholderTopHolder(instance, storage, key, value);
-            placeholderTopHolder.register();
-            topHolders.put(key, placeholderTopHolder);
+            addTopHolder(key, new PlaceholderTopHolder(instance, storage, key, value));
         });
         defaultFormatter.addReplacer("name", (uuid, bigDecimal) -> Bukkit.getOfflinePlayer(uuid).getName());
         topFormatters.putAll(MainConfig.FORMATTERS.getValue());
@@ -41,6 +39,14 @@ public class TopManager {
         topHolders.values().forEach(TopHolder::unregister);
         topHolders.clear();
         topFormatters.clear();
+    }
+
+    public void addTopHolder(String key, TopHolder topHolder) {
+        if (topHolders.containsKey(key)) {
+            topHolders.get(key).unregister();
+        }
+        topHolder.register();
+        topHolders.put(key, topHolder);
     }
 
     public Optional<TopHolder> getTopHolder(String name) {
