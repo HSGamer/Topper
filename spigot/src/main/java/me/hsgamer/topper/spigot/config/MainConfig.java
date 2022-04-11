@@ -6,6 +6,7 @@ import me.hsgamer.hscore.config.PathableConfig;
 import me.hsgamer.hscore.config.path.AdvancedConfigPath;
 import me.hsgamer.hscore.config.path.BaseConfigPath;
 import me.hsgamer.hscore.config.path.impl.BooleanConfigPath;
+import me.hsgamer.hscore.config.path.impl.IntegerConfigPath;
 import me.hsgamer.hscore.config.path.impl.StringConfigPath;
 import me.hsgamer.topper.core.TopFormatter;
 import org.bukkit.plugin.Plugin;
@@ -50,6 +51,10 @@ public class MainConfig extends PathableConfig {
     public static final StringConfigPath NULL_DISPLAY_NAME = new StringConfigPath("null-display-name", "---");
     public static final StringConfigPath NULL_DISPLAY_VALUE = new StringConfigPath("null-display-value", "---");
     public static final BooleanConfigPath LOAD_ALL_OFFLINE_PLAYERS = new BooleanConfigPath("load-all-offline-players", false);
+    public static final IntegerConfigPath TASK_SAVE_ENTRY_PER_TICK = new IntegerConfigPath("task.save.entry-per-tick", 10);
+    public static final IntegerConfigPath TASK_SAVE_DELAY = new IntegerConfigPath("task.save.delay", 0);
+    public static final IntegerConfigPath TASK_UPDATE_ENTRY_PER_TICK = new IntegerConfigPath("task.update.entry-per-tick", 10);
+    public static final IntegerConfigPath TASK_UPDATE_DELAY = new IntegerConfigPath("task.update.delay", 0);
 
     public MainConfig(Plugin plugin) {
         super(new BukkitConfig(plugin, "config.yml"));

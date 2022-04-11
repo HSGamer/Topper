@@ -4,6 +4,7 @@ import me.hsgamer.topper.core.TopEntry;
 import me.hsgamer.topper.core.TopHolder;
 import me.hsgamer.topper.core.TopStorage;
 import me.hsgamer.topper.spigot.TopperPlugin;
+import me.hsgamer.topper.spigot.config.MainConfig;
 import me.hsgamer.topper.spigot.event.TopEntryCreateEvent;
 import me.hsgamer.topper.spigot.event.TopEntryRemoveEvent;
 import me.hsgamer.topper.spigot.event.TopEntryUpdateEvent;
@@ -30,22 +31,30 @@ public abstract class AutoUpdateTopHolder extends TopHolder {
     @Override
     public void onRegister() {
         snapshotTask = instance.getServer().getScheduler().runTaskTimerAsynchronously(instance, this::takeTopSnapshot, 20L, 20L);
+
+        int updateDelay = MainConfig.TASK_UPDATE_DELAY.getValue();
         updateTask = instance.getServer().getScheduler().runTaskTimerAsynchronously(instance, () -> {
-            UUID uuid = updateQueue.poll();
-            if (uuid != null) {
-                TopEntry entry = getOrCreateEntry(uuid);
-                entry.update();
-                updateQueue.add(uuid);
+            for (int i = 0; i < MainConfig.TASK_UPDATE_ENTRY_PER_TICK.getValue(); i++) {
+                UUID uuid = updateQueue.poll();
+                if (uuid != null) {
+                    TopEntry entry = getOrCreateEntry(uuid);
+                    entry.update();
+                    updateQueue.add(uuid);
+                }
             }
-        }, 10, 10);
+        }, updateDelay, updateDelay);
+
+        int saveDelay = MainConfig.TASK_SAVE_DELAY.getValue();
         saveTask = instance.getServer().getScheduler().runTaskTimerAsynchronously(instance, () -> {
-            UUID uuid = saveQueue.poll();
-            if (uuid != null) {
-                TopEntry entry = getOrCreateEntry(uuid);
-                entry.save();
-                saveQueue.add(uuid);
+            for (int i = 0; i < MainConfig.TASK_SAVE_ENTRY_PER_TICK.getValue(); i++) {
+                UUID uuid = saveQueue.poll();
+                if (uuid != null) {
+                    TopEntry entry = getOrCreateEntry(uuid);
+                    entry.save();
+                    saveQueue.add(uuid);
+                }
             }
-        }, 10, 10);
+        }, saveDelay, saveDelay);
     }
 
     @Override
