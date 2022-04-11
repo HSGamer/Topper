@@ -42,6 +42,10 @@ public abstract class TopHolder {
         // EMPTY
     }
 
+    public void onPostRegister() {
+        // EMPTY
+    }
+
     public void onUnregister() {
         // EMPTY
     }
@@ -93,7 +97,9 @@ public abstract class TopHolder {
     public final void register() {
         onRegister();
         topStorage.onRegister(this);
-        topStorage.load(this).thenAccept(valueEntryMap -> valueEntryMap.forEach((uuid, value) -> getOrCreateEntry(uuid).setValue(value)));
+        topStorage.load(this)
+                .thenAccept(valueEntryMap -> valueEntryMap.forEach((uuid, value) -> getOrCreateEntry(uuid).setValue(value)))
+                .thenAccept(v -> onPostRegister());
     }
 
     public final void unregister() {

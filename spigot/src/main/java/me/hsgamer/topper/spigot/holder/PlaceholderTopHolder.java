@@ -3,6 +3,7 @@ package me.hsgamer.topper.spigot.holder;
 import me.clip.placeholderapi.PlaceholderAPI;
 import me.hsgamer.topper.core.TopStorage;
 import me.hsgamer.topper.spigot.TopperPlugin;
+import me.hsgamer.topper.spigot.config.MainConfig;
 import org.bukkit.OfflinePlayer;
 
 import java.math.BigDecimal;
@@ -31,5 +32,14 @@ public class PlaceholderTopHolder extends AutoUpdateTopHolder {
             }
         });
         return future;
+    }
+
+    @Override
+    public void onPostRegister() {
+        if (Boolean.TRUE.equals(MainConfig.LOAD_ALL_OFFLINE_PLAYERS.getValue())) {
+            for (OfflinePlayer player : instance.getServer().getOfflinePlayers()) {
+                getOrCreateEntry(player.getUniqueId());
+            }
+        }
     }
 }
