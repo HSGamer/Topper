@@ -12,7 +12,7 @@
     <artifactId>topper-spigot</artifactId>
 
     <properties>
-        <core.version>4.0.3</core.version>
+        <core.version>4.0.4</core.version>
     </properties>
 
     <build>
