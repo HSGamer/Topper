@@ -86,8 +86,8 @@ public abstract class TopHolder {
         indexMap.set(map);
     }
 
-    public final void save(TopEntry entry) {
-        topStorage.save(entry, false);
+    public final CompletableFuture<Void> save(TopEntry entry) {
+        return topStorage.save(entry, false);
     }
 
     public final void register() {

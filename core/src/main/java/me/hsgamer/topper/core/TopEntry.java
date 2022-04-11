@@ -3,12 +3,15 @@ package me.hsgamer.topper.core;
 import java.math.BigDecimal;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 public final class TopEntry implements Comparable<TopEntry> {
     private final UUID uuid;
     private final TopHolder topHolder;
     private final AtomicReference<BigDecimal> value = new AtomicReference<>(BigDecimal.ZERO);
+    private final AtomicBoolean needSaving = new AtomicBoolean(false);
+    private final AtomicBoolean isSaving = new AtomicBoolean(false);
 
     TopEntry(UUID uuid, TopHolder topHolder) {
         this.uuid = uuid;
@@ -18,14 +21,23 @@ public final class TopEntry implements Comparable<TopEntry> {
     public void update() {
         topHolder.updateNewValue(uuid).thenAccept(optional -> {
             if (optional.isPresent()) {
-                setValue(optional.get());
-                topHolder.notifyUpdateEntry(this);
+                BigDecimal currentValue = value.get();
+                BigDecimal newValue = optional.get();
+                if (currentValue.compareTo(newValue) != 0) {
+                    value.set(newValue);
+                    needSaving.set(true);
+                    topHolder.notifyUpdateEntry(this);
+                }
             }
         });
     }
 
     public void save() {
-        topHolder.save(this);
+        if (isSaving.get()) return;
+        if (!needSaving.get()) return;
+        needSaving.set(false);
+        isSaving.set(true);
+        topHolder.save(this).whenComplete((result, throwable) -> isSaving.set(false));
     }
 
     public UUID getUuid() {
@@ -36,7 +48,7 @@ public final class TopEntry implements Comparable<TopEntry> {
         return value.get();
     }
 
-    public void setValue(BigDecimal value) {
+    void setValue(BigDecimal value) {
         this.value.set(value);
     }
 

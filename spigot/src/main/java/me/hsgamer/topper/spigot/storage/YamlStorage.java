@@ -53,9 +53,10 @@ public class YamlStorage implements TopStorage {
     }
 
     @Override
-    public void save(TopEntry topEntry, boolean onUnregister) {
+    public CompletableFuture<Void> save(TopEntry topEntry, boolean onUnregister) {
         Config config = getConfig(topEntry.getTopHolder().getName());
         config.set(topEntry.getUuid().toString(), topEntry.getValue().toString());
+        return CompletableFuture.completedFuture(null);
     }
 
     @Override

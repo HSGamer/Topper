@@ -8,7 +8,7 @@ import java.util.concurrent.CompletableFuture;
 public interface TopStorage {
     CompletableFuture<Map<UUID, BigDecimal>> load(TopHolder holder);
 
-    void save(TopEntry topEntry, boolean onUnregister);
+    CompletableFuture<Void> save(TopEntry topEntry, boolean onUnregister);
 
     default void onRegister(TopHolder holder) {
         // EMPTY

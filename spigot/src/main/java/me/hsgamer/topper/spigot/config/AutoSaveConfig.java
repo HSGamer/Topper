@@ -10,8 +10,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class AutoSaveConfig extends DecorativeConfig implements Runnable {
     private final Plugin plugin;
-    private final AtomicBoolean needSaving = new AtomicBoolean();
-    private final AtomicBoolean isSaving = new AtomicBoolean();
+    private final AtomicBoolean needSaving = new AtomicBoolean(false);
+    private final AtomicBoolean isSaving = new AtomicBoolean(false);
     private BukkitTask task;
 
     public AutoSaveConfig(Plugin plugin, Config config) {
