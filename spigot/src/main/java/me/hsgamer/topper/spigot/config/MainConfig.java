@@ -46,6 +46,8 @@ public class MainConfig extends PathableConfig {
         }
     };
     public static final StringConfigPath STORAGE_TYPE = new StringConfigPath("storage-type", "yaml");
+    public static final StringConfigPath NULL_DISPLAY_NAME = new StringConfigPath("null-display-name", "---");
+    public static final StringConfigPath NULL_DISPLAY_VALUE = new StringConfigPath("null-display-value", "---");
 
     public MainConfig(Plugin plugin) {
         super(new BukkitConfig(plugin, "config.yml"));

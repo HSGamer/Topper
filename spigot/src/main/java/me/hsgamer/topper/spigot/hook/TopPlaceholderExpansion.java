@@ -5,6 +5,7 @@ import me.hsgamer.topper.core.TopEntry;
 import me.hsgamer.topper.core.TopFormatter;
 import me.hsgamer.topper.core.TopHolder;
 import me.hsgamer.topper.spigot.TopperPlugin;
+import me.hsgamer.topper.spigot.config.MainConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
@@ -61,7 +62,7 @@ public class TopPlaceholderExpansion extends PlaceholderExpansion {
                         .map(TopEntry::getUuid)
                         .map(Bukkit::getOfflinePlayer)
                         .map(OfflinePlayer::getName)
-                        .orElse("");
+                        .orElseGet(MainConfig.NULL_DISPLAY_NAME::getValue);
             }
             case "top_value_raw":
             case "top_value": {
@@ -76,7 +77,7 @@ public class TopPlaceholderExpansion extends PlaceholderExpansion {
                 return holder.getEntryByIndex(i - 1)
                         .map(TopEntry::getValue)
                         .map(bigDecimal -> args[1].endsWith("raw") ? bigDecimal.toPlainString() : formatter.format(bigDecimal))
-                        .orElse("0");
+                        .orElseGet(MainConfig.NULL_DISPLAY_VALUE::getValue);
             }
             case "top_rank":
                 return Integer.toString(holder.getTopIndex(player.getUniqueId()) + 1);
@@ -85,7 +86,7 @@ public class TopPlaceholderExpansion extends PlaceholderExpansion {
                 return holder.getEntry(player.getUniqueId())
                         .map(TopEntry::getValue)
                         .map(bigDecimal -> args[1].endsWith("raw") ? bigDecimal.toPlainString() : formatter.format(bigDecimal))
-                        .orElse("");
+                        .orElseGet(MainConfig.NULL_DISPLAY_NAME::getValue);
             default:
                 break;
         }
