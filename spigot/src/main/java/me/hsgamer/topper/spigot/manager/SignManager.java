@@ -40,7 +40,7 @@ public class SignManager implements Listener {
     public void unregister() {
         task.cancel();
         HandlerList.unregisterAll(this);
-        SignConfig.SIGN_ENTRIES.setValue(signEntries);
+        SignConfig.SIGN_ENTRIES.setAndSave(signEntries);
     }
 
     public void addSign(SignEntry entry) {
