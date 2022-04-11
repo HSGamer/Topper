@@ -5,10 +5,6 @@ import me.hsgamer.topper.core.TopHolder;
 import me.hsgamer.topper.core.TopStorage;
 import me.hsgamer.topper.spigot.TopperPlugin;
 import me.hsgamer.topper.spigot.config.MainConfig;
-import me.hsgamer.topper.spigot.event.TopEntryCreateEvent;
-import me.hsgamer.topper.spigot.event.TopEntryRemoveEvent;
-import me.hsgamer.topper.spigot.event.TopEntryUpdateEvent;
-import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.Queue;
@@ -65,21 +61,14 @@ public abstract class AutoUpdateTopHolder extends TopHolder {
     }
 
     @Override
-    public void onUpdateEntry(TopEntry entry) {
-        Bukkit.getPluginManager().callEvent(new TopEntryUpdateEvent(entry));
-    }
-
-    @Override
     public void onCreateEntry(TopEntry entry) {
         updateQueue.add(entry.getUuid());
         saveQueue.add(entry.getUuid());
-        Bukkit.getPluginManager().callEvent(new TopEntryCreateEvent(entry));
     }
 
     @Override
     public void onRemoveEntry(TopEntry entry) {
         updateQueue.remove(entry.getUuid());
         saveQueue.remove(entry.getUuid());
-        Bukkit.getPluginManager().callEvent(new TopEntryRemoveEvent(entry));
     }
 }
