@@ -97,6 +97,11 @@
             <artifactId>hscore-config-path</artifactId>
             <version>${core.version}</version>
         </dependency>
+        <dependency>
+            <groupId>me.hsgamer</groupId>
+            <artifactId>hscore-builder</artifactId>
+            <version>${core.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>me.clip</groupId>
