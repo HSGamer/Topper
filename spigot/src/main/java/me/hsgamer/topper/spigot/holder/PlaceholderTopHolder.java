@@ -45,7 +45,7 @@ public class PlaceholderTopHolder extends TopHolder {
 
     @Override
     public void onRegister() {
-        snapshotTask = instance.getServer().getScheduler().runTaskTimer(instance, this::takeTopSnapshot, 20L, 20L);
+        snapshotTask = instance.getServer().getScheduler().runTaskTimerAsynchronously(instance, this::takeTopSnapshot, 20L, 20L);
     }
 
     @Override
@@ -55,8 +55,8 @@ public class PlaceholderTopHolder extends TopHolder {
 
     @Override
     public void onCreateEntry(TopEntry entry) {
-        updateTasks.put(entry.getUuid(), instance.getServer().getScheduler().runTaskTimer(instance, entry::update, 20L, 20L));
-        saveTasks.put(entry.getUuid(), instance.getServer().getScheduler().runTaskTimer(instance, entry::save, 30L, 30L));
+        updateTasks.put(entry.getUuid(), instance.getServer().getScheduler().runTaskTimerAsynchronously(instance, entry::update, 20L, 20L));
+        saveTasks.put(entry.getUuid(), instance.getServer().getScheduler().runTaskTimerAsynchronously(instance, entry::save, 30L, 30L));
     }
 
     @Override
