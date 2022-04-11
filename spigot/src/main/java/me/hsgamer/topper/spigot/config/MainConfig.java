@@ -27,7 +27,7 @@ public class MainConfig extends PathableConfig {
         @Override
         public @NotNull Map<String, Map<String, Object>> getFromConfig(@NotNull Config config) {
             Map<String, Map<String, Object>> map = new HashMap<>();
-            config.getKeys(getPath(), false).forEach(key -> map.put(key, config.getValues(getPath() + "." + key, false)));
+            config.getKeys(getPath(), false).forEach(key -> map.put(key, config.getNormalizedValues(getPath() + "." + key, false)));
             return map;
         }
 

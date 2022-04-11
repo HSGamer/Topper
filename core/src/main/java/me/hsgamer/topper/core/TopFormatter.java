@@ -12,6 +12,7 @@ import java.util.function.BiFunction;
 
 public class TopFormatter {
     private final Map<String, BiFunction<UUID, BigDecimal, String>> replacers = new HashMap<>();
+    private String displayName = "";
     private String prefix = "";
     private String suffix = "";
     private int fractionDigits = -1;
@@ -21,6 +22,7 @@ public class TopFormatter {
     private DecimalFormat format;
 
     public TopFormatter(Map<String, Object> map) {
+        Optional.ofNullable(map.get("display-name")).ifPresent(s -> displayName = String.valueOf(s));
         Optional.ofNullable(map.get("prefix")).ifPresent(s -> prefix = String.valueOf(s));
         Optional.ofNullable(map.get("suffix")).ifPresent(s -> suffix = String.valueOf(s));
         Optional.ofNullable(map.get("fraction-digits")).ifPresent(s -> fractionDigits = Integer.parseInt(String.valueOf(s)));
@@ -35,6 +37,14 @@ public class TopFormatter {
 
     public void addReplacer(String key, BiFunction<UUID, BigDecimal, String> replacer) {
         replacers.put(key, replacer);
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 
     public String getPrefix() {
@@ -110,9 +120,10 @@ public class TopFormatter {
     public String replace(String text, UUID uuid, BigDecimal value) {
         String replaced = text.replace("{prefix}", prefix)
                 .replace("{suffix}", suffix)
-                .replace("{uuid}", uuid.toString())
-                .replace("{value}", format(value))
-                .replace("{value_raw}", value.toPlainString());
+                .replace("{uuid}", uuid != null ? uuid.toString() : "")
+                .replace("{value}", value != null ? format(value) : "")
+                .replace("{value_raw}", value != null ? value.toPlainString() : "")
+                .replace("{display-name}", displayName);
         for (Map.Entry<String, BiFunction<UUID, BigDecimal, String>> entry : replacers.entrySet()) {
             replaced = replaced.replace("{" + entry.getKey() + "}", entry.getValue().apply(uuid, value));
         }
