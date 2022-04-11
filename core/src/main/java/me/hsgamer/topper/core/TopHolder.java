@@ -90,8 +90,8 @@ public abstract class TopHolder {
         indexMap.set(map);
     }
 
-    public final CompletableFuture<Void> save(TopEntry entry) {
-        return topStorage.save(entry, false);
+    public final CompletableFuture<Void> save(TopEntry entry, boolean onUnregister) {
+        return topStorage.save(entry, onUnregister);
     }
 
     public final void register() {
@@ -112,7 +112,7 @@ public abstract class TopHolder {
     public final void unregister() {
         entryMap.values().forEach(entry -> {
             notifyRemoveEntry(entry);
-            topStorage.save(entry, true);
+            entry.save(true);
         });
         topStorage.onUnregister(this);
         onUnregister();

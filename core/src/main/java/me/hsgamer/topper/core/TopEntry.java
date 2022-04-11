@@ -32,12 +32,16 @@ public final class TopEntry implements Comparable<TopEntry> {
         });
     }
 
-    public void save() {
+    public void save(boolean onUnregister) {
         if (isSaving.get()) return;
         if (!needSaving.get()) return;
         needSaving.set(false);
         isSaving.set(true);
-        topHolder.save(this).whenComplete((result, throwable) -> isSaving.set(false));
+        topHolder.save(this, onUnregister).whenComplete((result, throwable) -> isSaving.set(false));
+    }
+
+    public void save() {
+        save(false);
     }
 
     public UUID getUuid() {
