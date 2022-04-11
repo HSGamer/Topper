@@ -9,7 +9,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public abstract class TopHolder implements Initializer {
+public abstract class TopHolder {
     private final Map<UUID, TopEntry> entryMap = new ConcurrentHashMap<>();
     private final AtomicReference<List<TopSnapshot>> topSnapshot = new AtomicReference<>(Collections.emptyList());
     private final AtomicReference<Map<UUID, Integer>> indexMap = new AtomicReference<>(Collections.emptyMap());
@@ -35,6 +35,14 @@ public abstract class TopHolder implements Initializer {
     }
 
     public void onUpdateEntry(TopEntry entry) {
+        // EMPTY
+    }
+
+    public void onRegister() {
+        // EMPTY
+    }
+
+    public void onUnregister() {
         // EMPTY
     }
 
@@ -84,7 +92,7 @@ public abstract class TopHolder implements Initializer {
 
     public final void register() {
         onRegister();
-        topStorage.onRegister();
+        topStorage.onRegister(this);
         topStorage.load(this).thenAccept(valueEntryMap -> valueEntryMap.forEach((uuid, value) -> getOrCreateEntry(uuid).setValue(value)));
     }
 
@@ -93,7 +101,7 @@ public abstract class TopHolder implements Initializer {
             notifyRemoveEntry(entry);
             topStorage.save(entry, true);
         });
-        topStorage.onUnregister();
+        topStorage.onUnregister(this);
         onUnregister();
         entryMap.clear();
         topSnapshot.set(Collections.emptyList());
