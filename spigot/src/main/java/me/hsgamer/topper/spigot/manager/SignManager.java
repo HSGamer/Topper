@@ -1,90 +1,65 @@
 package me.hsgamer.topper.spigot.manager;
 
 import me.hsgamer.hscore.bukkit.utils.MessageUtils;
+import me.hsgamer.hscore.config.path.ConfigPath;
+import me.hsgamer.topper.core.TopFormatter;
 import me.hsgamer.topper.spigot.Permissions;
 import me.hsgamer.topper.spigot.TopperPlugin;
+import me.hsgamer.topper.spigot.block.BlockEntry;
 import me.hsgamer.topper.spigot.config.MessageConfig;
 import me.hsgamer.topper.spigot.config.SignConfig;
-import me.hsgamer.topper.spigot.sign.SignEntry;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.HandlerList;
-import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockExplodeEvent;
-import org.bukkit.event.block.BlockPhysicsEvent;
-import org.bukkit.event.entity.EntityExplodeEvent;
-import org.bukkit.scheduler.BukkitTask;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.Sign;
+import org.bukkit.permissions.Permission;
 
-import java.util.ArrayList;
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 
-public class SignManager implements Listener {
-    private final TopperPlugin instance;
-    private final List<SignEntry> signEntries = new ArrayList<>();
-    private BukkitTask task;
-
+public class SignManager extends BlockManager {
     public SignManager(TopperPlugin instance) {
-        this.instance = instance;
+        super(instance);
     }
 
-    public void register() {
-        instance.registerListener(this);
-        signEntries.addAll(SignConfig.SIGN_ENTRIES.getValue());
-        task = Bukkit.getScheduler().runTaskTimer(instance, () -> signEntries.forEach(SignEntry::update), 20L, 20L);
-    }
-
-    public void unregister() {
-        task.cancel();
-        HandlerList.unregisterAll(this);
-        SignConfig.SIGN_ENTRIES.setAndSave(signEntries);
-    }
-
-    public void addSign(SignEntry entry) {
-        removeSign(entry.location);
-        signEntries.add(entry);
-    }
-
-    public void removeSign(Location location) {
-        signEntries.removeIf(topSign -> topSign.location.equals(location));
-    }
-
-    public boolean containsSign(Location location) {
-        return signEntries.stream().anyMatch(topSign -> topSign.location.equals(location));
-    }
-
-    @EventHandler(ignoreCancelled = true)
-    public void onBreak(BlockBreakEvent event) {
-        Block block = event.getBlock();
-        Location location = block.getLocation();
-        Player player = event.getPlayer();
-        if (containsSign(location)) {
-            if (!player.hasPermission(Permissions.SIGN_BREAK) || !player.isSneaking()) {
-                event.setCancelled(true);
-                return;
+    @Override
+    protected void updateBlock(Block block, UUID uuid, BigDecimal value, int index, TopFormatter formatter) {
+        BlockState blockState = block.getState();
+        if (blockState instanceof Sign) {
+            Sign sign = (Sign) blockState;
+            String[] lines = getSignLines(uuid, value, index, formatter);
+            for (int i = 0; i < 4; i++) {
+                sign.setLine(i, lines[i]);
             }
-            removeSign(location);
-            MessageUtils.sendMessage(player, MessageConfig.SIGN_REMOVED.getValue());
+            sign.update(false, false);
+        } else {
+            remove(block.getLocation());
         }
     }
 
-    @EventHandler(ignoreCancelled = true)
-    public void onPhysics(BlockPhysicsEvent event) {
-        if (containsSign(event.getBlock().getLocation())) {
-            event.setCancelled(true);
+    @Override
+    protected ConfigPath<List<BlockEntry>> getEntriesConfigPath() {
+        return SignConfig.SIGN_ENTRIES;
+    }
+
+    @Override
+    protected String getBreakMessage() {
+        return MessageConfig.SIGN_REMOVED.getValue();
+    }
+
+    @Override
+    protected Permission getBreakPermission() {
+        return Permissions.SIGN_BREAK;
+    }
+
+    private String[] getSignLines(UUID uuid, BigDecimal value, int index, TopFormatter formatter) {
+        List<String> list = SignConfig.SIGN_LINES.getValue();
+        int startIndex = SignConfig.START_INDEX.getValue();
+        list.replaceAll(s -> formatter.replace(s, uuid, value).replace("{index}", String.valueOf(index + startIndex)));
+        String[] lines = new String[4];
+        for (int i = 0; i < 4; i++) {
+            lines[i] = MessageUtils.colorize(i < list.size() ? list.get(i) : "");
         }
-    }
-
-    @EventHandler(ignoreCancelled = true)
-    public void onBlockExplode(BlockExplodeEvent event) {
-        event.blockList().removeIf(block -> containsSign(block.getLocation()));
-    }
-
-    @EventHandler(ignoreCancelled = true)
-    public void onEntityExplode(EntityExplodeEvent event) {
-        event.blockList().removeIf(block -> containsSign(block.getLocation()));
+        return lines;
     }
 }

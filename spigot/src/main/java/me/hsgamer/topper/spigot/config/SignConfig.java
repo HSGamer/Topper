@@ -7,7 +7,7 @@ import me.hsgamer.hscore.config.PathableConfig;
 import me.hsgamer.hscore.config.path.AdvancedConfigPath;
 import me.hsgamer.hscore.config.path.impl.IntegerConfigPath;
 import me.hsgamer.hscore.config.path.impl.SimpleConfigPath;
-import me.hsgamer.topper.spigot.sign.SignEntry;
+import me.hsgamer.topper.spigot.block.BlockEntry;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,7 +24,7 @@ public class SignConfig extends PathableConfig {
             "&6&m               "
     ));
     public static final IntegerConfigPath START_INDEX = new IntegerConfigPath("start-index", 1);
-    public static final AdvancedConfigPath<List<String>, List<SignEntry>> SIGN_ENTRIES = new AdvancedConfigPath<List<String>, List<SignEntry>>("sign-entries", Collections.emptyList()) {
+    public static final AdvancedConfigPath<List<String>, List<BlockEntry>> SIGN_ENTRIES = new AdvancedConfigPath<List<String>, List<BlockEntry>>("sign-entries", Collections.emptyList()) {
         @Override
         public @NotNull List<String> getFromConfig(@NotNull Config config) {
             Object raw = config.get(getPath());
@@ -36,13 +36,13 @@ public class SignConfig extends PathableConfig {
         }
 
         @Override
-        public @NotNull List<SignEntry> convert(@NotNull List<String> rawValue) {
-            return rawValue.stream().map(SignEntry::deserialize).collect(Collectors.toList());
+        public @NotNull List<BlockEntry> convert(@NotNull List<String> rawValue) {
+            return rawValue.stream().map(BlockEntry::deserialize).collect(Collectors.toList());
         }
 
         @Override
-        public @NotNull List<String> convertToRaw(@NotNull List<SignEntry> value) {
-            return value.stream().map(SignEntry::serialize).collect(Collectors.toList());
+        public @NotNull List<String> convertToRaw(@NotNull List<BlockEntry> value) {
+            return value.stream().map(BlockEntry::serialize).collect(Collectors.toList());
         }
     };
 

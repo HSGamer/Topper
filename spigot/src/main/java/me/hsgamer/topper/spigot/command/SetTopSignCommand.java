@@ -3,8 +3,8 @@ package me.hsgamer.topper.spigot.command;
 import me.hsgamer.hscore.bukkit.utils.MessageUtils;
 import me.hsgamer.topper.spigot.Permissions;
 import me.hsgamer.topper.spigot.TopperPlugin;
+import me.hsgamer.topper.spigot.block.BlockEntry;
 import me.hsgamer.topper.spigot.config.MessageConfig;
-import me.hsgamer.topper.spigot.sign.SignEntry;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.command.Command;
@@ -54,7 +54,7 @@ public class SetTopSignCommand extends Command {
             MessageUtils.sendMessage(sender, MessageConfig.SIGN_REQUIRED.getValue());
             return false;
         }
-        instance.getSignManager().addSign(new SignEntry(block.getLocation(), args[0], index - 1));
+        instance.getSignManager().add(new BlockEntry(block.getLocation(), args[0], index - 1));
         MessageUtils.sendMessage(sender, MessageConfig.SUCCESS.getValue());
         return true;
     }
