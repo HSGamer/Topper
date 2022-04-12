@@ -6,10 +6,13 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public abstract class TopHolder {
+    public static final Logger LOGGER = Logger.getLogger(TopHolder.class.getName());
     private final Map<UUID, TopEntry> entryMap = new ConcurrentHashMap<>();
     private final AtomicReference<List<TopSnapshot>> topSnapshot = new AtomicReference<>(Collections.emptyList());
     private final AtomicReference<Map<UUID, Integer>> indexMap = new AtomicReference<>(Collections.emptyMap());
@@ -100,7 +103,7 @@ public abstract class TopHolder {
         topStorage.load(this)
                 .whenComplete((entries, throwable) -> {
                     if (throwable != null) {
-                        throwable.printStackTrace();
+                        LOGGER.log(Level.SEVERE, "Failed to load top entries", throwable);
                     }
                     if (entries != null) {
                         entries.forEach((uuid, value) -> getOrCreateEntry(uuid).setValue(value));

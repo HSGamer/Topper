@@ -3,6 +3,7 @@ package me.hsgamer.topper.spigot;
 import me.hsgamer.hscore.bukkit.baseplugin.BasePlugin;
 import me.hsgamer.hscore.bukkit.utils.MessageUtils;
 import me.hsgamer.topper.spigot.command.SetTopSignCommand;
+import me.hsgamer.topper.spigot.config.DatabaseConfig;
 import me.hsgamer.topper.spigot.config.MainConfig;
 import me.hsgamer.topper.spigot.config.MessageConfig;
 import me.hsgamer.topper.spigot.config.SignConfig;
@@ -15,6 +16,7 @@ public class TopperPlugin extends BasePlugin {
     private final MainConfig mainConfig = new MainConfig(this);
     private final SignConfig signConfig = new SignConfig(this);
     private final MessageConfig messageConfig = new MessageConfig(this);
+    private final DatabaseConfig databaseConfig = new DatabaseConfig(this);
     private final TopManager topManager = new TopManager(this);
     private final SignManager signManager = new SignManager(this);
     private final TopPlaceholderExpansion topPlaceholderExpansion = new TopPlaceholderExpansion(this);
@@ -25,6 +27,7 @@ public class TopperPlugin extends BasePlugin {
         mainConfig.setup();
         signConfig.setup();
         messageConfig.setup();
+        databaseConfig.setup();
     }
 
     @Override
