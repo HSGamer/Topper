@@ -7,12 +7,14 @@ import me.hsgamer.topper.core.TopStorage;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.logging.Level;
 
 public abstract class SqlStorage implements TopStorage {
     public abstract Connection getConnection(String name) throws SQLException;
@@ -22,8 +24,7 @@ public abstract class SqlStorage implements TopStorage {
     public Connection getAndCreateTable(String name) throws SQLException {
         Connection connection = getConnection(name);
         StatementBuilder.create(connection)
-                .setStatement("CREATE TABLE IF NOT EXISTS ? (`uuid` varchar(36) NOT NULL UNIQUE, `value` double DEFAULT 0);")
-                .addValues(name)
+                .setStatement("CREATE TABLE IF NOT EXISTS `" + name + "` (`uuid` varchar(36) NOT NULL UNIQUE, `value` double DEFAULT 0);")
                 .update();
         return connection;
     }
@@ -36,8 +37,7 @@ public abstract class SqlStorage implements TopStorage {
             try {
                 connection = getAndCreateTable(name);
                 return StatementBuilder.create(connection)
-                        .setStatement("SELECT * FROM ?;")
-                        .addValues(name)
+                        .setStatement("SELECT * FROM `" + name + "`;")
                         .querySafe(resultSet -> {
                             Map<UUID, BigDecimal> map = new HashMap<>();
                             while (resultSet.next()) {
@@ -47,7 +47,8 @@ public abstract class SqlStorage implements TopStorage {
                         })
                         .orElseGet(Collections::emptyMap);
             } catch (SQLException e) {
-                throw new IllegalStateException(e);
+                LOGGER.log(Level.SEVERE, "Failed to load top holder", e);
+                return Collections.emptyMap();
             } finally {
                 if (connection != null) {
                     flushConnection(connection);
@@ -63,12 +64,25 @@ public abstract class SqlStorage implements TopStorage {
             Connection connection = null;
             try {
                 connection = getAndCreateTable(name);
-                StatementBuilder.create(connection)
-                        .setStatement("INSERT INTO ? (`uuid`, `value`) VALUES (?, ?) ON DUPLICATE KEY UPDATE `value` = ?;")
-                        .addValues(name, topEntry.getUuid().toString(), topEntry.getValue().doubleValue(), topEntry.getValue().doubleValue())
-                        .update();
+                boolean exists = StatementBuilder.create(connection)
+                        .setStatement("SELECT * FROM `" + name + "` WHERE `uuid` = ?;")
+                        .addValues(topEntry.getUuid().toString())
+                        .query(ResultSet::next);
+                if (exists) {
+                    StatementBuilder.create(connection)
+                            .setStatement("UPDATE `" + name + "` SET `value` = ? WHERE `uuid` = ?;")
+                            .addValues(topEntry.getValue().doubleValue())
+                            .addValues(topEntry.getUuid().toString())
+                            .update();
+                } else {
+                    StatementBuilder.create(connection)
+                            .setStatement("INSERT INTO `" + name + "` (`uuid`, `value`) VALUES (?, ?);")
+                            .addValues(topEntry.getUuid().toString())
+                            .addValues(topEntry.getValue().doubleValue())
+                            .update();
+                }
             } catch (SQLException e) {
-                throw new IllegalStateException(e);
+                LOGGER.log(Level.SEVERE, "Failed to save top entry", e);
             } finally {
                 if (connection != null) {
                     flushConnection(connection);
