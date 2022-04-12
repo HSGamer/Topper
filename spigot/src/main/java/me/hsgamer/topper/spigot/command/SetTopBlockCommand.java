@@ -21,7 +21,7 @@ public abstract class SetTopBlockCommand extends Command {
     protected final TopperPlugin instance;
 
     protected SetTopBlockCommand(TopperPlugin instance, String name, String description) {
-        super(name, description, "/" + name + " <top_holder> <index>", Collections.emptyList());
+        super(name, description, "/" + name + " <holder> <index>", Collections.emptyList());
         this.instance = instance;
         setPermission(getRequiredPermission().getName());
     }
