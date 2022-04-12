@@ -59,7 +59,7 @@ public abstract class SqlStorage implements TopStorage {
     @Override
     public CompletableFuture<Void> save(TopEntry topEntry, boolean onUnregister) {
         String name = topEntry.getTopHolder().getName();
-        return CompletableFuture.runAsync(() -> {
+        Runnable runnable = () -> {
             Connection connection = null;
             try {
                 connection = getAndCreateTable(name);
@@ -74,6 +74,12 @@ public abstract class SqlStorage implements TopStorage {
                     flushConnection(connection);
                 }
             }
-        });
+        };
+        if (onUnregister) {
+            runnable.run();
+            return CompletableFuture.completedFuture(null);
+        } else {
+            return CompletableFuture.runAsync(runnable);
+        }
     }
 }
