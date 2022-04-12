@@ -28,7 +28,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public abstract class BlockManager implements Listener {
-    private final TopperPlugin instance;
+    protected final TopperPlugin instance;
     private final List<BlockEntry> signEntries = new ArrayList<>();
     private BukkitTask task;
 

@@ -7,6 +7,9 @@ import org.bukkit.permissions.PermissionDefault;
 public final class Permissions {
     public static final Permission SIGN_BREAK = new Permission("topper.sign.break", PermissionDefault.OP);
     public static final Permission SIGN = new Permission("topper.sign", PermissionDefault.OP);
+    public static final Permission SKULL_BREAK = new Permission("topper.skull.break", PermissionDefault.OP);
+    public static final Permission SKULL = new Permission("topper.skull", PermissionDefault.OP);
+    public static final Permission TOP = new Permission("topper.top", PermissionDefault.OP);
 
     private Permissions() {
         // EMPTY
@@ -15,10 +18,16 @@ public final class Permissions {
     public static void register() {
         Bukkit.getPluginManager().addPermission(SIGN_BREAK);
         Bukkit.getPluginManager().addPermission(SIGN);
+        Bukkit.getPluginManager().addPermission(SKULL_BREAK);
+        Bukkit.getPluginManager().addPermission(SKULL);
+        Bukkit.getPluginManager().addPermission(TOP);
     }
 
     public static void unregister() {
         Bukkit.getPluginManager().removePermission(SIGN_BREAK);
         Bukkit.getPluginManager().removePermission(SIGN);
+        Bukkit.getPluginManager().removePermission(SKULL_BREAK);
+        Bukkit.getPluginManager().removePermission(SKULL);
+        Bukkit.getPluginManager().removePermission(TOP);
     }
 }

@@ -1,6 +1,5 @@
 package me.hsgamer.topper.spigot.command;
 
-import me.hsgamer.hscore.bukkit.utils.MessageUtils;
 import me.hsgamer.topper.spigot.TopperPlugin;
 import me.hsgamer.topper.spigot.block.BlockEntry;
 import me.hsgamer.topper.spigot.config.MessageConfig;
@@ -15,6 +14,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static me.hsgamer.hscore.bukkit.utils.MessageUtils.sendMessage;
 
 public abstract class SetTopBlockCommand extends Command {
     protected final TopperPlugin instance;
@@ -39,31 +40,31 @@ public abstract class SetTopBlockCommand extends Command {
             return false;
         }
         if (!(sender instanceof Player)) {
-            MessageUtils.sendMessage(sender, MessageConfig.PLAYER_ONLY.getValue());
+            sendMessage(sender, MessageConfig.PLAYER_ONLY.getValue());
             return false;
         }
         if (args.length < 2) {
-            MessageUtils.sendMessage(sender, "&c" + getUsage());
+            sendMessage(sender, "&c" + getUsage());
             return false;
         }
         if (!instance.getTopManager().getTopHolder(args[0]).isPresent()) {
-            MessageUtils.sendMessage(sender, MessageConfig.TOP_HOLDER_NOT_FOUND.getValue());
+            sendMessage(sender, MessageConfig.TOP_HOLDER_NOT_FOUND.getValue());
             return false;
         }
         int index;
         try {
             index = Integer.parseInt(args[1]);
         } catch (NumberFormatException e) {
-            MessageUtils.sendMessage(sender, MessageConfig.NUMBER_REQUIRED.getValue());
+            sendMessage(sender, MessageConfig.NUMBER_REQUIRED.getValue());
             return false;
         }
         Block block = ((Player) sender).getTargetBlock(null, 5);
         if (block == null || !isValidBlock(block)) {
-            MessageUtils.sendMessage(sender, getBlockRequiredMessage());
+            sendMessage(sender, getBlockRequiredMessage());
             return false;
         }
         getBlockManager().add(new BlockEntry(block.getLocation(), args[0], index - 1));
-        MessageUtils.sendMessage(sender, MessageConfig.SUCCESS.getValue());
+        sendMessage(sender, MessageConfig.SUCCESS.getValue());
         return true;
     }
 

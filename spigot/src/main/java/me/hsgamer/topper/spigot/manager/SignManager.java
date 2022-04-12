@@ -54,8 +54,7 @@ public class SignManager extends BlockManager {
 
     private String[] getSignLines(UUID uuid, BigDecimal value, int index, TopFormatter formatter) {
         List<String> list = SignConfig.SIGN_LINES.getValue();
-        int startIndex = SignConfig.START_INDEX.getValue();
-        list.replaceAll(s -> formatter.replace(s, uuid, value).replace("{index}", String.valueOf(index + startIndex)));
+        list.replaceAll(s -> formatter.replace(s, uuid, value).replace("{index}", String.valueOf(index + 1)));
         String[] lines = new String[4];
         for (int i = 0; i < 4; i++) {
             lines[i] = MessageUtils.colorize(i < list.size() ? list.get(i) : "");
