@@ -3,6 +3,8 @@ package me.hsgamer.topper.spigot.builder;
 import me.hsgamer.hscore.builder.Builder;
 import me.hsgamer.topper.core.TopStorage;
 import me.hsgamer.topper.spigot.TopperPlugin;
+import me.hsgamer.topper.spigot.storage.MySqlStorage;
+import me.hsgamer.topper.spigot.storage.SqliteStorage;
 import me.hsgamer.topper.spigot.storage.YamlStorage;
 
 public class TopStorageBuilder extends Builder<TopperPlugin, TopStorage> {
@@ -10,5 +12,7 @@ public class TopStorageBuilder extends Builder<TopperPlugin, TopStorage> {
 
     private TopStorageBuilder() {
         register(plugin -> new YamlStorage(), "yaml", "yml");
+        register(SqliteStorage::new, "sqlite", "sqlite3");
+        register(plugin -> new MySqlStorage(), "mysql", "mysql-connector-java", "mysql-connector");
     }
 }
