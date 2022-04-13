@@ -58,30 +58,43 @@ public abstract class BlockManager implements Listener {
 
     private void registerEvents() {
         Bukkit.getPluginManager().registerEvent(BlockBreakEvent.class, this, EventPriority.NORMAL, (l, e) -> {
+            if (!(e instanceof BlockBreakEvent)) {
+                return;
+            }
             BlockBreakEvent event = (BlockBreakEvent) e;
             Block block = event.getBlock();
             Location location = block.getLocation();
             Player player = event.getPlayer();
-            if (contains(location)) {
-                if (!player.hasPermission(getBreakPermission()) || !player.isSneaking()) {
-                    event.setCancelled(true);
-                    return;
-                }
-                remove(location);
-                MessageUtils.sendMessage(player, getBreakMessage());
+            if (!contains(location)) {
+                return;
             }
+            if (!player.hasPermission(getBreakPermission()) || !player.isSneaking()) {
+                event.setCancelled(true);
+                return;
+            }
+            remove(location);
+            MessageUtils.sendMessage(player, getBreakMessage());
         }, instance, true);
         Bukkit.getPluginManager().registerEvent(BlockPhysicsEvent.class, this, EventPriority.NORMAL, (l, e) -> {
+            if (!(e instanceof BlockPhysicsEvent)) {
+                return;
+            }
             BlockPhysicsEvent event = (BlockPhysicsEvent) e;
             if (contains(event.getBlock().getLocation())) {
                 event.setCancelled(true);
             }
         }, instance, true);
         Bukkit.getPluginManager().registerEvent(BlockExplodeEvent.class, this, EventPriority.NORMAL, (l, e) -> {
+            if (!(e instanceof BlockExplodeEvent)) {
+                return;
+            }
             BlockExplodeEvent event = (BlockExplodeEvent) e;
             event.blockList().removeIf(block -> contains(block.getLocation()));
         }, instance, true);
         Bukkit.getPluginManager().registerEvent(EntityExplodeEvent.class, this, EventPriority.NORMAL, (l, e) -> {
+            if (!(e instanceof EntityExplodeEvent)) {
+                return;
+            }
             EntityExplodeEvent event = (EntityExplodeEvent) e;
             event.blockList().removeIf(block -> contains(block.getLocation()));
         }, instance, true);
