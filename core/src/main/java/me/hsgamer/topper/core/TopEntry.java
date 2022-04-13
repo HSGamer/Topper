@@ -1,6 +1,5 @@
 package me.hsgamer.topper.core;
 
-import java.math.BigDecimal;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -9,7 +8,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public final class TopEntry implements Comparable<TopEntry> {
     private final UUID uuid;
     private final TopHolder topHolder;
-    private final AtomicReference<BigDecimal> value = new AtomicReference<>(BigDecimal.ZERO);
+    private final AtomicReference<Double> value = new AtomicReference<>(0D);
     private final AtomicBoolean needSaving = new AtomicBoolean(false);
     private final AtomicBoolean isSaving = new AtomicBoolean(false);
 
@@ -21,9 +20,9 @@ public final class TopEntry implements Comparable<TopEntry> {
     public void update() {
         topHolder.updateNewValue(uuid).thenAccept(optional -> {
             if (optional.isPresent()) {
-                BigDecimal currentValue = value.get();
-                BigDecimal newValue = optional.get();
-                if (currentValue.compareTo(newValue) != 0) {
+                double currentValue = value.get();
+                double newValue = optional.get();
+                if (currentValue != newValue) {
                     value.set(newValue);
                     needSaving.set(true);
                     topHolder.notifyUpdateEntry(this);
@@ -48,11 +47,11 @@ public final class TopEntry implements Comparable<TopEntry> {
         return uuid;
     }
 
-    public BigDecimal getValue() {
+    public double getValue() {
         return value.get();
     }
 
-    void setValue(BigDecimal value) {
+    void setValue(double value) {
         this.value.set(value);
     }
 
@@ -62,7 +61,7 @@ public final class TopEntry implements Comparable<TopEntry> {
 
     @Override
     public int compareTo(TopEntry o) {
-        int compare = getValue().compareTo(o.getValue());
+        int compare = Double.compare(value.get(), o.value.get());
         if (compare == 0) {
             compare = getUuid().compareTo(o.getUuid());
         }

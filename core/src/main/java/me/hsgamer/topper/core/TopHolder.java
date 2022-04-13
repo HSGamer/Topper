@@ -1,6 +1,5 @@
 package me.hsgamer.topper.core;
 
-import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
@@ -27,7 +26,7 @@ public abstract class TopHolder {
         this.name = name;
     }
 
-    public abstract CompletableFuture<Optional<BigDecimal>> updateNewValue(UUID uuid);
+    public abstract CompletableFuture<Optional<Double>> updateNewValue(UUID uuid);
 
     public void onCreateEntry(TopEntry entry) {
         // EMPTY

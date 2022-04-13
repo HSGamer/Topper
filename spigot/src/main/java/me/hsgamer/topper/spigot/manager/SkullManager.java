@@ -16,7 +16,6 @@ import org.bukkit.permissions.Permission;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -40,7 +39,7 @@ public class SkullManager extends BlockManager {
     }
 
     @Override
-    protected void updateBlock(Block block, UUID uuid, BigDecimal value, int index, TopFormatter formatter) {
+    protected void updateBlock(Block block, UUID uuid, Double value, int index, TopFormatter formatter) {
         OfflinePlayer topPlayer = Bukkit.getOfflinePlayer(uuid == null ? skullUUID : uuid);
         BlockState blockState = block.getState();
         if (blockState instanceof Skull) {

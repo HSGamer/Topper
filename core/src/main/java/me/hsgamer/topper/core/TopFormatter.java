@@ -1,6 +1,5 @@
 package me.hsgamer.topper.core;
 
-import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -14,7 +13,7 @@ import java.util.function.Supplier;
 public class TopFormatter {
     private static Supplier<String> nullValueSupplier = () -> "";
     private static Supplier<String> nullUuidSupplier = () -> "";
-    private final Map<String, BiFunction<UUID, BigDecimal, String>> replacers = new HashMap<>();
+    private final Map<String, BiFunction<UUID, Double, String>> replacers = new HashMap<>();
     private String displayName = "";
     private String prefix = "";
     private String suffix = "";
@@ -46,7 +45,7 @@ public class TopFormatter {
         nullUuidSupplier = supplier;
     }
 
-    public void addReplacer(String key, BiFunction<UUID, BigDecimal, String> replacer) {
+    public void addReplacer(String key, BiFunction<UUID, Double, String> replacer) {
         replacers.put(key, replacer);
     }
 
@@ -124,18 +123,18 @@ public class TopFormatter {
         return format;
     }
 
-    public String format(BigDecimal value) {
+    public String format(double value) {
         return getFormat().format(value);
     }
 
-    public String replace(String text, UUID uuid, BigDecimal value) {
+    public String replace(String text, UUID uuid, Double value) {
         String replaced = text.replace("{prefix}", prefix)
                 .replace("{suffix}", suffix)
                 .replace("{uuid}", uuid != null ? uuid.toString() : nullUuidSupplier.get())
                 .replace("{value}", value != null ? format(value) : nullValueSupplier.get())
-                .replace("{value_raw}", value != null ? value.toPlainString() : nullValueSupplier.get())
+                .replace("{value_raw}", value != null ? String.valueOf(value) : nullValueSupplier.get())
                 .replace("{display_name}", displayName);
-        for (Map.Entry<String, BiFunction<UUID, BigDecimal, String>> entry : replacers.entrySet()) {
+        for (Map.Entry<String, BiFunction<UUID, Double, String>> entry : replacers.entrySet()) {
             replaced = replaced.replace("{" + entry.getKey() + "}", entry.getValue().apply(uuid, value));
         }
         return replaced;

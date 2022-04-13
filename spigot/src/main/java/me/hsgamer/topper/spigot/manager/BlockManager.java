@@ -21,7 +21,6 @@ import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.permissions.Permission;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -36,7 +35,7 @@ public abstract class BlockManager implements Listener {
         this.instance = instance;
     }
 
-    protected abstract void updateBlock(Block block, UUID uuid, BigDecimal value, int index, TopFormatter formatter);
+    protected abstract void updateBlock(Block block, UUID uuid, Double value, int index, TopFormatter formatter);
 
     protected abstract ConfigPath<List<BlockEntry>> getEntriesConfigPath();
 
@@ -107,7 +106,7 @@ public abstract class BlockManager implements Listener {
         TopFormatter formatter = instance.getTopManager().getTopFormatter(entry.topHolderName);
         Optional<TopEntry> optionalEntry = topHolder.getEntryByIndex(entry.index);
         UUID uuid = optionalEntry.map(TopEntry::getUuid).orElse(null);
-        BigDecimal value = optionalEntry.map(TopEntry::getValue).orElse(null);
+        Double value = optionalEntry.map(TopEntry::getValue).orElse(null);
 
         Block block = entry.location.getBlock();
         if (!block.getChunk().isLoaded()) return;

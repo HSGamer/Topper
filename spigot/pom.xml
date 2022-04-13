@@ -42,6 +42,20 @@
                                     <shadedPattern>me.hsgamer.topper.lib.core</shadedPattern>
                                 </relocation>
                             </relocations>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/MANIFEST.MF</exclude>
+                                    </excludes>
+                                </filter>
+                                <filter>
+                                    <artifact>me.hsgamer:hscore-config-common</artifact>
+                                    <excludes>
+                                        <exclude>me/hsgamer/hscore/config/package-info*</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
                         </configuration>
                     </execution>
                 </executions>

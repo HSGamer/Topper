@@ -9,7 +9,6 @@ import me.hsgamer.topper.spigot.config.MessageConfig;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
-import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -68,7 +67,7 @@ public class GetTopListCommand extends Command {
         for (int i = fromIndex; i <= toIndex; i++) {
             Optional<TopEntry> optionalTopEntry = topHolder.getEntryByIndex(i - 1);
             UUID uuid = optionalTopEntry.map(TopEntry::getUuid).orElse(null);
-            BigDecimal value = optionalTopEntry.map(TopEntry::getValue).orElse(null);
+            Double value = optionalTopEntry.map(TopEntry::getValue).orElse(null);
             topList.add(
                     topFormatter.replace(MessageConfig.TOP_ENTRY_LINE.getValue(), uuid, value)
                             .replace("{index}", String.valueOf(i))

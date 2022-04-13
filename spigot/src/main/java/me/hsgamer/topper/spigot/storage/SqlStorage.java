@@ -5,7 +5,6 @@ import me.hsgamer.topper.core.TopEntry;
 import me.hsgamer.topper.core.TopHolder;
 import me.hsgamer.topper.core.TopStorage;
 
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -30,7 +29,7 @@ public abstract class SqlStorage implements TopStorage {
     }
 
     @Override
-    public CompletableFuture<Map<UUID, BigDecimal>> load(TopHolder holder) {
+    public CompletableFuture<Map<UUID, Double>> load(TopHolder holder) {
         String name = holder.getName();
         return CompletableFuture.supplyAsync(() -> {
             Connection connection = null;
@@ -39,9 +38,9 @@ public abstract class SqlStorage implements TopStorage {
                 return StatementBuilder.create(connection)
                         .setStatement("SELECT * FROM `" + name + "`;")
                         .querySafe(resultSet -> {
-                            Map<UUID, BigDecimal> map = new HashMap<>();
+                            Map<UUID, Double> map = new HashMap<>();
                             while (resultSet.next()) {
-                                map.put(UUID.fromString(resultSet.getString("uuid")), BigDecimal.valueOf(resultSet.getDouble("value")));
+                                map.put(UUID.fromString(resultSet.getString("uuid")), resultSet.getDouble("value"));
                             }
                             return map;
                         })
@@ -71,14 +70,14 @@ public abstract class SqlStorage implements TopStorage {
                 if (exists) {
                     StatementBuilder.create(connection)
                             .setStatement("UPDATE `" + name + "` SET `value` = ? WHERE `uuid` = ?;")
-                            .addValues(topEntry.getValue().doubleValue())
+                            .addValues(topEntry.getValue())
                             .addValues(topEntry.getUuid().toString())
                             .update();
                 } else {
                     StatementBuilder.create(connection)
                             .setStatement("INSERT INTO `" + name + "` (`uuid`, `value`) VALUES (?, ?);")
                             .addValues(topEntry.getUuid().toString())
-                            .addValues(topEntry.getValue().doubleValue())
+                            .addValues(topEntry.getValue())
                             .update();
                 }
             } catch (SQLException e) {

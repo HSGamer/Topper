@@ -6,7 +6,6 @@ import me.hsgamer.topper.spigot.TopperPlugin;
 import me.hsgamer.topper.spigot.config.MainConfig;
 import org.bukkit.OfflinePlayer;
 
-import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -20,13 +19,13 @@ public class PlaceholderTopHolder extends AutoUpdateTopHolder {
     }
 
     @Override
-    public CompletableFuture<Optional<BigDecimal>> updateNewValue(UUID uuid) {
-        CompletableFuture<Optional<BigDecimal>> future = new CompletableFuture<>();
+    public CompletableFuture<Optional<Double>> updateNewValue(UUID uuid) {
+        CompletableFuture<Optional<Double>> future = new CompletableFuture<>();
         instance.getServer().getScheduler().runTask(instance, () -> {
             OfflinePlayer player = instance.getServer().getOfflinePlayer(uuid);
             try {
                 String parsed = PlaceholderAPI.setPlaceholders(player, placeholder);
-                future.complete(Optional.of(new BigDecimal(parsed)));
+                future.complete(Optional.of(Double.parseDouble(parsed)));
             } catch (Exception e) {
                 future.complete(Optional.empty());
             }

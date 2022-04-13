@@ -13,7 +13,6 @@ import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.permissions.Permission;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,7 +22,7 @@ public class SignManager extends BlockManager {
     }
 
     @Override
-    protected void updateBlock(Block block, UUID uuid, BigDecimal value, int index, TopFormatter formatter) {
+    protected void updateBlock(Block block, UUID uuid, Double value, int index, TopFormatter formatter) {
         BlockState blockState = block.getState();
         if (blockState instanceof Sign) {
             Sign sign = (Sign) blockState;
@@ -52,7 +51,7 @@ public class SignManager extends BlockManager {
         return Permissions.SIGN_BREAK;
     }
 
-    private String[] getSignLines(UUID uuid, BigDecimal value, int index, TopFormatter formatter) {
+    private String[] getSignLines(UUID uuid, Double value, int index, TopFormatter formatter) {
         List<String> list = SignConfig.SIGN_LINES.getValue();
         list.replaceAll(s -> formatter.replace(s, uuid, value).replace("{index}", String.valueOf(index + 1)));
         String[] lines = new String[4];

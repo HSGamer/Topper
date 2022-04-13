@@ -11,7 +11,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
-import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -43,12 +42,12 @@ public class YamlStorage implements TopStorage {
     }
 
     @Override
-    public CompletableFuture<Map<UUID, BigDecimal>> load(TopHolder holder) {
+    public CompletableFuture<Map<UUID, Double>> load(TopHolder holder) {
         Config config = getConfig(holder.getName());
         Map<String, Object> values = config.getValues(false);
         return CompletableFuture.supplyAsync(() -> {
-            Map<UUID, BigDecimal> map = new HashMap<>();
-            values.forEach((uuid, value) -> map.put(UUID.fromString(uuid), new BigDecimal(String.valueOf(value))));
+            Map<UUID, Double> map = new HashMap<>();
+            values.forEach((uuid, value) -> map.put(UUID.fromString(uuid), Double.parseDouble(String.valueOf(value))));
             return map;
         });
     }
@@ -60,7 +59,7 @@ public class YamlStorage implements TopStorage {
         BukkitRunnable runnable = new BukkitRunnable() {
             @Override
             public void run() {
-                config.set(topEntry.getUuid().toString(), topEntry.getValue().toString());
+                config.set(topEntry.getUuid().toString(), topEntry.getValue());
                 future.complete(null);
             }
         };

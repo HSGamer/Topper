@@ -76,7 +76,7 @@ public class TopPlaceholderExpansion extends PlaceholderExpansion {
                 }
                 return holder.getEntryByIndex(i - 1)
                         .map(TopEntry::getValue)
-                        .map(bigDecimal -> args[1].endsWith("raw") ? bigDecimal.toPlainString() : formatter.format(bigDecimal))
+                        .map(value -> args[1].endsWith("raw") ? String.valueOf(value) : formatter.format(value))
                         .orElseGet(MainConfig.NULL_DISPLAY_VALUE::getValue);
             }
             case "top_rank":
@@ -85,7 +85,7 @@ public class TopPlaceholderExpansion extends PlaceholderExpansion {
             case "value_raw":
                 return holder.getEntry(player.getUniqueId())
                         .map(TopEntry::getValue)
-                        .map(bigDecimal -> args[1].endsWith("raw") ? bigDecimal.toPlainString() : formatter.format(bigDecimal))
+                        .map(value -> args[1].endsWith("raw") ? String.valueOf(value) : formatter.format(value))
                         .orElseGet(MainConfig.NULL_DISPLAY_NAME::getValue);
             default:
                 break;
