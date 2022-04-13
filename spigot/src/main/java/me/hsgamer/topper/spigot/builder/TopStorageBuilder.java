@@ -12,7 +12,7 @@ public class TopStorageBuilder extends Builder<TopperPlugin, TopStorage> {
 
     private TopStorageBuilder() {
         register(plugin -> new YamlStorage(), "yaml", "yml");
-        register(SqliteStorage::new, "sqlite", "sqlite3");
+        register(plugin -> new SqliteStorage(), "sqlite", "sqlite3");
         register(plugin -> new MySqlStorage(), "mysql", "mysql-connector-java", "mysql-connector");
     }
 }

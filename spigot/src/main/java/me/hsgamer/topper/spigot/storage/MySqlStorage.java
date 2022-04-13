@@ -10,9 +10,9 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 
 public class MySqlStorage extends SqlStorage {
-    private final JavaSqlClient client;
+    private static final JavaSqlClient client;
 
-    public MySqlStorage() {
+    static {
         Setting setting = Setting.create()
                 .setDatabaseName(DatabaseConfig.DATABASE.getValue())
                 .setHost(DatabaseConfig.HOST.getValue())
