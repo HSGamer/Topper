@@ -7,7 +7,7 @@
     <groupId>me.hsgamer</groupId>
     <artifactId>topper</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <modules>
         <module>core</module>
         <module>spigot</module>
