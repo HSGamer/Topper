@@ -21,15 +21,19 @@ public class PlaceholderTopHolder extends AutoUpdateTopHolder {
     @Override
     public CompletableFuture<Optional<Double>> updateNewValue(UUID uuid) {
         CompletableFuture<Optional<Double>> future = new CompletableFuture<>();
-        instance.getServer().getScheduler().runTask(instance, () -> {
-            OfflinePlayer player = instance.getServer().getOfflinePlayer(uuid);
-            try {
-                String parsed = PlaceholderAPI.setPlaceholders(player, placeholder);
-                future.complete(Optional.of(Double.parseDouble(parsed)));
-            } catch (Exception e) {
-                future.complete(Optional.empty());
-            }
-        });
+        OfflinePlayer player = instance.getServer().getOfflinePlayer(uuid);
+        if (player.isOnline() || !MainConfig.ONLINE_PLACEHOLDERS.getValue().contains(getName())) {
+            instance.getServer().getScheduler().runTask(instance, () -> {
+                try {
+                    String parsed = PlaceholderAPI.setPlaceholders(player, placeholder);
+                    future.complete(Optional.of(Double.parseDouble(parsed)));
+                } catch (Exception e) {
+                    future.complete(Optional.empty());
+                }
+            });
+        } else {
+            future.complete(Optional.empty());
+        }
         return future;
     }
 

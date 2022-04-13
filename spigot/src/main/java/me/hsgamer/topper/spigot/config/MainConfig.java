@@ -5,17 +5,17 @@ import me.hsgamer.hscore.config.Config;
 import me.hsgamer.hscore.config.PathableConfig;
 import me.hsgamer.hscore.config.path.AdvancedConfigPath;
 import me.hsgamer.hscore.config.path.BaseConfigPath;
+import me.hsgamer.hscore.config.path.ConfigPath;
+import me.hsgamer.hscore.config.path.StickyConfigPath;
 import me.hsgamer.hscore.config.path.impl.BooleanConfigPath;
 import me.hsgamer.hscore.config.path.impl.IntegerConfigPath;
+import me.hsgamer.hscore.config.path.impl.SimpleConfigPath;
 import me.hsgamer.hscore.config.path.impl.StringConfigPath;
 import me.hsgamer.topper.core.TopFormatter;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class MainConfig extends PathableConfig {
     public static final BaseConfigPath<Map<String, String>> PLACEHOLDERS = new BaseConfigPath<>("placeholders", Collections.emptyMap(), o -> {
@@ -55,6 +55,7 @@ public class MainConfig extends PathableConfig {
     public static final IntegerConfigPath TASK_SAVE_DELAY = new IntegerConfigPath("task.save.delay", 0);
     public static final IntegerConfigPath TASK_UPDATE_ENTRY_PER_TICK = new IntegerConfigPath("task.update.entry-per-tick", 10);
     public static final IntegerConfigPath TASK_UPDATE_DELAY = new IntegerConfigPath("task.update.delay", 0);
+    public static final ConfigPath<List<String>> ONLINE_PLACEHOLDERS = new StickyConfigPath<>(new SimpleConfigPath<>("online-placeholders", Collections.emptyList()));
 
     public MainConfig(Plugin plugin) {
         super(new BukkitConfig(plugin, "config.yml"));
