@@ -9,6 +9,7 @@ public final class TopEntry implements Comparable<TopEntry> {
     private final UUID uuid;
     private final TopHolder topHolder;
     private final AtomicReference<Double> value = new AtomicReference<>(0D);
+    private final AtomicBoolean isUpdating = new AtomicBoolean(false);
     private final AtomicBoolean needSaving = new AtomicBoolean(false);
     private final AtomicBoolean isSaving = new AtomicBoolean(false);
 
@@ -18,6 +19,8 @@ public final class TopEntry implements Comparable<TopEntry> {
     }
 
     public void update() {
+        if (isUpdating.get()) return;
+        isUpdating.set(true);
         topHolder.updateNewValue(uuid).thenAccept(optional -> {
             if (optional.isPresent()) {
                 double currentValue = value.get();
@@ -28,6 +31,7 @@ public final class TopEntry implements Comparable<TopEntry> {
                     topHolder.notifyUpdateEntry(this);
                 }
             }
+            isUpdating.set(false);
         });
     }
 
