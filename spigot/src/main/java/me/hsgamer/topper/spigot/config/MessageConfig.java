@@ -37,7 +37,7 @@ public class MessageConfig extends PathableConfig {
         @Override
         public void migrateConfig(@NotNull Config config) {
             JavaPlugin plugin = JavaPlugin.getPlugin(TopperPlugin.class);
-            File file = new File(plugin.getDataFolder(), "skull.yml");
+            File file = new File(plugin.getDataFolder(), "sign.yml");
             if (file.exists()) {
                 YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(file);
                 if (yamlConfiguration.contains("sign-lines")) {
