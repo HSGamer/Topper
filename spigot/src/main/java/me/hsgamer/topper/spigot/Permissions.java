@@ -10,6 +10,7 @@ public final class Permissions {
     public static final Permission SKULL_BREAK = new Permission("topper.skull.break", PermissionDefault.OP);
     public static final Permission SKULL = new Permission("topper.skull", PermissionDefault.OP);
     public static final Permission TOP = new Permission("topper.top", PermissionDefault.OP);
+    public static final Permission RELOAD = new Permission("topper.reload", PermissionDefault.OP);
 
     private Permissions() {
         // EMPTY
@@ -21,6 +22,7 @@ public final class Permissions {
         Bukkit.getPluginManager().addPermission(SKULL_BREAK);
         Bukkit.getPluginManager().addPermission(SKULL);
         Bukkit.getPluginManager().addPermission(TOP);
+        Bukkit.getPluginManager().addPermission(RELOAD);
     }
 
     public static void unregister() {
@@ -29,5 +31,6 @@ public final class Permissions {
         Bukkit.getPluginManager().removePermission(SKULL_BREAK);
         Bukkit.getPluginManager().removePermission(SKULL);
         Bukkit.getPluginManager().removePermission(TOP);
+        Bukkit.getPluginManager().removePermission(RELOAD);
     }
 }

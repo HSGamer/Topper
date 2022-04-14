@@ -3,6 +3,7 @@ package me.hsgamer.topper.spigot;
 import me.hsgamer.hscore.bukkit.baseplugin.BasePlugin;
 import me.hsgamer.hscore.bukkit.utils.MessageUtils;
 import me.hsgamer.topper.spigot.command.GetTopListCommand;
+import me.hsgamer.topper.spigot.command.ReloadCommand;
 import me.hsgamer.topper.spigot.command.SetTopSignCommand;
 import me.hsgamer.topper.spigot.command.SetTopSkullCommand;
 import me.hsgamer.topper.spigot.config.*;
@@ -48,6 +49,7 @@ public class TopperPlugin extends BasePlugin {
         registerCommand(new SetTopSignCommand(this));
         registerCommand(new SetTopSkullCommand(this));
         registerCommand(new GetTopListCommand(this));
+        registerCommand(new ReloadCommand(this));
     }
 
     @Override
@@ -69,5 +71,25 @@ public class TopperPlugin extends BasePlugin {
 
     public SkullManager getSkullManager() {
         return skullManager;
+    }
+
+    public MainConfig getMainConfig() {
+        return mainConfig;
+    }
+
+    public SignConfig getSignConfig() {
+        return signConfig;
+    }
+
+    public SkullConfig getSkullConfig() {
+        return skullConfig;
+    }
+
+    public MessageConfig getMessageConfig() {
+        return messageConfig;
+    }
+
+    public DatabaseConfig getDatabaseConfig() {
+        return databaseConfig;
     }
 }
