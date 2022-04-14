@@ -37,6 +37,7 @@ public final class TopEntry implements Comparable<TopEntry> {
 
     public void save(boolean onUnregister) {
         if (isSaving.get()) return;
+        if (isUpdating.get()) return;
         if (!needSaving.get()) return;
         needSaving.set(false);
         isSaving.set(true);
