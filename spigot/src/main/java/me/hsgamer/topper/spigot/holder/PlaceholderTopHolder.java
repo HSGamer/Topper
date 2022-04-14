@@ -12,9 +12,14 @@ import java.util.concurrent.CompletableFuture;
 
 public class PlaceholderTopHolder extends AutoUpdateTopHolder {
     private final String placeholder;
+    private final boolean isOnlineOnly;
 
     public PlaceholderTopHolder(TopperPlugin instance, TopStorage topStorage, String name, String placeholder) {
         super(instance, topStorage, name);
+        isOnlineOnly = placeholder.startsWith("[ONLINE]");
+        if (isOnlineOnly) {
+            placeholder = placeholder.substring(8).trim();
+        }
         this.placeholder = placeholder;
     }
 
@@ -22,7 +27,7 @@ public class PlaceholderTopHolder extends AutoUpdateTopHolder {
     public CompletableFuture<Optional<Double>> updateNewValue(UUID uuid) {
         CompletableFuture<Optional<Double>> future = new CompletableFuture<>();
         OfflinePlayer player = instance.getServer().getOfflinePlayer(uuid);
-        if (player.isOnline() || !MainConfig.ONLINE_PLACEHOLDERS.getValue().contains(getName())) {
+        if (player.isOnline() || !isOnlineOnly) {
             instance.getServer().getScheduler().runTask(instance, () -> {
                 try {
                     String parsed = PlaceholderAPI.setPlaceholders(player, placeholder);
