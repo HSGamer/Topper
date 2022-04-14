@@ -1,12 +1,10 @@
 package me.hsgamer.topper.spigot.manager;
 
-import me.hsgamer.hscore.config.path.ConfigPath;
+import me.hsgamer.hscore.bukkit.config.BukkitConfig;
 import me.hsgamer.topper.core.TopFormatter;
 import me.hsgamer.topper.spigot.Permissions;
 import me.hsgamer.topper.spigot.TopperPlugin;
-import me.hsgamer.topper.spigot.block.BlockEntry;
 import me.hsgamer.topper.spigot.config.MessageConfig;
-import me.hsgamer.topper.spigot.config.SkullConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
@@ -16,7 +14,6 @@ import org.bukkit.permissions.Permission;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
 
@@ -36,6 +33,16 @@ public class SkullManager extends BlockManager {
 
     public SkullManager(TopperPlugin instance) {
         super(instance);
+    }
+
+    @Override
+    protected BukkitConfig getConfig() {
+        return new BukkitConfig(instance, "skull.yml");
+    }
+
+    @Override
+    protected String getEntriesPath() {
+        return "skull-entries";
     }
 
     @Override
@@ -63,11 +70,6 @@ public class SkullManager extends BlockManager {
                 instance.getLogger().log(Level.WARNING, "Error when setting owner for skulls", e);
             }
         }
-    }
-
-    @Override
-    protected ConfigPath<List<BlockEntry>> getEntriesConfigPath() {
-        return SkullConfig.SKULL_ENTRIES;
     }
 
     @Override

@@ -6,7 +6,9 @@ import me.hsgamer.topper.spigot.command.GetTopListCommand;
 import me.hsgamer.topper.spigot.command.ReloadCommand;
 import me.hsgamer.topper.spigot.command.SetTopSignCommand;
 import me.hsgamer.topper.spigot.command.SetTopSkullCommand;
-import me.hsgamer.topper.spigot.config.*;
+import me.hsgamer.topper.spigot.config.DatabaseConfig;
+import me.hsgamer.topper.spigot.config.MainConfig;
+import me.hsgamer.topper.spigot.config.MessageConfig;
 import me.hsgamer.topper.spigot.hook.TopPlaceholderExpansion;
 import me.hsgamer.topper.spigot.listener.JoinListener;
 import me.hsgamer.topper.spigot.manager.SignManager;
@@ -15,8 +17,6 @@ import me.hsgamer.topper.spigot.manager.TopManager;
 
 public class TopperPlugin extends BasePlugin {
     private final MainConfig mainConfig = new MainConfig(this);
-    private final SignConfig signConfig = new SignConfig(this);
-    private final SkullConfig skullConfig = new SkullConfig(this);
     private final MessageConfig messageConfig = new MessageConfig(this);
     private final DatabaseConfig databaseConfig = new DatabaseConfig(this);
     private final TopManager topManager = new TopManager(this);
@@ -28,8 +28,6 @@ public class TopperPlugin extends BasePlugin {
     public void load() {
         MessageUtils.setPrefix(MessageConfig.PREFIX::getValue);
         mainConfig.setup();
-        signConfig.setup();
-        skullConfig.setup();
         messageConfig.setup();
         databaseConfig.setup();
     }
@@ -75,14 +73,6 @@ public class TopperPlugin extends BasePlugin {
 
     public MainConfig getMainConfig() {
         return mainConfig;
-    }
-
-    public SignConfig getSignConfig() {
-        return signConfig;
-    }
-
-    public SkullConfig getSkullConfig() {
-        return skullConfig;
     }
 
     public MessageConfig getMessageConfig() {

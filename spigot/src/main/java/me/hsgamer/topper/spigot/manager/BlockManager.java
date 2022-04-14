@@ -1,12 +1,13 @@
 package me.hsgamer.topper.spigot.manager;
 
+import me.hsgamer.hscore.bukkit.config.BukkitConfig;
 import me.hsgamer.hscore.bukkit.utils.MessageUtils;
-import me.hsgamer.hscore.config.path.ConfigPath;
 import me.hsgamer.topper.core.TopEntry;
 import me.hsgamer.topper.core.TopFormatter;
 import me.hsgamer.topper.core.TopHolder;
 import me.hsgamer.topper.spigot.TopperPlugin;
 import me.hsgamer.topper.spigot.block.BlockEntry;
+import me.hsgamer.topper.spigot.config.path.BlockEntryConfigPath;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -21,23 +22,28 @@ import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.permissions.Permission;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 public abstract class BlockManager implements Listener {
     protected final TopperPlugin instance;
-    private final List<BlockEntry> signEntries = new ArrayList<>();
+    private final BlockEntryConfigPath configPath;
+    private final List<BlockEntry> entries = new ArrayList<>();
     private BukkitTask task;
 
     protected BlockManager(TopperPlugin instance) {
         this.instance = instance;
+        BukkitConfig config = getConfig();
+        config.setup();
+        this.configPath = new BlockEntryConfigPath(getEntriesPath(), Collections.emptyList());
+        configPath.setConfig(config);
+        config.save();
     }
 
-    protected abstract void updateBlock(Block block, UUID uuid, Double value, int index, TopFormatter formatter);
+    protected abstract BukkitConfig getConfig();
 
-    protected abstract ConfigPath<List<BlockEntry>> getEntriesConfigPath();
+    protected abstract String getEntriesPath();
+
+    protected abstract void updateBlock(Block block, UUID uuid, Double value, int index, TopFormatter formatter);
 
     protected abstract String getBreakMessage();
 
@@ -45,14 +51,14 @@ public abstract class BlockManager implements Listener {
 
     public void register() {
         this.registerEvents();
-        signEntries.addAll(getEntriesConfigPath().getValue());
-        task = Bukkit.getScheduler().runTaskTimer(instance, () -> signEntries.forEach(this::update), 20L, 20L);
+        entries.addAll(configPath.getValue());
+        task = Bukkit.getScheduler().runTaskTimer(instance, () -> entries.forEach(this::update), 20L, 20L);
     }
 
     public void unregister() {
         task.cancel();
         HandlerList.unregisterAll(this);
-        getEntriesConfigPath().setAndSave(signEntries);
+        configPath.setAndSave(entries);
     }
 
     private void registerEvents() {
@@ -115,14 +121,14 @@ public abstract class BlockManager implements Listener {
 
     public void add(BlockEntry entry) {
         remove(entry.location);
-        signEntries.add(entry);
+        entries.add(entry);
     }
 
     public void remove(Location location) {
-        signEntries.removeIf(topSign -> topSign.location.equals(location));
+        entries.removeIf(topSign -> topSign.location.equals(location));
     }
 
     public boolean contains(Location location) {
-        return signEntries.stream().anyMatch(topSign -> topSign.location.equals(location));
+        return entries.stream().anyMatch(topSign -> topSign.location.equals(location));
     }
 }

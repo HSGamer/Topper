@@ -1,13 +1,11 @@
 package me.hsgamer.topper.spigot.manager;
 
+import me.hsgamer.hscore.bukkit.config.BukkitConfig;
 import me.hsgamer.hscore.bukkit.utils.MessageUtils;
-import me.hsgamer.hscore.config.path.ConfigPath;
 import me.hsgamer.topper.core.TopFormatter;
 import me.hsgamer.topper.spigot.Permissions;
 import me.hsgamer.topper.spigot.TopperPlugin;
-import me.hsgamer.topper.spigot.block.BlockEntry;
 import me.hsgamer.topper.spigot.config.MessageConfig;
-import me.hsgamer.topper.spigot.config.SignConfig;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
@@ -19,6 +17,16 @@ import java.util.UUID;
 public class SignManager extends BlockManager {
     public SignManager(TopperPlugin instance) {
         super(instance);
+    }
+
+    @Override
+    protected BukkitConfig getConfig() {
+        return new BukkitConfig(instance, "sign.yml");
+    }
+
+    @Override
+    protected String getEntriesPath() {
+        return "sign-entries";
     }
 
     @Override
@@ -37,11 +45,6 @@ public class SignManager extends BlockManager {
     }
 
     @Override
-    protected ConfigPath<List<BlockEntry>> getEntriesConfigPath() {
-        return SignConfig.SIGN_ENTRIES;
-    }
-
-    @Override
     protected String getBreakMessage() {
         return MessageConfig.SIGN_REMOVED.getValue();
     }
@@ -52,7 +55,7 @@ public class SignManager extends BlockManager {
     }
 
     private String[] getSignLines(UUID uuid, Double value, int index, TopFormatter formatter) {
-        List<String> list = SignConfig.SIGN_LINES.getValue();
+        List<String> list = MessageConfig.SIGN_LINES.getValue();
         list.replaceAll(s -> formatter.replace(s, uuid, value).replace("{index}", String.valueOf(index + 1)));
         String[] lines = new String[4];
         for (int i = 0; i < 4; i++) {

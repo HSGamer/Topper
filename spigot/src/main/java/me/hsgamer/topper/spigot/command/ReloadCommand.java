@@ -28,8 +28,6 @@ public class ReloadCommand extends Command {
         instance.getTopManager().unregister();
         instance.getMainConfig().reload();
         instance.getMessageConfig().reload();
-        instance.getSignConfig().reload();
-        instance.getSkullConfig().reload();
         instance.getDatabaseConfig().reload();
         instance.getTopManager().register();
         instance.getSignManager().register();
