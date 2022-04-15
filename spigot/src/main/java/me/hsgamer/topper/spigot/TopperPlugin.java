@@ -2,6 +2,7 @@ package me.hsgamer.topper.spigot;
 
 import me.hsgamer.hscore.bukkit.baseplugin.BasePlugin;
 import me.hsgamer.hscore.bukkit.utils.MessageUtils;
+import me.hsgamer.hscore.checker.spigotmc.SpigotVersionChecker;
 import me.hsgamer.topper.spigot.command.GetTopListCommand;
 import me.hsgamer.topper.spigot.command.ReloadCommand;
 import me.hsgamer.topper.spigot.command.SetTopSignCommand;
@@ -14,6 +15,9 @@ import me.hsgamer.topper.spigot.listener.JoinListener;
 import me.hsgamer.topper.spigot.manager.SignManager;
 import me.hsgamer.topper.spigot.manager.SkullManager;
 import me.hsgamer.topper.spigot.manager.TopManager;
+import org.bstats.bukkit.Metrics;
+
+import java.util.logging.Level;
 
 public class TopperPlugin extends BasePlugin {
     private final MainConfig mainConfig = new MainConfig(this);
@@ -23,6 +27,28 @@ public class TopperPlugin extends BasePlugin {
     private final SignManager signManager = new SignManager(this);
     private final SkullManager skullManager = new SkullManager(this);
     private final TopPlaceholderExpansion topPlaceholderExpansion = new TopPlaceholderExpansion(this);
+
+    @Override
+    public void preLoad() {
+        if (getDescription().getVersion().contains("SNAPSHOT")) {
+            getLogger().warning("You are using the development version");
+            getLogger().warning("This is not ready for production");
+            getLogger().warning("Use in your own risk");
+        } else {
+            new SpigotVersionChecker(101325).getVersion().whenComplete((output, throwable) -> {
+                if (throwable != null) {
+                    getLogger().log(Level.WARNING, "Failed to check spigot version", throwable);
+                } else if (output != null) {
+                    if (this.getDescription().getVersion().equalsIgnoreCase(output)) {
+                        getLogger().info("You are using the latest version");
+                    } else {
+                        getLogger().warning("There is an available update");
+                        getLogger().warning("New Version: " + output);
+                    }
+                }
+            });
+        }
+    }
 
     @Override
     public void load() {
@@ -38,6 +64,10 @@ public class TopperPlugin extends BasePlugin {
         topManager.register();
         registerListener(new JoinListener(this));
         topPlaceholderExpansion.register();
+
+        if (Boolean.TRUE.equals(MainConfig.METRICS.getValue())) {
+            new Metrics(this, 14938);
+        }
     }
 
     @Override

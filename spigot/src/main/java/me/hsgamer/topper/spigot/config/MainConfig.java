@@ -55,6 +55,7 @@ public class MainConfig extends PathableConfig {
     public static final IntegerConfigPath TASK_SAVE_DELAY = new IntegerConfigPath("task.save.delay", 0);
     public static final IntegerConfigPath TASK_UPDATE_ENTRY_PER_TICK = new IntegerConfigPath("task.update.entry-per-tick", 10);
     public static final IntegerConfigPath TASK_UPDATE_DELAY = new IntegerConfigPath("task.update.delay", 0);
+    public static final BooleanConfigPath METRICS = new BooleanConfigPath("metrics", true);
 
     public MainConfig(Plugin plugin) {
         super(new BukkitConfig(plugin, "config.yml"));

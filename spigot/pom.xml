@@ -41,6 +41,10 @@
                                     <pattern>me.hsgamer.hscore</pattern>
                                     <shadedPattern>me.hsgamer.topper.lib.core</shadedPattern>
                                 </relocation>
+                                <relocation>
+                                    <pattern>org.bstats</pattern>
+                                    <shadedPattern>me.hsgamer.topper.lib.bstats</shadedPattern>
+                                </relocation>
                             </relocations>
                             <filters>
                                 <filter>
@@ -90,6 +94,13 @@
         </dependency>
 
         <dependency>
+            <groupId>org.bstats</groupId>
+            <artifactId>bstats-bukkit</artifactId>
+            <version>3.0.0</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
             <version>1.12.2-R0.1-SNAPSHOT</version>
@@ -124,6 +135,11 @@
         <dependency>
             <groupId>me.hsgamer</groupId>
             <artifactId>hscore-common</artifactId>
+            <version>${core.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>me.hsgamer</groupId>
+            <artifactId>hscore-checker-spigotmc</artifactId>
             <version>${core.version}</version>
         </dependency>
         <dependency>
