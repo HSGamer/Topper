@@ -52,7 +52,17 @@ public abstract class BlockManager implements Listener {
     public void register() {
         this.registerEvents();
         entries.addAll(configPath.getValue());
-        task = Bukkit.getScheduler().runTaskTimer(instance, () -> entries.forEach(this::update), 20L, 20L);
+
+        final Queue<BlockEntry> entryQueue = new LinkedList<>();
+        task = Bukkit.getScheduler().runTaskTimer(instance, () -> {
+            if (entryQueue.isEmpty()) {
+                entryQueue.addAll(this.entries);
+                return;
+            }
+            BlockEntry entry = entryQueue.poll();
+            if (entry == null) return;
+            this.update(entry);
+        }, 20L, 20L);
     }
 
     public void unregister() {
