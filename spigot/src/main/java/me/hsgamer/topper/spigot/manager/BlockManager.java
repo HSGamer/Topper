@@ -27,7 +27,7 @@ import java.util.*;
 public abstract class BlockManager implements Listener {
     protected final TopperPlugin instance;
     private final BlockEntryConfigPath configPath;
-    private final List<BlockEntry> entries = new ArrayList<>();
+    private final Map<Location, BlockEntry> entries = new HashMap<>();
     private BukkitTask task;
 
     protected BlockManager(TopperPlugin instance) {
@@ -51,12 +51,12 @@ public abstract class BlockManager implements Listener {
 
     public void register() {
         this.registerEvents();
-        entries.addAll(configPath.getValue());
+        configPath.getValue().forEach(this::add);
 
         final Queue<BlockEntry> entryQueue = new LinkedList<>();
         task = Bukkit.getScheduler().runTaskTimer(instance, () -> {
             if (entryQueue.isEmpty()) {
-                entryQueue.addAll(this.entries);
+                entryQueue.addAll(this.entries.values());
                 return;
             }
             BlockEntry entry = entryQueue.poll();
@@ -68,7 +68,7 @@ public abstract class BlockManager implements Listener {
     public void unregister() {
         task.cancel();
         HandlerList.unregisterAll(this);
-        configPath.setAndSave(entries);
+        configPath.setAndSave(new ArrayList<>(entries.values()));
     }
 
     private void registerEvents() {
@@ -131,14 +131,14 @@ public abstract class BlockManager implements Listener {
 
     public void add(BlockEntry entry) {
         remove(entry.location);
-        entries.add(entry);
+        entries.put(entry.location, entry);
     }
 
     public void remove(Location location) {
-        entries.removeIf(topSign -> topSign.location.equals(location));
+        entries.remove(location);
     }
 
     public boolean contains(Location location) {
-        return entries.stream().anyMatch(topSign -> topSign.location.equals(location));
+        return entries.containsKey(location);
     }
 }
