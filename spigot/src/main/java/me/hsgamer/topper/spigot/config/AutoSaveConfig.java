@@ -6,13 +6,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
-public class AutoSaveConfig extends DecorativeConfig implements Runnable {
+public class AutoSaveConfig extends DecorativeConfig {
     private final Plugin plugin;
-    private final AtomicBoolean needSaving = new AtomicBoolean(false);
     private final AtomicBoolean isSaving = new AtomicBoolean(false);
-    private BukkitTask task;
+    private final AtomicReference<BukkitTask> currentSaveTask = new AtomicReference<>();
 
     public AutoSaveConfig(Plugin plugin, Config config) {
         super(config);
@@ -20,32 +21,27 @@ public class AutoSaveConfig extends DecorativeConfig implements Runnable {
     }
 
     @Override
-    public void setup() {
-        super.setup();
-        task = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, this, 40, 40);
-    }
-
-    @Override
     public void set(String path, Object value) {
         super.set(path, value);
-        needSaving.set(true);
+        if (!isSaving.get()) {
+            isSaving.set(true);
+            BukkitTask task = Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                save();
+                isSaving.set(false);
+            }, 40L);
+            currentSaveTask.set(task);
+        }
     }
 
     public void finalSave() {
-        task.cancel();
+        Optional.ofNullable(currentSaveTask.getAndSet(null)).ifPresent(task -> {
+            try {
+                task.cancel();
+            } catch (Exception ignored) {
+                // IGNORED
+            }
+        });
         if (isSaving.get()) return;
         save();
-    }
-
-    @Override
-    public void run() {
-        if (isSaving.get()) return;
-        if (!needSaving.get()) return;
-        needSaving.set(false);
-        isSaving.set(true);
-        Bukkit.getScheduler().runTask(plugin, () -> {
-            save();
-            isSaving.set(false);
-        });
     }
 }
