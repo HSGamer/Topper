@@ -22,10 +22,16 @@ public class PlaceholderTopHolder extends AutoUpdateTopHolder {
     public PlaceholderTopHolder(TopperPlugin instance, TopStorage topStorage, String name, String placeholder) {
         super(instance, topStorage, name);
         Matcher matcher = PATTERN.matcher(placeholder);
-        this.placeholder = matcher.group(2);
-        String prefix = matcher.group(1).toLowerCase(Locale.ROOT);
-        isOnlineOnly = prefix.contains("[online]");
-        isAsync = prefix.contains("[async]");
+        if (matcher.matches()) {
+            this.placeholder = matcher.group(2);
+            String prefix = matcher.group(1).toLowerCase(Locale.ROOT);
+            isOnlineOnly = prefix.contains("[online]");
+            isAsync = prefix.contains("[async]");
+        } else {
+            this.placeholder = placeholder;
+            isOnlineOnly = false;
+            isAsync = false;
+        }
     }
 
     @Override
