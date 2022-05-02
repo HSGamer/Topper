@@ -6,7 +6,6 @@ import me.hsgamer.topper.spigot.TopperPlugin;
 import me.hsgamer.topper.spigot.config.MainConfig;
 import org.bukkit.OfflinePlayer;
 
-import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -23,8 +22,8 @@ public class PlaceholderTopHolder extends AutoUpdateTopHolder {
         super(instance, topStorage, name);
         Matcher matcher = PATTERN.matcher(placeholder);
         if (matcher.matches()) {
-            this.placeholder = matcher.group(2);
-            String prefix = matcher.group(1).toLowerCase(Locale.ROOT);
+            this.placeholder = Optional.ofNullable(matcher.group(2)).orElse("");
+            String prefix = Optional.ofNullable(matcher.group(1)).map(String::toLowerCase).orElse("");
             isOnlineOnly = prefix.contains("[online]");
             isAsync = prefix.contains("[async]");
         } else {
