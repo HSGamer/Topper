@@ -19,6 +19,10 @@ public abstract class DataStorage<T extends Comparable<T>> {
 
     public abstract CompletableFuture<Void> save(UUID uuid, T value, boolean onUnregister);
 
+    public DataHolder<T> getHolder() {
+        return holder;
+    }
+
     public void onRegister() {
         // EMPTY
     }

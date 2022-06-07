@@ -1,30 +1,29 @@
 package me.hsgamer.topper.placeholderleaderboard.holder;
 
-import me.hsgamer.topper.core.agent.save.SaveAgent;
 import me.hsgamer.topper.core.agent.snapshot.SnapshotAgent;
+import me.hsgamer.topper.core.agent.storage.StorageAgent;
 import me.hsgamer.topper.core.agent.update.UpdateAgent;
 import me.hsgamer.topper.core.holder.DataHolder;
-import me.hsgamer.topper.core.storage.DataStorage;
 import me.hsgamer.topper.placeholderleaderboard.TopperPlaceholderLeaderboard;
 import me.hsgamer.topper.placeholderleaderboard.config.MainConfig;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Function;
 
 public abstract class NumberTopHolder extends DataHolder<Double> {
     protected final TopperPlaceholderLeaderboard instance;
     private final UpdateAgent<Double, BukkitTask> updateAgent;
-    private final SaveAgent<Double, BukkitTask> saveAgent;
+    private final StorageAgent<Double, BukkitTask> storageAgent;
     private final SnapshotAgent<Double, BukkitTask> snapshotAgent;
 
-    protected NumberTopHolder(TopperPlaceholderLeaderboard instance, Function<DataHolder<Double>, DataStorage<Double>> storageSupplier, String name) {
-        super(storageSupplier, name);
+    protected NumberTopHolder(TopperPlaceholderLeaderboard instance, String name) {
+        super(name);
         this.instance = instance;
         this.updateAgent = new UpdateAgent<>(this);
-        this.saveAgent = new SaveAgent<>(this);
+        this.storageAgent = new StorageAgent<>(instance.getTopManager().getStorageSupplier().apply(this));
         this.snapshotAgent = new SnapshotAgent<>(this);
     }
 
@@ -46,12 +45,22 @@ public abstract class NumberTopHolder extends DataHolder<Double> {
         updateAgent.setCancelTaskConsumer(BukkitTask::cancel);
         updateAgent.start();
 
-        saveAgent.setMaxEntryPerCall(MainConfig.TASK_SAVE_ENTRY_PER_TICK.getValue());
-        saveAgent.setRunTaskFunction(runnable -> {
+        storageAgent.setMaxEntryPerCall(MainConfig.TASK_SAVE_ENTRY_PER_TICK.getValue());
+        storageAgent.setRunTaskFunction(runnable -> {
             int saveDelay = MainConfig.TASK_SAVE_DELAY.getValue();
             return instance.getServer().getScheduler().runTaskTimerAsynchronously(instance, runnable, saveDelay, saveDelay);
         });
-        saveAgent.setCancelTaskConsumer(BukkitTask::cancel);
+        storageAgent.setCancelTaskConsumer(BukkitTask::cancel);
+        storageAgent.addOnLoadListener(() -> {
+            if (Boolean.TRUE.equals(MainConfig.LOAD_ALL_OFFLINE_PLAYERS.getValue())) {
+                instance.getServer().getScheduler().scheduleSyncDelayedTask(instance, () -> {
+                    for (OfflinePlayer player : instance.getServer().getOfflinePlayers()) {
+                        getOrCreateEntry(player.getUniqueId());
+                    }
+                });
+            }
+        });
+        storageAgent.start();
 
         snapshotAgent.setRunTaskFunction(runnable -> instance.getServer().getScheduler().runTaskTimerAsynchronously(instance, runnable, 20L, 20L));
         snapshotAgent.setCancelTaskConsumer(BukkitTask::cancel);
@@ -62,7 +71,7 @@ public abstract class NumberTopHolder extends DataHolder<Double> {
     public void onUnregister() {
         updateAgent.stop();
         snapshotAgent.stop();
-        saveAgent.stop();
+        storageAgent.stop();
         super.onUnregister();
     }
 
@@ -70,8 +79,8 @@ public abstract class NumberTopHolder extends DataHolder<Double> {
         return updateAgent;
     }
 
-    public SaveAgent<Double, BukkitTask> getSaveAgent() {
-        return saveAgent;
+    public StorageAgent<Double, BukkitTask> getStorageAgent() {
+        return storageAgent;
     }
 
     public SnapshotAgent<Double, BukkitTask> getSnapshotAgent() {

@@ -21,18 +21,6 @@ public class DataEntry<T extends Comparable<T>> implements Comparable<DataEntry<
         this.value = new AtomicReference<>(holder.getDefaultValue());
     }
 
-    public void save(boolean onUnregister) {
-        if (hasFlag(EntryTempFlag.IS_SAVING)) return;
-        if (!hasFlag(EntryTempFlag.NEED_SAVING)) return;
-        removeFlag(EntryTempFlag.NEED_SAVING);
-        addFlag(EntryTempFlag.IS_SAVING);
-        holder.save(this, onUnregister).whenComplete((result, throwable) -> removeFlag(EntryTempFlag.IS_SAVING));
-    }
-
-    public void save() {
-        save(false);
-    }
-
     public UUID getUuid() {
         return uuid;
     }
@@ -43,7 +31,7 @@ public class DataEntry<T extends Comparable<T>> implements Comparable<DataEntry<
 
     public void setValue(T value) {
         this.value.set(value);
-        addFlag(EntryTempFlag.NEED_SAVING);
+        holder.notifyUpdateEntry(this);
     }
 
     public DataHolder<T> getHolder() {

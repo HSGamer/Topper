@@ -17,16 +17,17 @@ public class TopManager {
     private final Map<String, DataFormatter> topFormatters = new HashMap<>();
     private final DataFormatter defaultFormatter = new DataFormatter();
     private final TopperPlaceholderLeaderboard instance;
+    private Function<DataHolder<Double>, DataStorage<Double>> storageSupplier;
 
     public TopManager(TopperPlaceholderLeaderboard instance) {
         this.instance = instance;
     }
 
     public void register() {
+        storageSupplier = TopStorageBuilder.buildSupplier(MainConfig.STORAGE_TYPE.getValue(), instance);
         DataFormatter.setNullDisplayName(MainConfig.NULL_DISPLAY_NAME::getValue);
         DataFormatter.setNullDisplayValue(MainConfig.NULL_DISPLAY_VALUE::getValue);
-        Function<DataHolder<Double>, DataStorage<Double>> storageSupplier = TopStorageBuilder.buildSupplier(MainConfig.STORAGE_TYPE.getValue(), instance);
-        MainConfig.PLACEHOLDERS.getValue().forEach((key, value) -> addTopHolder(key, new PlaceholderTopHolder(instance, storageSupplier, key, value)));
+        MainConfig.PLACEHOLDERS.getValue().forEach((key, value) -> addTopHolder(key, new PlaceholderTopHolder(instance, key, value)));
         topFormatters.putAll(MainConfig.FORMATTERS.getValue());
     }
 
@@ -42,6 +43,10 @@ public class TopManager {
         }
         topHolder.register();
         topHolders.put(key, topHolder);
+    }
+
+    public Function<DataHolder<Double>, DataStorage<Double>> getStorageSupplier() {
+        return storageSupplier;
     }
 
     public Optional<NumberTopHolder> getTopHolder(String name) {
