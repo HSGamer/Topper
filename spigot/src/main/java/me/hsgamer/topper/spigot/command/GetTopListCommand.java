@@ -1,11 +1,11 @@
 package me.hsgamer.topper.spigot.command;
 
-import me.hsgamer.topper.core.TopEntry;
-import me.hsgamer.topper.core.TopFormatter;
-import me.hsgamer.topper.core.TopHolder;
+import me.hsgamer.topper.core.common.DataEntry;
 import me.hsgamer.topper.spigot.Permissions;
 import me.hsgamer.topper.spigot.TopperPlugin;
 import me.hsgamer.topper.spigot.config.MessageConfig;
+import me.hsgamer.topper.spigot.formatter.TopFormatter;
+import me.hsgamer.topper.spigot.holder.PlaceholderTopHolder;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
@@ -32,12 +32,12 @@ public class GetTopListCommand extends Command {
             sendMessage(sender, "&c" + getUsage());
             return false;
         }
-        Optional<TopHolder> optional = instance.getTopManager().getTopHolder(args[0]);
+        Optional<PlaceholderTopHolder> optional = instance.getTopManager().getTopHolder(args[0]);
         if (!optional.isPresent()) {
             sendMessage(sender, MessageConfig.TOP_HOLDER_NOT_FOUND.getValue());
             return false;
         }
-        TopHolder topHolder = optional.get();
+        PlaceholderTopHolder topHolder = optional.get();
         TopFormatter topFormatter = instance.getTopManager().getTopFormatter(args[0]);
 
         int fromIndex = 1;
@@ -65,9 +65,9 @@ public class GetTopListCommand extends Command {
 
         List<String> topList = new ArrayList<>();
         for (int i = fromIndex; i <= toIndex; i++) {
-            Optional<TopEntry> optionalTopEntry = topHolder.getEntryByIndex(i - 1);
-            UUID uuid = optionalTopEntry.map(TopEntry::getUuid).orElse(null);
-            Double value = optionalTopEntry.map(TopEntry::getValue).orElse(null);
+            Optional<DataEntry<Double>> optionalTopEntry = topHolder.getEntryByIndex(i - 1);
+            UUID uuid = optionalTopEntry.map(DataEntry::getUuid).orElse(null);
+            Double value = optionalTopEntry.map(DataEntry::getValue).orElse(null);
             topList.add(
                     topFormatter.replace(MessageConfig.TOP_ENTRY_LINE.getValue(), uuid, value)
                             .replace("{index}", String.valueOf(i))

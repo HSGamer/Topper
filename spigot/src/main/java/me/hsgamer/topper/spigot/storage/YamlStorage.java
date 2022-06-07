@@ -2,9 +2,9 @@ package me.hsgamer.topper.spigot.storage;
 
 import me.hsgamer.hscore.bukkit.config.BukkitConfig;
 import me.hsgamer.hscore.config.Config;
-import me.hsgamer.topper.core.TopEntry;
-import me.hsgamer.topper.core.TopHolder;
-import me.hsgamer.topper.core.TopStorage;
+import me.hsgamer.topper.core.common.DataEntry;
+import me.hsgamer.topper.core.common.DataHolder;
+import me.hsgamer.topper.core.common.DataStorage;
 import me.hsgamer.topper.spigot.TopperPlugin;
 import me.hsgamer.topper.spigot.config.AutoSaveConfig;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-public class YamlStorage implements TopStorage {
+public class YamlStorage implements DataStorage<Double> {
     private static final TopperPlugin instance;
     private static final File baseFolder;
     private static final Map<String, AutoSaveConfig> configs = new HashMap<>();
@@ -42,7 +42,7 @@ public class YamlStorage implements TopStorage {
     }
 
     @Override
-    public CompletableFuture<Map<UUID, Double>> load(TopHolder holder) {
+    public CompletableFuture<Map<UUID, Double>> load(DataHolder<Double> holder) {
         Config config = getConfig(holder.getName());
         Map<String, Object> values = config.getValues(false);
         return CompletableFuture.supplyAsync(() -> {
@@ -53,8 +53,8 @@ public class YamlStorage implements TopStorage {
     }
 
     @Override
-    public CompletableFuture<Void> save(TopEntry topEntry, boolean onUnregister) {
-        Config config = getConfig(topEntry.getTopHolder().getName());
+    public CompletableFuture<Void> save(DataEntry<Double> topEntry, boolean onUnregister) {
+        Config config = getConfig(topEntry.getHolder().getName());
         CompletableFuture<Void> future = new CompletableFuture<>();
         BukkitRunnable runnable = new BukkitRunnable() {
             @Override
@@ -72,7 +72,7 @@ public class YamlStorage implements TopStorage {
     }
 
     @Override
-    public void onUnregister(TopHolder holder) {
+    public void onUnregister(DataHolder<Double> holder) {
         removeConfig(holder.getName());
     }
 }

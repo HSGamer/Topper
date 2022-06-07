@@ -2,12 +2,12 @@ package me.hsgamer.topper.spigot.manager;
 
 import me.hsgamer.hscore.bukkit.config.BukkitConfig;
 import me.hsgamer.hscore.bukkit.utils.MessageUtils;
-import me.hsgamer.topper.core.TopEntry;
-import me.hsgamer.topper.core.TopFormatter;
-import me.hsgamer.topper.core.TopHolder;
+import me.hsgamer.topper.core.common.DataEntry;
 import me.hsgamer.topper.spigot.TopperPlugin;
 import me.hsgamer.topper.spigot.block.BlockEntry;
 import me.hsgamer.topper.spigot.config.path.BlockEntryConfigPath;
+import me.hsgamer.topper.spigot.formatter.TopFormatter;
+import me.hsgamer.topper.spigot.holder.PlaceholderTopHolder;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -116,13 +116,13 @@ public abstract class BlockManager implements Listener {
     }
 
     private void update(BlockEntry entry) {
-        Optional<TopHolder> optional = instance.getTopManager().getTopHolder(entry.topHolderName);
+        Optional<PlaceholderTopHolder> optional = instance.getTopManager().getTopHolder(entry.topHolderName);
         if (!optional.isPresent()) return;
-        TopHolder topHolder = optional.get();
+        PlaceholderTopHolder topHolder = optional.get();
         TopFormatter formatter = instance.getTopManager().getTopFormatter(entry.topHolderName);
-        Optional<TopEntry> optionalEntry = topHolder.getEntryByIndex(entry.index);
-        UUID uuid = optionalEntry.map(TopEntry::getUuid).orElse(null);
-        Double value = optionalEntry.map(TopEntry::getValue).orElse(null);
+        Optional<DataEntry<Double>> optionalEntry = topHolder.getEntryByIndex(entry.index);
+        UUID uuid = optionalEntry.map(DataEntry::getUuid).orElse(null);
+        Double value = optionalEntry.map(DataEntry::getValue).orElse(null);
 
         Block block = entry.location.getBlock();
         if (!block.getChunk().isLoaded()) return;

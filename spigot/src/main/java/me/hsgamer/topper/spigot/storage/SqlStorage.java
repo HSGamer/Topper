@@ -1,9 +1,9 @@
 package me.hsgamer.topper.spigot.storage;
 
 import me.hsgamer.hscore.database.client.sql.StatementBuilder;
-import me.hsgamer.topper.core.TopEntry;
-import me.hsgamer.topper.core.TopHolder;
-import me.hsgamer.topper.core.TopStorage;
+import me.hsgamer.topper.core.common.DataEntry;
+import me.hsgamer.topper.core.common.DataHolder;
+import me.hsgamer.topper.core.common.DataStorage;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -15,7 +15,7 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 
-public abstract class SqlStorage implements TopStorage {
+public abstract class SqlStorage implements DataStorage<Double> {
     public abstract Connection getConnection(String name) throws SQLException;
 
     public abstract void flushConnection(Connection connection);
@@ -29,7 +29,7 @@ public abstract class SqlStorage implements TopStorage {
     }
 
     @Override
-    public CompletableFuture<Map<UUID, Double>> load(TopHolder holder) {
+    public CompletableFuture<Map<UUID, Double>> load(DataHolder<Double> holder) {
         String name = holder.getName();
         return CompletableFuture.supplyAsync(() -> {
             Connection connection = null;
@@ -57,8 +57,8 @@ public abstract class SqlStorage implements TopStorage {
     }
 
     @Override
-    public CompletableFuture<Void> save(TopEntry topEntry, boolean onUnregister) {
-        String name = topEntry.getTopHolder().getName();
+    public CompletableFuture<Void> save(DataEntry<Double> topEntry, boolean onUnregister) {
+        String name = topEntry.getHolder().getName();
         Runnable runnable = () -> {
             Connection connection = null;
             try {

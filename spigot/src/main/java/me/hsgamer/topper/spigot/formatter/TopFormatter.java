@@ -1,4 +1,4 @@
-package me.hsgamer.topper.core;
+package me.hsgamer.topper.spigot.formatter;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;

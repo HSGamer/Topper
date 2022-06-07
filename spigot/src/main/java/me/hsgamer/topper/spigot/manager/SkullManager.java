@@ -1,10 +1,10 @@
 package me.hsgamer.topper.spigot.manager;
 
 import me.hsgamer.hscore.bukkit.config.BukkitConfig;
-import me.hsgamer.topper.core.TopFormatter;
 import me.hsgamer.topper.spigot.Permissions;
 import me.hsgamer.topper.spigot.TopperPlugin;
 import me.hsgamer.topper.spigot.config.MessageConfig;
+import me.hsgamer.topper.spigot.formatter.TopFormatter;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;

@@ -1,13 +1,13 @@
 package me.hsgamer.topper.spigot.builder;
 
 import me.hsgamer.hscore.builder.Builder;
-import me.hsgamer.topper.core.TopStorage;
+import me.hsgamer.topper.core.common.DataStorage;
 import me.hsgamer.topper.spigot.TopperPlugin;
 import me.hsgamer.topper.spigot.storage.MySqlStorage;
 import me.hsgamer.topper.spigot.storage.SqliteStorage;
 import me.hsgamer.topper.spigot.storage.YamlStorage;
 
-public class TopStorageBuilder extends Builder<TopperPlugin, TopStorage> {
+public class TopStorageBuilder extends Builder<TopperPlugin, DataStorage<Double>> {
     public static final TopStorageBuilder INSTANCE = new TopStorageBuilder();
 
     private TopStorageBuilder() {

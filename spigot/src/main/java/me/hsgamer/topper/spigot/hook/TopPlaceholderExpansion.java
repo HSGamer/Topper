@@ -1,11 +1,11 @@
 package me.hsgamer.topper.spigot.hook;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
-import me.hsgamer.topper.core.TopEntry;
-import me.hsgamer.topper.core.TopFormatter;
-import me.hsgamer.topper.core.TopHolder;
+import me.hsgamer.topper.core.common.DataEntry;
 import me.hsgamer.topper.spigot.TopperPlugin;
 import me.hsgamer.topper.spigot.config.MainConfig;
+import me.hsgamer.topper.spigot.formatter.TopFormatter;
+import me.hsgamer.topper.spigot.holder.PlaceholderTopHolder;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
@@ -43,9 +43,9 @@ public class TopPlaceholderExpansion extends PlaceholderExpansion {
     public String onRequest(OfflinePlayer player, @NotNull String params) {
         String[] args = params.split(";");
         if (args.length < 2) return null;
-        Optional<TopHolder> optionalHolder = instance.getTopManager().getTopHolder(args[0]);
+        Optional<PlaceholderTopHolder> optionalHolder = instance.getTopManager().getTopHolder(args[0]);
         if (!optionalHolder.isPresent()) return null;
-        TopHolder holder = optionalHolder.get();
+        PlaceholderTopHolder holder = optionalHolder.get();
         TopFormatter formatter = instance.getTopManager().getTopFormatter(args[0]);
 
         switch (args[1]) {
@@ -59,7 +59,7 @@ public class TopPlaceholderExpansion extends PlaceholderExpansion {
                     }
                 }
                 return holder.getEntryByIndex(i - 1)
-                        .map(TopEntry::getUuid)
+                        .map(DataEntry::getUuid)
                         .map(Bukkit::getOfflinePlayer)
                         .map(OfflinePlayer::getName)
                         .orElseGet(MainConfig.NULL_DISPLAY_NAME::getValue);
@@ -75,7 +75,7 @@ public class TopPlaceholderExpansion extends PlaceholderExpansion {
                     }
                 }
                 return holder.getEntryByIndex(i - 1)
-                        .map(TopEntry::getValue)
+                        .map(DataEntry::getValue)
                         .map(value -> args[1].endsWith("raw") ? String.valueOf(value) : formatter.format(value))
                         .orElseGet(MainConfig.NULL_DISPLAY_VALUE::getValue);
             }
@@ -84,7 +84,7 @@ public class TopPlaceholderExpansion extends PlaceholderExpansion {
             case "value":
             case "value_raw":
                 return holder.getEntry(player.getUniqueId())
-                        .map(TopEntry::getValue)
+                        .map(DataEntry::getValue)
                         .map(value -> args[1].endsWith("raw") ? String.valueOf(value) : formatter.format(value))
                         .orElseGet(MainConfig.NULL_DISPLAY_NAME::getValue);
             default:

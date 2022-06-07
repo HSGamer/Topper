@@ -1,7 +1,7 @@
 package me.hsgamer.topper.spigot.holder;
 
 import me.clip.placeholderapi.PlaceholderAPI;
-import me.hsgamer.topper.core.TopStorage;
+import me.hsgamer.topper.core.common.DataStorage;
 import me.hsgamer.topper.spigot.TopperPlugin;
 import me.hsgamer.topper.spigot.config.MainConfig;
 import org.bukkit.OfflinePlayer;
@@ -12,14 +12,14 @@ import java.util.concurrent.CompletableFuture;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class PlaceholderTopHolder extends AutoUpdateTopHolder {
+public class PlaceholderTopHolder extends AutoUpdateNumberTopHolder {
     private static final Pattern PATTERN = Pattern.compile("(\\[.*])?\\s*(.*)\\s*");
     private final String placeholder;
     private final boolean isOnlineOnly;
     private final boolean isAsync;
 
-    public PlaceholderTopHolder(TopperPlugin instance, TopStorage topStorage, String name, String placeholder) {
-        super(instance, topStorage, name);
+    public PlaceholderTopHolder(TopperPlugin instance, DataStorage<Double> storage, String name, String placeholder) {
+        super(instance, storage, name);
         Matcher matcher = PATTERN.matcher(placeholder);
         if (matcher.matches()) {
             this.placeholder = Optional.ofNullable(matcher.group(2)).orElse("");

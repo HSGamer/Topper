@@ -1,12 +1,12 @@
-package me.hsgamer.topper.core;
+package me.hsgamer.topper.core.top;
 
 import java.util.UUID;
 
-public class TopSnapshot {
+public class TopSnapshot<T extends Comparable<T>> {
     public final UUID uuid;
-    public final double value;
+    public final T value;
 
-    TopSnapshot(UUID uuid, double value) {
+    TopSnapshot(UUID uuid, T value) {
         this.uuid = uuid;
         this.value = value;
     }
@@ -15,7 +15,7 @@ public class TopSnapshot {
         return uuid;
     }
 
-    public double getValue() {
+    public T getValue() {
         return value;
     }
 }

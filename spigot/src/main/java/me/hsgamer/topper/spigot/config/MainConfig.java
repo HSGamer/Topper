@@ -8,7 +8,7 @@ import me.hsgamer.hscore.config.path.BaseConfigPath;
 import me.hsgamer.hscore.config.path.impl.BooleanConfigPath;
 import me.hsgamer.hscore.config.path.impl.IntegerConfigPath;
 import me.hsgamer.hscore.config.path.impl.StringConfigPath;
-import me.hsgamer.topper.core.TopFormatter;
+import me.hsgamer.topper.spigot.formatter.TopFormatter;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
