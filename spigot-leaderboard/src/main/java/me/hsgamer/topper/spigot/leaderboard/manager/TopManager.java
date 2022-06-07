@@ -3,7 +3,7 @@ package me.hsgamer.topper.spigot.leaderboard.manager;
 import me.hsgamer.topper.core.holder.DataHolder;
 import me.hsgamer.topper.core.storage.DataStorage;
 import me.hsgamer.topper.spigot.builder.TopStorageBuilder;
-import me.hsgamer.topper.spigot.formatter.TopFormatter;
+import me.hsgamer.topper.spigot.formatter.DataFormatter;
 import me.hsgamer.topper.spigot.leaderboard.TopperLeaderboard;
 import me.hsgamer.topper.spigot.leaderboard.config.MainConfig;
 import me.hsgamer.topper.spigot.leaderboard.holder.NumberTopHolder;
@@ -14,8 +14,8 @@ import java.util.function.Function;
 
 public class TopManager {
     private final Map<String, NumberTopHolder> topHolders = new HashMap<>();
-    private final Map<String, TopFormatter> topFormatters = new HashMap<>();
-    private final TopFormatter defaultFormatter = new TopFormatter();
+    private final Map<String, DataFormatter> topFormatters = new HashMap<>();
+    private final DataFormatter defaultFormatter = new DataFormatter();
     private final TopperLeaderboard instance;
 
     public TopManager(TopperLeaderboard instance) {
@@ -50,7 +50,7 @@ public class TopManager {
         return Collections.unmodifiableList(new ArrayList<>(topHolders.keySet()));
     }
 
-    public TopFormatter getTopFormatter(String name) {
+    public DataFormatter getTopFormatter(String name) {
         return topFormatters.getOrDefault(name, defaultFormatter);
     }
 

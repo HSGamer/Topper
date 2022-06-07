@@ -1,7 +1,7 @@
 package me.hsgamer.topper.spigot.leaderboard.manager;
 
 import me.hsgamer.hscore.bukkit.config.BukkitConfig;
-import me.hsgamer.topper.spigot.formatter.TopFormatter;
+import me.hsgamer.topper.spigot.formatter.DataFormatter;
 import me.hsgamer.topper.spigot.leaderboard.Permissions;
 import me.hsgamer.topper.spigot.leaderboard.TopperLeaderboard;
 import me.hsgamer.topper.spigot.leaderboard.config.MessageConfig;
@@ -46,7 +46,7 @@ public class SkullManager extends BlockManager {
     }
 
     @Override
-    protected void updateBlock(Block block, UUID uuid, Double value, int index, TopFormatter formatter) {
+    protected void updateBlock(Block block, UUID uuid, Double value, int index, DataFormatter formatter) {
         OfflinePlayer topPlayer = Bukkit.getOfflinePlayer(uuid == null ? skullUUID : uuid);
         BlockState blockState = block.getState();
         if (blockState instanceof Skull) {

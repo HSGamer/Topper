@@ -1,7 +1,7 @@
 package me.hsgamer.topper.spigot.leaderboard.command;
 
 import me.hsgamer.topper.core.entry.DataEntry;
-import me.hsgamer.topper.spigot.formatter.TopFormatter;
+import me.hsgamer.topper.spigot.formatter.DataFormatter;
 import me.hsgamer.topper.spigot.leaderboard.Permissions;
 import me.hsgamer.topper.spigot.leaderboard.TopperLeaderboard;
 import me.hsgamer.topper.spigot.leaderboard.config.MessageConfig;
@@ -38,7 +38,7 @@ public class GetTopListCommand extends Command {
             return false;
         }
         NumberTopHolder topHolder = optional.get();
-        TopFormatter topFormatter = instance.getTopManager().getTopFormatter(args[0]);
+        DataFormatter dataFormatter = instance.getTopManager().getTopFormatter(args[0]);
 
         int fromIndex = 1;
         int toIndex = 10;
@@ -69,7 +69,7 @@ public class GetTopListCommand extends Command {
             UUID uuid = optionalTopEntry.map(DataEntry::getUuid).orElse(null);
             Double value = optionalTopEntry.map(DataEntry::getValue).orElse(null);
             topList.add(
-                    topFormatter.replace(MessageConfig.TOP_ENTRY_LINE.getValue(), uuid, value)
+                    dataFormatter.replace(MessageConfig.TOP_ENTRY_LINE.getValue(), uuid, value)
                             .replace("{index}", String.valueOf(i))
             );
         }

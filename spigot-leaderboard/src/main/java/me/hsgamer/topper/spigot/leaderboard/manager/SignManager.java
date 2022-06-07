@@ -2,7 +2,7 @@ package me.hsgamer.topper.spigot.leaderboard.manager;
 
 import me.hsgamer.hscore.bukkit.config.BukkitConfig;
 import me.hsgamer.hscore.bukkit.utils.MessageUtils;
-import me.hsgamer.topper.spigot.formatter.TopFormatter;
+import me.hsgamer.topper.spigot.formatter.DataFormatter;
 import me.hsgamer.topper.spigot.leaderboard.Permissions;
 import me.hsgamer.topper.spigot.leaderboard.TopperLeaderboard;
 import me.hsgamer.topper.spigot.leaderboard.config.MessageConfig;
@@ -30,7 +30,7 @@ public class SignManager extends BlockManager {
     }
 
     @Override
-    protected void updateBlock(Block block, UUID uuid, Double value, int index, TopFormatter formatter) {
+    protected void updateBlock(Block block, UUID uuid, Double value, int index, DataFormatter formatter) {
         BlockState blockState = block.getState();
         if (blockState instanceof Sign) {
             Sign sign = (Sign) blockState;
@@ -54,7 +54,7 @@ public class SignManager extends BlockManager {
         return Permissions.SIGN_BREAK;
     }
 
-    private String[] getSignLines(UUID uuid, Double value, int index, TopFormatter formatter) {
+    private String[] getSignLines(UUID uuid, Double value, int index, DataFormatter formatter) {
         List<String> list = MessageConfig.SIGN_LINES.getValue();
         list.replaceAll(s -> formatter.replace(s, uuid, value).replace("{index}", String.valueOf(index + 1)));
         String[] lines = new String[4];

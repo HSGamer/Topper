@@ -3,7 +3,7 @@ package me.hsgamer.topper.spigot.leaderboard.hook;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import me.hsgamer.topper.core.entry.DataEntry;
 import me.hsgamer.topper.spigot.config.BaseMainConfig;
-import me.hsgamer.topper.spigot.formatter.TopFormatter;
+import me.hsgamer.topper.spigot.formatter.DataFormatter;
 import me.hsgamer.topper.spigot.leaderboard.TopperLeaderboard;
 import me.hsgamer.topper.spigot.leaderboard.holder.NumberTopHolder;
 import org.bukkit.Bukkit;
@@ -46,7 +46,7 @@ public class TopPlaceholderExpansion extends PlaceholderExpansion {
         Optional<NumberTopHolder> optionalHolder = instance.getTopManager().getTopHolder(args[0]);
         if (!optionalHolder.isPresent()) return null;
         NumberTopHolder holder = optionalHolder.get();
-        TopFormatter formatter = instance.getTopManager().getTopFormatter(args[0]);
+        DataFormatter formatter = instance.getTopManager().getTopFormatter(args[0]);
 
         switch (args[1]) {
             case "top_name": {

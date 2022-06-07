@@ -13,7 +13,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.BiFunction;
 
-public class TopFormatter {
+public class DataFormatter {
     private final Map<String, BiFunction<UUID, Double, String>> replacers = new HashMap<>();
     private String displayName = "";
     private String prefix = "";
@@ -24,7 +24,7 @@ public class TopFormatter {
     private boolean showGroupSeparator = false;
     private DecimalFormat format;
 
-    public TopFormatter(Map<String, Object> map) {
+    public DataFormatter(Map<String, Object> map) {
         Optional.ofNullable(map.get("display-name")).ifPresent(s -> displayName = String.valueOf(s));
         Optional.ofNullable(map.get("prefix")).ifPresent(s -> prefix = String.valueOf(s));
         Optional.ofNullable(map.get("suffix")).ifPresent(s -> suffix = String.valueOf(s));
@@ -34,7 +34,7 @@ public class TopFormatter {
         Optional.ofNullable(map.get("show-group-separator")).ifPresent(s -> showGroupSeparator = Boolean.parseBoolean(String.valueOf(s)));
     }
 
-    public TopFormatter() {
+    public DataFormatter() {
         // EMPTY
     }
 
