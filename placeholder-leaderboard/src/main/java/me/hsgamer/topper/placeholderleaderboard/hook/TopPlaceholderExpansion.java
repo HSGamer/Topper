@@ -3,8 +3,8 @@ package me.hsgamer.topper.placeholderleaderboard.hook;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import me.hsgamer.topper.core.entry.DataEntry;
 import me.hsgamer.topper.placeholderleaderboard.TopperPlaceholderLeaderboard;
+import me.hsgamer.topper.placeholderleaderboard.config.MainConfig;
 import me.hsgamer.topper.placeholderleaderboard.holder.NumberTopHolder;
-import me.hsgamer.topper.spigot.config.BaseMainConfig;
 import me.hsgamer.topper.spigot.formatter.DataFormatter;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -62,7 +62,7 @@ public class TopPlaceholderExpansion extends PlaceholderExpansion {
                         .map(DataEntry::getUuid)
                         .map(Bukkit::getOfflinePlayer)
                         .map(OfflinePlayer::getName)
-                        .orElseGet(BaseMainConfig.NULL_DISPLAY_NAME::getValue);
+                        .orElseGet(MainConfig.NULL_DISPLAY_NAME::getValue);
             }
             case "top_value_raw":
             case "top_value": {
@@ -77,7 +77,7 @@ public class TopPlaceholderExpansion extends PlaceholderExpansion {
                 return holder.getSnapshotAgent().getEntryByIndex(i - 1)
                         .map(DataEntry::getValue)
                         .map(value -> args[1].endsWith("raw") ? String.valueOf(value) : formatter.format(value))
-                        .orElseGet(BaseMainConfig.NULL_DISPLAY_VALUE::getValue);
+                        .orElseGet(MainConfig.NULL_DISPLAY_VALUE::getValue);
             }
             case "top_rank":
                 return Integer.toString(holder.getSnapshotAgent().getTopIndex(player.getUniqueId()) + 1);
@@ -86,7 +86,7 @@ public class TopPlaceholderExpansion extends PlaceholderExpansion {
                 return holder.getEntry(player.getUniqueId())
                         .map(DataEntry::getValue)
                         .map(value -> args[1].endsWith("raw") ? String.valueOf(value) : formatter.format(value))
-                        .orElseGet(BaseMainConfig.NULL_DISPLAY_NAME::getValue);
+                        .orElseGet(MainConfig.NULL_DISPLAY_NAME::getValue);
             default:
                 break;
         }

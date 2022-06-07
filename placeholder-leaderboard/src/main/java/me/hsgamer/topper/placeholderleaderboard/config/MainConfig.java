@@ -1,11 +1,13 @@
 package me.hsgamer.topper.placeholderleaderboard.config;
 
+import me.hsgamer.hscore.bukkit.config.BukkitConfig;
 import me.hsgamer.hscore.config.Config;
+import me.hsgamer.hscore.config.PathableConfig;
 import me.hsgamer.hscore.config.path.AdvancedConfigPath;
 import me.hsgamer.hscore.config.path.BaseConfigPath;
 import me.hsgamer.hscore.config.path.impl.BooleanConfigPath;
 import me.hsgamer.hscore.config.path.impl.IntegerConfigPath;
-import me.hsgamer.topper.spigot.config.BaseMainConfig;
+import me.hsgamer.hscore.config.path.impl.StringConfigPath;
 import me.hsgamer.topper.spigot.formatter.DataFormatter;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
@@ -15,7 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class MainConfig extends BaseMainConfig {
+public class MainConfig extends PathableConfig {
     public static final BaseConfigPath<Map<String, String>> PLACEHOLDERS = new BaseConfigPath<>("placeholders", Collections.emptyMap(), o -> {
         Map<String, String> map = new HashMap<>();
         if (o instanceof Map) {
@@ -51,8 +53,11 @@ public class MainConfig extends BaseMainConfig {
     public static final IntegerConfigPath TASK_UPDATE_ENTRY_PER_TICK = new IntegerConfigPath("task.update.entry-per-tick", 10);
     public static final IntegerConfigPath TASK_UPDATE_DELAY = new IntegerConfigPath("task.update.delay", 0);
     public static final BooleanConfigPath METRICS = new BooleanConfigPath("metrics", true);
+    public static final StringConfigPath NULL_DISPLAY_NAME = new StringConfigPath("null-display-name", "---");
+    public static final StringConfigPath NULL_DISPLAY_VALUE = new StringConfigPath("null-display-value", "---");
+    public static final StringConfigPath STORAGE_TYPE = new StringConfigPath("storage-type", "yaml");
 
     public MainConfig(Plugin plugin) {
-        super(plugin);
+        super(new BukkitConfig(plugin, "config.yml"));
     }
 }

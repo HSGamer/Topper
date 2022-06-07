@@ -4,7 +4,6 @@ import me.hsgamer.hscore.builder.Builder;
 import me.hsgamer.hscore.bukkit.baseplugin.BasePlugin;
 import me.hsgamer.topper.core.holder.DataHolder;
 import me.hsgamer.topper.core.storage.DataStorage;
-import me.hsgamer.topper.spigot.config.BaseMainConfig;
 import me.hsgamer.topper.spigot.storage.MySqlStorageSupplier;
 import me.hsgamer.topper.spigot.storage.SqliteStorageSupplier;
 import me.hsgamer.topper.spigot.storage.YamlStorageSupplier;
@@ -20,7 +19,7 @@ public class TopStorageBuilder extends Builder<BasePlugin, Function<DataHolder<D
         register(MySqlStorageSupplier::new, "mysql", "mysql-connector-java", "mysql-connector");
     }
 
-    public static Function<DataHolder<Double>, DataStorage<Double>> build(BasePlugin plugin) {
-        return INSTANCE.build(BaseMainConfig.STORAGE_TYPE.getValue(), plugin).orElseGet(() -> new YamlStorageSupplier(plugin));
+    public static Function<DataHolder<Double>, DataStorage<Double>> buildSupplier(String type, BasePlugin plugin) {
+        return INSTANCE.build(type, plugin).orElseGet(() -> new YamlStorageSupplier(plugin));
     }
 }

@@ -23,7 +23,9 @@ public class TopManager {
     }
 
     public void register() {
-        Function<DataHolder<Double>, DataStorage<Double>> storageSupplier = TopStorageBuilder.build(instance);
+        DataFormatter.setNullDisplayName(MainConfig.NULL_DISPLAY_NAME::getValue);
+        DataFormatter.setNullDisplayValue(MainConfig.NULL_DISPLAY_VALUE::getValue);
+        Function<DataHolder<Double>, DataStorage<Double>> storageSupplier = TopStorageBuilder.buildSupplier(MainConfig.STORAGE_TYPE.getValue(), instance);
         MainConfig.PLACEHOLDERS.getValue().forEach((key, value) -> addTopHolder(key, new PlaceholderTopHolder(instance, storageSupplier, key, value)));
         topFormatters.putAll(MainConfig.FORMATTERS.getValue());
     }
