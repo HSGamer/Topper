@@ -1,19 +1,22 @@
 package me.hsgamer.topper.placeholderleaderboard.holder;
 
+import me.hsgamer.topper.core.agent.Agent;
 import me.hsgamer.topper.core.agent.snapshot.SnapshotAgent;
 import me.hsgamer.topper.core.agent.storage.StorageAgent;
 import me.hsgamer.topper.core.agent.update.UpdateAgent;
-import me.hsgamer.topper.core.holder.DataHolder;
+import me.hsgamer.topper.core.holder.DataWithAgentHolder;
 import me.hsgamer.topper.placeholderleaderboard.TopperPlaceholderLeaderboard;
 import me.hsgamer.topper.placeholderleaderboard.config.MainConfig;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-public abstract class NumberTopHolder extends DataHolder<Double> {
+public abstract class NumberTopHolder extends DataWithAgentHolder<Double> {
     protected final TopperPlaceholderLeaderboard instance;
     private final UpdateAgent<Double, BukkitTask> updateAgent;
     private final StorageAgent<Double, BukkitTask> storageAgent;
@@ -35,7 +38,7 @@ public abstract class NumberTopHolder extends DataHolder<Double> {
     protected abstract CompletableFuture<Optional<Double>> updateNewValue(UUID uuid);
 
     @Override
-    public void onRegister() {
+    public List<Agent> getAgentList() {
         updateAgent.setMaxEntryPerCall(MainConfig.TASK_UPDATE_ENTRY_PER_TICK.getValue());
         updateAgent.setUpdateFunction(this::updateNewValue);
         updateAgent.setRunTaskFunction(runnable -> {
@@ -43,7 +46,6 @@ public abstract class NumberTopHolder extends DataHolder<Double> {
             return instance.getServer().getScheduler().runTaskTimerAsynchronously(instance, runnable, updateDelay, updateDelay);
         });
         updateAgent.setCancelTaskConsumer(BukkitTask::cancel);
-        updateAgent.start();
 
         storageAgent.setMaxEntryPerCall(MainConfig.TASK_SAVE_ENTRY_PER_TICK.getValue());
         storageAgent.setRunTaskFunction(runnable -> {
@@ -60,19 +62,11 @@ public abstract class NumberTopHolder extends DataHolder<Double> {
                 });
             }
         });
-        storageAgent.start();
 
         snapshotAgent.setRunTaskFunction(runnable -> instance.getServer().getScheduler().runTaskTimerAsynchronously(instance, runnable, 20L, 20L));
         snapshotAgent.setCancelTaskConsumer(BukkitTask::cancel);
-        snapshotAgent.start();
-    }
 
-    @Override
-    public void onUnregister() {
-        updateAgent.stop();
-        snapshotAgent.stop();
-        storageAgent.stop();
-        super.onUnregister();
+        return Arrays.asList(updateAgent, storageAgent, snapshotAgent);
     }
 
     public UpdateAgent<Double, BukkitTask> getUpdateAgent() {

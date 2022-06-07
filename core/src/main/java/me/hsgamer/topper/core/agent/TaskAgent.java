@@ -3,7 +3,7 @@ package me.hsgamer.topper.core.agent;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public abstract class TaskAgent<R> {
+public abstract class TaskAgent<R> implements Agent {
     private R task;
     private Function<Runnable, R> runTaskFunction;
     private Consumer<R> cancelTaskConsumer;
@@ -18,6 +18,7 @@ public abstract class TaskAgent<R> {
         this.cancelTaskConsumer = cancelTaskConsumer;
     }
 
+    @Override
     public void start() {
         if (runTaskFunction == null) {
             throw new IllegalStateException("runTaskFunction is null");
@@ -28,6 +29,7 @@ public abstract class TaskAgent<R> {
         task = runTaskFunction.apply(getRunnable());
     }
 
+    @Override
     public void stop() {
         if (task == null) {
             return;
