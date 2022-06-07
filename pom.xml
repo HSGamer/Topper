@@ -11,7 +11,7 @@
     <modules>
         <module>core</module>
         <module>spigot</module>
-        <module>spigot-leaderboard</module>
+        <module>placeholder-leaderboard</module>
     </modules>
 
     <properties>

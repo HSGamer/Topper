@@ -23,4 +23,4 @@ jobs:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           prerelease: false
           files: |
-            ./spigot-leaderboard/target/topper*.jar
+            ./placeholder-leaderboard/target/topper*.jar
