@@ -37,7 +37,11 @@ public class StorageAgent<T extends Comparable<T>, R> extends TaskAgent<R> {
 
     @Override
     public void start() {
-        holder.addRemoveListener(entry -> save(entry, true));
+        holder.addCreateListener(entry -> saveQueue.add(entry.getUuid()));
+        holder.addRemoveListener(entry -> {
+            save(entry, true);
+            saveQueue.remove(entry.getUuid());
+        });
         holder.addUpdateListener(entry -> entry.addFlag(EntryTempFlag.NEED_SAVING));
         storage.onRegister();
         storage.load()

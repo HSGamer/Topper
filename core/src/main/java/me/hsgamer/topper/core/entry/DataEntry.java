@@ -34,6 +34,7 @@ public final class DataEntry<T extends Comparable<T>> implements Comparable<Data
     }
 
     public void setValue(T value, boolean notify) {
+        if (Objects.equals(this.value.get(), value)) return;
         this.value.set(value);
         if (notify) {
             holder.notifyUpdateEntry(this);

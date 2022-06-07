@@ -58,6 +58,8 @@ public class UpdateAgent<T extends Comparable<T>, R> extends TaskAgent<R> {
         if (updateFunction == null) {
             throw new IllegalStateException("Update function is not set");
         }
+        holder.addCreateListener(entry -> updateQueue.add(entry.getUuid()));
+        holder.addRemoveListener(entry -> updateQueue.remove(entry.getUuid()));
         super.start();
     }
 
