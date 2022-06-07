@@ -7,6 +7,7 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -18,8 +19,8 @@ public abstract class DataHolder<T extends Comparable<T>> {
     private final DataStorage<T> storage;
     private final String name;
 
-    protected DataHolder(DataStorage<T> storage, String name) {
-        this.storage = storage;
+    protected DataHolder(Function<DataHolder<T>, DataStorage<T>> storageSupplier, String name) {
+        this.storage = storageSupplier.apply(this);
         this.name = name;
     }
 
@@ -66,13 +67,13 @@ public abstract class DataHolder<T extends Comparable<T>> {
     }
 
     public final CompletableFuture<Void> save(DataEntry<T> entry, boolean onUnregister) {
-        return storage.save(entry, onUnregister);
+        return storage.save(entry.getUuid(), entry.getValue(), onUnregister);
     }
 
     public final void register() {
         onRegister();
-        storage.onRegister(this);
-        storage.load(this)
+        storage.onRegister();
+        storage.load()
                 .whenComplete((entries, throwable) -> {
                     if (throwable != null) {
                         LOGGER.log(Level.SEVERE, "Failed to load top entries", throwable);
@@ -89,7 +90,7 @@ public abstract class DataHolder<T extends Comparable<T>> {
             notifyRemoveEntry(entry);
             entry.save(true);
         });
-        storage.onUnregister(this);
+        storage.onUnregister();
         onUnregister();
         entryMap.clear();
         createListeners.clear();

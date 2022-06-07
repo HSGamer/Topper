@@ -3,6 +3,7 @@ package me.hsgamer.topper.spigot.storage;
 import me.hsgamer.hscore.database.Setting;
 import me.hsgamer.hscore.database.client.sql.java.JavaSqlClient;
 import me.hsgamer.hscore.database.driver.mysql.MySqlDriver;
+import me.hsgamer.topper.core.holder.DataHolder;
 import me.hsgamer.topper.spigot.config.DatabaseConfig;
 
 import java.sql.Connection;
@@ -23,6 +24,10 @@ public class MySqlStorage extends SqlStorage {
             setting.setDriverProperty("useSSL", "true");
         }
         client = new JavaSqlClient(setting, new MySqlDriver());
+    }
+
+    public MySqlStorage(DataHolder<Double> holder) {
+        super(holder);
     }
 
     @Override

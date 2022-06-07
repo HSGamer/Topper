@@ -22,19 +22,16 @@ public class UpdateAgent<T extends Comparable<T>, R> extends TaskAgent<R> {
         this.holder = holder;
     }
 
-    public UpdateAgent<T, R> addUpdateListener(Consumer<DataEntry<T>> listener) {
+    public void addUpdateListener(Consumer<DataEntry<T>> listener) {
         updateListeners.add(listener);
-        return this;
     }
 
-    public UpdateAgent<T, R> setMaxEntryPerCall(int maxEntryPerCall) {
+    public void setMaxEntryPerCall(int maxEntryPerCall) {
         this.maxEntryPerCall = maxEntryPerCall;
-        return this;
     }
 
-    public UpdateAgent<T, R> setUpdateFunction(Function<UUID, CompletableFuture<Optional<T>>> updateFunction) {
+    public void setUpdateFunction(Function<UUID, CompletableFuture<Optional<T>>> updateFunction) {
         this.updateFunction = updateFunction;
-        return this;
     }
 
     @Override
@@ -56,6 +53,7 @@ public class UpdateAgent<T extends Comparable<T>, R> extends TaskAgent<R> {
         };
     }
 
+    @Override
     public void start() {
         if (updateFunction == null) {
             throw new IllegalStateException("Update function is not set");
@@ -77,7 +75,7 @@ public class UpdateAgent<T extends Comparable<T>, R> extends TaskAgent<R> {
         });
     }
 
-    public void notifyUpdateEntry(DataEntry<T> entry) {
+    private void notifyUpdateEntry(DataEntry<T> entry) {
         updateListeners.forEach(listener -> listener.accept(entry));
     }
 }

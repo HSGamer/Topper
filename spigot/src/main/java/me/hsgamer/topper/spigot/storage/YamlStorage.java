@@ -1,8 +1,6 @@
 package me.hsgamer.topper.spigot.storage;
 
 import me.hsgamer.hscore.bukkit.config.BukkitConfig;
-import me.hsgamer.hscore.config.Config;
-import me.hsgamer.topper.core.entry.DataEntry;
 import me.hsgamer.topper.core.holder.DataHolder;
 import me.hsgamer.topper.core.storage.DataStorage;
 import me.hsgamer.topper.spigot.TopperPlugin;
@@ -16,34 +14,24 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-public class YamlStorage implements DataStorage<Double> {
+public class YamlStorage extends DataStorage<Double> {
     private static final TopperPlugin instance;
     private static final File baseFolder;
-    private static final Map<String, AutoSaveConfig> configs = new HashMap<>();
 
     static {
         instance = JavaPlugin.getPlugin(TopperPlugin.class);
         baseFolder = new File(instance.getDataFolder(), "top");
     }
 
-    private AutoSaveConfig getConfig(String name) {
-        return configs.computeIfAbsent(name, s -> {
-            AutoSaveConfig config = new AutoSaveConfig(instance, new BukkitConfig(new File(baseFolder, s + ".yml")));
-            config.setup();
-            return config;
-        });
-    }
+    private final AutoSaveConfig config;
 
-    private void removeConfig(String name) {
-        AutoSaveConfig config = configs.remove(name);
-        if (config != null) {
-            config.finalSave();
-        }
+    public YamlStorage(DataHolder<Double> holder) {
+        super(holder);
+        config = new AutoSaveConfig(instance, new BukkitConfig(new File(baseFolder, holder.getName() + ".yml")));
     }
 
     @Override
-    public CompletableFuture<Map<UUID, Double>> load(DataHolder<Double> holder) {
-        Config config = getConfig(holder.getName());
+    public CompletableFuture<Map<UUID, Double>> load() {
         Map<String, Object> values = config.getValues(false);
         return CompletableFuture.supplyAsync(() -> {
             Map<UUID, Double> map = new HashMap<>();
@@ -53,13 +41,12 @@ public class YamlStorage implements DataStorage<Double> {
     }
 
     @Override
-    public CompletableFuture<Void> save(DataEntry<Double> topEntry, boolean onUnregister) {
-        Config config = getConfig(topEntry.getHolder().getName());
+    public CompletableFuture<Void> save(UUID uuid, Double value, boolean onUnregister) {
         CompletableFuture<Void> future = new CompletableFuture<>();
         BukkitRunnable runnable = new BukkitRunnable() {
             @Override
             public void run() {
-                config.set(topEntry.getUuid().toString(), topEntry.getValue());
+                config.set(uuid.toString(), value);
                 future.complete(null);
             }
         };
@@ -72,7 +59,12 @@ public class YamlStorage implements DataStorage<Double> {
     }
 
     @Override
-    public void onUnregister(DataHolder<Double> holder) {
-        removeConfig(holder.getName());
+    public void onRegister() {
+        config.setup();
+    }
+
+    @Override
+    public void onUnregister() {
+        config.finalSave();
     }
 }

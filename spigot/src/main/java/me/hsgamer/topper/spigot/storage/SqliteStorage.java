@@ -3,6 +3,7 @@ package me.hsgamer.topper.spigot.storage;
 import me.hsgamer.hscore.database.Setting;
 import me.hsgamer.hscore.database.client.sql.java.JavaSqlClient;
 import me.hsgamer.hscore.database.driver.sqlite.SqliteFileDriver;
+import me.hsgamer.topper.core.holder.DataHolder;
 import me.hsgamer.topper.spigot.TopperPlugin;
 import me.hsgamer.topper.spigot.config.DatabaseConfig;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -32,6 +33,10 @@ public class SqliteStorage extends SqlStorage {
                 instance.getLogger().log(Level.SEVERE, "disable()", e);
             }
         });
+    }
+
+    public SqliteStorage(DataHolder<Double> holder) {
+        super(holder);
     }
 
     @Override

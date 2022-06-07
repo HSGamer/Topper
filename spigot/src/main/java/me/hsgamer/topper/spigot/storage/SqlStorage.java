@@ -1,7 +1,6 @@
 package me.hsgamer.topper.spigot.storage;
 
 import me.hsgamer.hscore.database.client.sql.StatementBuilder;
-import me.hsgamer.topper.core.entry.DataEntry;
 import me.hsgamer.topper.core.holder.DataHolder;
 import me.hsgamer.topper.core.storage.DataStorage;
 
@@ -15,7 +14,11 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 
-public abstract class SqlStorage implements DataStorage<Double> {
+public abstract class SqlStorage extends DataStorage<Double> {
+    protected SqlStorage(DataHolder<Double> holder) {
+        super(holder);
+    }
+
     public abstract Connection getConnection(String name) throws SQLException;
 
     public abstract void flushConnection(Connection connection);
@@ -29,7 +32,7 @@ public abstract class SqlStorage implements DataStorage<Double> {
     }
 
     @Override
-    public CompletableFuture<Map<UUID, Double>> load(DataHolder<Double> holder) {
+    public CompletableFuture<Map<UUID, Double>> load() {
         String name = holder.getName();
         return CompletableFuture.supplyAsync(() -> {
             Connection connection = null;
@@ -57,27 +60,27 @@ public abstract class SqlStorage implements DataStorage<Double> {
     }
 
     @Override
-    public CompletableFuture<Void> save(DataEntry<Double> topEntry, boolean onUnregister) {
-        String name = topEntry.getHolder().getName();
+    public CompletableFuture<Void> save(UUID uuid, Double value, boolean onUnregister) {
+        String name = holder.getName();
         Runnable runnable = () -> {
             Connection connection = null;
             try {
                 connection = getAndCreateTable(name);
                 boolean exists = StatementBuilder.create(connection)
                         .setStatement("SELECT * FROM `" + name + "` WHERE `uuid` = ?;")
-                        .addValues(topEntry.getUuid().toString())
+                        .addValues(uuid.toString())
                         .query(ResultSet::next);
                 if (exists) {
                     StatementBuilder.create(connection)
                             .setStatement("UPDATE `" + name + "` SET `value` = ? WHERE `uuid` = ?;")
-                            .addValues(topEntry.getValue())
-                            .addValues(topEntry.getUuid().toString())
+                            .addValues(value)
+                            .addValues(uuid.toString())
                             .update();
                 } else {
                     StatementBuilder.create(connection)
                             .setStatement("INSERT INTO `" + name + "` (`uuid`, `value`) VALUES (?, ?);")
-                            .addValues(topEntry.getUuid().toString())
-                            .addValues(topEntry.getValue())
+                            .addValues(uuid.toString())
+                            .addValues(value)
                             .update();
                 }
             } catch (SQLException e) {

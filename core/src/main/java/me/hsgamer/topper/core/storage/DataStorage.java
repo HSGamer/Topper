@@ -1,6 +1,5 @@
 package me.hsgamer.topper.core.storage;
 
-import me.hsgamer.topper.core.entry.DataEntry;
 import me.hsgamer.topper.core.holder.DataHolder;
 
 import java.util.Map;
@@ -8,18 +7,23 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Logger;
 
-public interface DataStorage<T extends Comparable<T>> {
-    Logger LOGGER = Logger.getLogger(DataStorage.class.getName());
+public abstract class DataStorage<T extends Comparable<T>> {
+    protected static final Logger LOGGER = Logger.getLogger(DataStorage.class.getName());
+    protected final DataHolder<T> holder;
 
-    CompletableFuture<Map<UUID, T>> load(DataHolder<T> holder);
+    protected DataStorage(DataHolder<T> holder) {
+        this.holder = holder;
+    }
 
-    CompletableFuture<Void> save(DataEntry<T> dataEntry, boolean onUnregister);
+    public abstract CompletableFuture<Map<UUID, T>> load();
 
-    default void onRegister(DataHolder<T> holder) {
+    public abstract CompletableFuture<Void> save(UUID uuid, T value, boolean onUnregister);
+
+    public void onRegister() {
         // EMPTY
     }
 
-    default void onUnregister(DataHolder<T> holder) {
+    public void onUnregister() {
         // EMPTY
     }
 }
