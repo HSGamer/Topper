@@ -46,7 +46,7 @@ public class StorageAgent<T extends Comparable<T>, R> extends TaskAgent<R> {
                         LOGGER.log(Level.SEVERE, "Failed to load top entries", throwable);
                     }
                     if (entries != null) {
-                        entries.forEach((uuid, value) -> holder.getOrCreateEntry(uuid).setValue(value));
+                        entries.forEach((uuid, value) -> holder.getOrCreateEntry(uuid).setValue(value, false));
                     }
                     onLoadListeners.forEach(Runnable::run);
                 });

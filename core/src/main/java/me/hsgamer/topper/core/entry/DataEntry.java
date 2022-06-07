@@ -9,7 +9,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class DataEntry<T extends Comparable<T>> implements Comparable<DataEntry<T>> {
+public final class DataEntry<T extends Comparable<T>> implements Comparable<DataEntry<T>> {
     private final UUID uuid;
     private final DataHolder<T> holder;
     private final AtomicReference<T> value;
@@ -30,8 +30,14 @@ public class DataEntry<T extends Comparable<T>> implements Comparable<DataEntry<
     }
 
     public void setValue(T value) {
+        setValue(value, true);
+    }
+
+    public void setValue(T value, boolean notify) {
         this.value.set(value);
-        holder.notifyUpdateEntry(this);
+        if (notify) {
+            holder.notifyUpdateEntry(this);
+        }
     }
 
     public DataHolder<T> getHolder() {
