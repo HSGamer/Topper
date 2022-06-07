@@ -26,5 +26,5 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
-          name: "Topper-Spigot"
-          path: "./spigot/target/topper*.jar"
+          name: "Topper-Spigot-Leaderboard"
+          path: "./spigot-leaderboard/target/topper*.jar"
