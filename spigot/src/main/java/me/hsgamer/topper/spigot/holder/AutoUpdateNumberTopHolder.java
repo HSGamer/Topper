@@ -18,6 +18,11 @@ public abstract class AutoUpdateNumberTopHolder extends TopHolder<Double> {
     }
 
     @Override
+    public Double getDefaultValue() {
+        return 0D;
+    }
+
+    @Override
     public void onRegister() {
         setMaxEntryUpdatePerCall(MainConfig.TASK_UPDATE_ENTRY_PER_TICK.getValue());
         setMaxEntrySavePerCall(MainConfig.TASK_SAVE_ENTRY_PER_TICK.getValue());

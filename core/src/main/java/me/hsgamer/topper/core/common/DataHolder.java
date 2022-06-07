@@ -40,6 +40,10 @@ public abstract class DataHolder<T extends Comparable<T>> {
         // EMPTY
     }
 
+    public T getDefaultValue() {
+        return null;
+    }
+
     public final void notifyCreateEntry(DataEntry<T> entry) {
         onCreateEntry(entry);
         createListeners.forEach(listener -> listener.accept(entry));

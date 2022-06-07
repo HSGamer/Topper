@@ -6,12 +6,13 @@ import java.util.concurrent.atomic.AtomicReference;
 public class DataEntry<T extends Comparable<T>> implements Comparable<DataEntry<T>> {
     private final UUID uuid;
     private final DataHolder<T> holder;
-    private final AtomicReference<T> value = new AtomicReference<>(null);
+    private final AtomicReference<T> value;
     private final Set<EntryTempFlag> tempFlags = Collections.synchronizedSet(new HashSet<>());
 
     DataEntry(UUID uuid, DataHolder<T> holder) {
         this.uuid = uuid;
         this.holder = holder;
+        this.value = new AtomicReference<>(holder.getDefaultValue());
     }
 
     public void save(boolean onUnregister) {
