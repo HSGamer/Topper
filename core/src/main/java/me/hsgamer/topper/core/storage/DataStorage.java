@@ -1,4 +1,7 @@
-package me.hsgamer.topper.core.common;
+package me.hsgamer.topper.core.storage;
+
+import me.hsgamer.topper.core.entry.DataEntry;
+import me.hsgamer.topper.core.holder.DataHolder;
 
 import java.util.Map;
 import java.util.UUID;

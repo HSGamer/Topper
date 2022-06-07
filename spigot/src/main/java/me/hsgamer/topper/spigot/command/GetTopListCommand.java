@@ -1,11 +1,11 @@
 package me.hsgamer.topper.spigot.command;
 
-import me.hsgamer.topper.core.common.DataEntry;
+import me.hsgamer.topper.core.entry.DataEntry;
 import me.hsgamer.topper.spigot.Permissions;
 import me.hsgamer.topper.spigot.TopperPlugin;
 import me.hsgamer.topper.spigot.config.MessageConfig;
 import me.hsgamer.topper.spigot.formatter.TopFormatter;
-import me.hsgamer.topper.spigot.holder.PlaceholderTopHolder;
+import me.hsgamer.topper.spigot.holder.NumberTopHolder;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
@@ -32,12 +32,12 @@ public class GetTopListCommand extends Command {
             sendMessage(sender, "&c" + getUsage());
             return false;
         }
-        Optional<PlaceholderTopHolder> optional = instance.getTopManager().getTopHolder(args[0]);
+        Optional<NumberTopHolder> optional = instance.getTopManager().getTopHolder(args[0]);
         if (!optional.isPresent()) {
             sendMessage(sender, MessageConfig.TOP_HOLDER_NOT_FOUND.getValue());
             return false;
         }
-        PlaceholderTopHolder topHolder = optional.get();
+        NumberTopHolder topHolder = optional.get();
         TopFormatter topFormatter = instance.getTopManager().getTopFormatter(args[0]);
 
         int fromIndex = 1;
@@ -65,7 +65,7 @@ public class GetTopListCommand extends Command {
 
         List<String> topList = new ArrayList<>();
         for (int i = fromIndex; i <= toIndex; i++) {
-            Optional<DataEntry<Double>> optionalTopEntry = topHolder.getEntryByIndex(i - 1);
+            Optional<DataEntry<Double>> optionalTopEntry = topHolder.getSnapshotAgent().getEntryByIndex(i - 1);
             UUID uuid = optionalTopEntry.map(DataEntry::getUuid).orElse(null);
             Double value = optionalTopEntry.map(DataEntry::getValue).orElse(null);
             topList.add(

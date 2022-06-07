@@ -2,9 +2,9 @@ package me.hsgamer.topper.spigot.storage;
 
 import me.hsgamer.hscore.bukkit.config.BukkitConfig;
 import me.hsgamer.hscore.config.Config;
-import me.hsgamer.topper.core.common.DataEntry;
-import me.hsgamer.topper.core.common.DataHolder;
-import me.hsgamer.topper.core.common.DataStorage;
+import me.hsgamer.topper.core.entry.DataEntry;
+import me.hsgamer.topper.core.holder.DataHolder;
+import me.hsgamer.topper.core.storage.DataStorage;
 import me.hsgamer.topper.spigot.TopperPlugin;
 import me.hsgamer.topper.spigot.config.AutoSaveConfig;
 import org.bukkit.plugin.java.JavaPlugin;

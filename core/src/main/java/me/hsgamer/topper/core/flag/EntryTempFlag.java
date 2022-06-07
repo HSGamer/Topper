@@ -1,10 +1,11 @@
-package me.hsgamer.topper.core.common;
+package me.hsgamer.topper.core.flag;
 
 import java.util.Objects;
 
 public class EntryTempFlag {
     public static final EntryTempFlag NEED_SAVING = new EntryTempFlag("needSaving");
     public static final EntryTempFlag IS_SAVING = new EntryTempFlag("isSaving");
+    public static final EntryTempFlag IS_UPDATING = new EntryTempFlag("isUpdating");
 
     public final String name;
 

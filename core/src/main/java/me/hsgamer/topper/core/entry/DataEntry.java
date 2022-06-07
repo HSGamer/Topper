@@ -1,4 +1,7 @@
-package me.hsgamer.topper.core.common;
+package me.hsgamer.topper.core.entry;
+
+import me.hsgamer.topper.core.flag.EntryTempFlag;
+import me.hsgamer.topper.core.holder.DataHolder;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
@@ -9,7 +12,7 @@ public class DataEntry<T extends Comparable<T>> implements Comparable<DataEntry<
     private final AtomicReference<T> value;
     private final Set<EntryTempFlag> tempFlags = Collections.synchronizedSet(new HashSet<>());
 
-    DataEntry(UUID uuid, DataHolder<T> holder) {
+    public DataEntry(UUID uuid, DataHolder<T> holder) {
         this.uuid = uuid;
         this.holder = holder;
         this.value = new AtomicReference<>(holder.getDefaultValue());

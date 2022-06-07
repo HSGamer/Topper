@@ -1,9 +1,9 @@
 package me.hsgamer.topper.spigot.storage;
 
 import me.hsgamer.hscore.database.client.sql.StatementBuilder;
-import me.hsgamer.topper.core.common.DataEntry;
-import me.hsgamer.topper.core.common.DataHolder;
-import me.hsgamer.topper.core.common.DataStorage;
+import me.hsgamer.topper.core.entry.DataEntry;
+import me.hsgamer.topper.core.holder.DataHolder;
+import me.hsgamer.topper.core.storage.DataStorage;
 
 import java.sql.Connection;
 import java.sql.ResultSet;

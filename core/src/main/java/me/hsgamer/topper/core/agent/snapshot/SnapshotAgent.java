@@ -1,27 +1,29 @@
-package me.hsgamer.topper.core.top;
+package me.hsgamer.topper.core.agent.snapshot;
 
-import me.hsgamer.topper.core.common.DataEntry;
-import me.hsgamer.topper.core.common.DataStorage;
-import me.hsgamer.topper.core.common.UpdatableDataHolder;
+import me.hsgamer.topper.core.agent.TaskAgent;
+import me.hsgamer.topper.core.entry.DataEntry;
+import me.hsgamer.topper.core.holder.DataHolder;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public abstract class TopHolder<T extends Comparable<T>> extends UpdatableDataHolder<T> {
-    private final AtomicReference<List<TopSnapshot<T>>> topSnapshot = new AtomicReference<>(Collections.emptyList());
+public class SnapshotAgent<T extends Comparable<T>, R> extends TaskAgent<R> {
+    private final AtomicReference<List<DataSnapshot<T>>> topSnapshot = new AtomicReference<>(Collections.emptyList());
     private final AtomicReference<Map<UUID, Integer>> indexMap = new AtomicReference<>(Collections.emptyMap());
+    private final DataHolder<T> holder;
 
-    protected TopHolder(DataStorage<T> dataStorage, String name) {
-        super(dataStorage, name);
+    public SnapshotAgent(DataHolder<T> holder) {
+        this.holder = holder;
     }
 
-    public final Runnable getTopSnapshotRunnable() {
+    @Override
+    protected Runnable getRunnable() {
         return () -> {
-            List<TopSnapshot<T>> list = getEntryMap().entrySet().stream()
-                    .map(entry -> new TopSnapshot<>(entry.getKey(), entry.getValue().getValue()))
-                    .sorted(Comparator.<TopSnapshot<T>, T>comparing(TopSnapshot::getValue).reversed())
+            List<DataSnapshot<T>> list = holder.getEntryMap().entrySet().stream()
+                    .map(entry -> new DataSnapshot<>(entry.getKey(), entry.getValue().getValue()))
+                    .sorted(Comparator.<DataSnapshot<T>, T>comparing(DataSnapshot::getValue).reversed())
                     .collect(Collectors.toList());
             topSnapshot.set(list);
 
@@ -33,12 +35,13 @@ public abstract class TopHolder<T extends Comparable<T>> extends UpdatableDataHo
     }
 
     @Override
-    public void onUnregister() {
+    public void stop() {
+        super.stop();
         topSnapshot.set(Collections.emptyList());
         indexMap.set(Collections.emptyMap());
     }
 
-    public final List<TopSnapshot<T>> getTop() {
+    public final List<DataSnapshot<T>> getTop() {
         return topSnapshot.get();
     }
 
@@ -47,9 +50,9 @@ public abstract class TopHolder<T extends Comparable<T>> extends UpdatableDataHo
     }
 
     public final Optional<DataEntry<T>> getEntryByIndex(int index) {
-        List<TopSnapshot<T>> list = getTop();
+        List<DataSnapshot<T>> list = getTop();
         if (index < 0 || index >= list.size()) return Optional.empty();
         UUID uuid = list.get(index).getUuid();
-        return getEntry(uuid);
+        return holder.getEntry(uuid);
     }
 }

@@ -1,7 +1,7 @@
 package me.hsgamer.topper.spigot.builder;
 
 import me.hsgamer.hscore.builder.Builder;
-import me.hsgamer.topper.core.common.DataStorage;
+import me.hsgamer.topper.core.storage.DataStorage;
 import me.hsgamer.topper.spigot.TopperPlugin;
 import me.hsgamer.topper.spigot.storage.MySqlStorage;
 import me.hsgamer.topper.spigot.storage.SqliteStorage;

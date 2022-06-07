@@ -1,4 +1,7 @@
-package me.hsgamer.topper.core.common;
+package me.hsgamer.topper.core.holder;
+
+import me.hsgamer.topper.core.entry.DataEntry;
+import me.hsgamer.topper.core.storage.DataStorage;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
