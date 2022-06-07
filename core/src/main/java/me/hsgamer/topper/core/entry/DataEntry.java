@@ -3,14 +3,17 @@ package me.hsgamer.topper.core.entry;
 import me.hsgamer.topper.core.flag.EntryTempFlag;
 import me.hsgamer.topper.core.holder.DataHolder;
 
-import java.util.*;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class DataEntry<T extends Comparable<T>> implements Comparable<DataEntry<T>> {
     private final UUID uuid;
     private final DataHolder<T> holder;
     private final AtomicReference<T> value;
-    private final Set<EntryTempFlag> tempFlags = Collections.synchronizedSet(new HashSet<>());
+    private final Map<EntryTempFlag, Boolean> tempFlags = new ConcurrentHashMap<>();
 
     public DataEntry(UUID uuid, DataHolder<T> holder) {
         this.uuid = uuid;
@@ -48,15 +51,15 @@ public class DataEntry<T extends Comparable<T>> implements Comparable<DataEntry<
     }
 
     public boolean hasFlag(EntryTempFlag flag) {
-        return tempFlags.contains(flag);
+        return tempFlags.getOrDefault(flag, false);
     }
 
     public void addFlag(EntryTempFlag flag) {
-        tempFlags.add(flag);
+        tempFlags.put(flag, true);
     }
 
     public void removeFlag(EntryTempFlag flag) {
-        tempFlags.remove(flag);
+        tempFlags.put(flag, false);
     }
 
     @Override
