@@ -37,7 +37,7 @@ public class TopManager {
         topFormatters.clear();
     }
 
-    public void addTopHolder(String key, PlaceholderTopHolder topHolder) {
+    public void addTopHolder(String key, NumberTopHolder topHolder) {
         if (topHolders.containsKey(key)) {
             topHolders.get(key).unregister();
         }
