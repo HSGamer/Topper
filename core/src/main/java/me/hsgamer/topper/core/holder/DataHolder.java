@@ -20,8 +20,8 @@ public abstract class DataHolder<T extends Comparable<T>> {
     private final String name;
 
     protected DataHolder(Function<DataHolder<T>, DataStorage<T>> storageSupplier, String name) {
-        this.storage = storageSupplier.apply(this);
         this.name = name;
+        this.storage = storageSupplier.apply(this);
     }
 
     public void onCreateEntry(DataEntry<T> entry) {

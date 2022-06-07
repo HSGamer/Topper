@@ -1,5 +1,6 @@
 package me.hsgamer.topper.spigot.manager;
 
+import me.hsgamer.topper.core.holder.DataHolder;
 import me.hsgamer.topper.core.storage.DataStorage;
 import me.hsgamer.topper.spigot.TopperPlugin;
 import me.hsgamer.topper.spigot.builder.TopStorageBuilder;
@@ -7,9 +8,10 @@ import me.hsgamer.topper.spigot.config.MainConfig;
 import me.hsgamer.topper.spigot.formatter.TopFormatter;
 import me.hsgamer.topper.spigot.holder.NumberTopHolder;
 import me.hsgamer.topper.spigot.holder.PlaceholderTopHolder;
-import me.hsgamer.topper.spigot.storage.YamlStorage;
+import me.hsgamer.topper.spigot.storage.YamlStorageSupplier;
 
 import java.util.*;
+import java.util.function.Function;
 
 public class TopManager {
     private final Map<String, NumberTopHolder> topHolders = new HashMap<>();
@@ -22,10 +24,10 @@ public class TopManager {
     }
 
     public void register() {
-        MainConfig.PLACEHOLDERS.getValue().forEach((key, value) -> {
-            DataStorage<Double> storage = TopStorageBuilder.INSTANCE.build(MainConfig.STORAGE_TYPE.getValue(), instance).orElseGet(YamlStorage::new);
-            addTopHolder(key, new PlaceholderTopHolder(instance, storage, key, value));
-        });
+        Function<DataHolder<Double>, DataStorage<Double>> storageSupplier =
+                TopStorageBuilder.INSTANCE.build(MainConfig.STORAGE_TYPE.getValue(), instance)
+                        .orElseGet(() -> new YamlStorageSupplier(instance));
+        MainConfig.PLACEHOLDERS.getValue().forEach((key, value) -> addTopHolder(key, new PlaceholderTopHolder(instance, storageSupplier, key, value)));
         topFormatters.putAll(MainConfig.FORMATTERS.getValue());
     }
 

@@ -12,6 +12,7 @@ import org.bukkit.scheduler.BukkitTask;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
 
 public abstract class NumberTopHolder extends DataHolder<Double> {
     protected final TopperPlugin instance;
@@ -19,8 +20,8 @@ public abstract class NumberTopHolder extends DataHolder<Double> {
     private final SaveAgent<Double, BukkitTask> saveAgent;
     private final SnapshotAgent<Double, BukkitTask> snapshotAgent;
 
-    protected NumberTopHolder(TopperPlugin instance, DataStorage<Double> topStorage, String name) {
-        super(topStorage, name);
+    protected NumberTopHolder(TopperPlugin instance, Function<DataHolder<Double>, DataStorage<Double>> storageSupplier, String name) {
+        super(storageSupplier, name);
         this.instance = instance;
         this.updateAgent = new UpdateAgent<>(this);
         this.saveAgent = new SaveAgent<>(this);
