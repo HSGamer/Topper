@@ -25,20 +25,8 @@ public abstract class NumberTopHolder extends DataWithAgentHolder<Double> {
     protected NumberTopHolder(TopperPlaceholderLeaderboard instance, String name) {
         super(name);
         this.instance = instance;
+
         this.updateAgent = new UpdateAgent<>(this);
-        this.storageAgent = new StorageAgent<>(instance.getTopManager().getStorageSupplier().apply(this));
-        this.snapshotAgent = new SnapshotAgent<>(this);
-    }
-
-    @Override
-    public Double getDefaultValue() {
-        return 0D;
-    }
-
-    protected abstract CompletableFuture<Optional<Double>> updateNewValue(UUID uuid);
-
-    @Override
-    public List<Agent> getAgentList() {
         updateAgent.setMaxEntryPerCall(MainConfig.TASK_UPDATE_ENTRY_PER_TICK.getValue());
         updateAgent.setUpdateFunction(this::updateNewValue);
         updateAgent.setRunTaskFunction(runnable -> {
@@ -47,6 +35,7 @@ public abstract class NumberTopHolder extends DataWithAgentHolder<Double> {
         });
         updateAgent.setCancelTaskConsumer(BukkitTask::cancel);
 
+        this.storageAgent = new StorageAgent<>(instance.getTopManager().getStorageSupplier().apply(this));
         storageAgent.setMaxEntryPerCall(MainConfig.TASK_SAVE_ENTRY_PER_TICK.getValue());
         storageAgent.setRunTaskFunction(runnable -> {
             int saveDelay = MainConfig.TASK_SAVE_DELAY.getValue();
@@ -63,9 +52,20 @@ public abstract class NumberTopHolder extends DataWithAgentHolder<Double> {
             }
         });
 
+        this.snapshotAgent = new SnapshotAgent<>(this);
         snapshotAgent.setRunTaskFunction(runnable -> instance.getServer().getScheduler().runTaskTimerAsynchronously(instance, runnable, 20L, 20L));
         snapshotAgent.setCancelTaskConsumer(BukkitTask::cancel);
+    }
 
+    @Override
+    public Double getDefaultValue() {
+        return 0D;
+    }
+
+    protected abstract CompletableFuture<Optional<Double>> updateNewValue(UUID uuid);
+
+    @Override
+    public List<Agent> getAgentList() {
         return Arrays.asList(updateAgent, storageAgent, snapshotAgent);
     }
 
