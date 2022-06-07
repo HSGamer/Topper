@@ -1,0 +1,5 @@
+name: Topper
+version: '${project.version}'
+main: me.hsgamer.topper.spigot.leaderboard.TopperLeaderboard
+api-version: 1.13
+depend: [ PlaceholderAPI ]

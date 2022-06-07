@@ -3,8 +3,8 @@ package me.hsgamer.topper.spigot.storage;
 import me.hsgamer.hscore.bukkit.config.BukkitConfig;
 import me.hsgamer.topper.core.holder.DataHolder;
 import me.hsgamer.topper.core.storage.DataStorage;
-import me.hsgamer.topper.spigot.TopperPlugin;
 import me.hsgamer.topper.spigot.config.AutoSaveConfig;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
@@ -15,19 +15,19 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
 public class YamlStorageSupplier implements Function<DataHolder<Double>, DataStorage<Double>> {
-    private final TopperPlugin instance;
+    private final JavaPlugin plugin;
     private final File baseFolder;
 
-    public YamlStorageSupplier(TopperPlugin instance) {
-        this.instance = instance;
-        baseFolder = new File(instance.getDataFolder(), "top");
+    public YamlStorageSupplier(JavaPlugin plugin) {
+        this.plugin = plugin;
+        baseFolder = new File(plugin.getDataFolder(), "top");
     }
 
     @Override
     public DataStorage<Double> apply(DataHolder<Double> holder) {
 
         return new DataStorage<Double>(holder) {
-            private final AutoSaveConfig config = new AutoSaveConfig(instance, new BukkitConfig(new File(baseFolder, holder.getName() + ".yml")));
+            private final AutoSaveConfig config = new AutoSaveConfig(plugin, new BukkitConfig(new File(baseFolder, holder.getName() + ".yml")));
 
             @Override
             public CompletableFuture<Map<UUID, Double>> load() {
@@ -52,7 +52,7 @@ public class YamlStorageSupplier implements Function<DataHolder<Double>, DataSto
                 if (onUnregister) {
                     runnable.run();
                 } else {
-                    runnable.runTask(instance);
+                    runnable.runTask(plugin);
                 }
                 return future;
             }

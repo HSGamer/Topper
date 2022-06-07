@@ -3,19 +3,19 @@ package me.hsgamer.topper.spigot.storage;
 import me.hsgamer.hscore.database.Setting;
 import me.hsgamer.hscore.database.client.sql.java.JavaSqlClient;
 import me.hsgamer.hscore.database.driver.mysql.MySqlDriver;
-import me.hsgamer.topper.spigot.TopperPlugin;
 import me.hsgamer.topper.spigot.config.DatabaseConfig;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.logging.Level;
 
 public class MySqlStorageSupplier extends SqlStorageSupplier {
-    private final TopperPlugin instance;
+    private final JavaPlugin plugin;
     private final JavaSqlClient client;
 
-    public MySqlStorageSupplier(TopperPlugin instance) {
-        this.instance = instance;
+    public MySqlStorageSupplier(JavaPlugin plugin) {
+        this.plugin = plugin;
         Setting setting = Setting.create()
                 .setDatabaseName(DatabaseConfig.DATABASE.getValue())
                 .setHost(DatabaseConfig.HOST.getValue())
@@ -38,7 +38,7 @@ public class MySqlStorageSupplier extends SqlStorageSupplier {
         try {
             connection.close();
         } catch (SQLException e) {
-            instance.getLogger().log(Level.WARNING, "Failed to close connection", e);
+            plugin.getLogger().log(Level.WARNING, "Failed to close connection", e);
         }
     }
 }

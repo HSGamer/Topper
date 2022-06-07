@@ -1,6 +1,6 @@
 package me.hsgamer.topper.spigot.formatter;
 
-import me.hsgamer.topper.spigot.config.MainConfig;
+import me.hsgamer.topper.spigot.config.BaseMainConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 
@@ -124,9 +124,9 @@ public class TopFormatter {
         String replaced = text.replace("{prefix}", prefix)
                 .replace("{suffix}", suffix)
                 .replace("{uuid}", uuid != null ? uuid.toString() : "")
-                .replace("{value}", value != null ? format(value) : MainConfig.NULL_DISPLAY_VALUE.getValue())
-                .replace("{name}", Optional.ofNullable(uuid).map(Bukkit::getOfflinePlayer).map(OfflinePlayer::getName).orElseGet(MainConfig.NULL_DISPLAY_NAME::getValue))
-                .replace("{value_raw}", value != null ? String.valueOf(value) : MainConfig.NULL_DISPLAY_VALUE.getValue())
+                .replace("{value}", value != null ? format(value) : BaseMainConfig.NULL_DISPLAY_VALUE.getValue())
+                .replace("{name}", Optional.ofNullable(uuid).map(Bukkit::getOfflinePlayer).map(OfflinePlayer::getName).orElseGet(BaseMainConfig.NULL_DISPLAY_NAME::getValue))
+                .replace("{value_raw}", value != null ? String.valueOf(value) : BaseMainConfig.NULL_DISPLAY_VALUE.getValue())
                 .replace("{display_name}", displayName);
         for (Map.Entry<String, BiFunction<UUID, Double, String>> entry : replacers.entrySet()) {
             replaced = replaced.replace("{" + entry.getKey() + "}", entry.getValue().apply(uuid, value));

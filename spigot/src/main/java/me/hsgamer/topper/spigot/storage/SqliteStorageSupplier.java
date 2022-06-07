@@ -1,9 +1,9 @@
 package me.hsgamer.topper.spigot.storage;
 
+import me.hsgamer.hscore.bukkit.baseplugin.BasePlugin;
 import me.hsgamer.hscore.database.Setting;
 import me.hsgamer.hscore.database.client.sql.java.JavaSqlClient;
 import me.hsgamer.hscore.database.driver.sqlite.SqliteFileDriver;
-import me.hsgamer.topper.spigot.TopperPlugin;
 import me.hsgamer.topper.spigot.config.DatabaseConfig;
 
 import java.sql.Connection;
@@ -15,19 +15,19 @@ public class SqliteStorageSupplier extends SqlStorageSupplier {
     private final JavaSqlClient client;
     private final AtomicReference<Connection> connectionReference = new AtomicReference<>();
 
-    public SqliteStorageSupplier(TopperPlugin instance) {
+    public SqliteStorageSupplier(BasePlugin plugin) {
         client = new JavaSqlClient(
                 Setting.create().setDatabaseName(DatabaseConfig.DATABASE.getValue()),
-                new SqliteFileDriver(instance.getDataFolder())
+                new SqliteFileDriver(plugin.getDataFolder())
         );
-        instance.addDisableFunction(() -> {
+        plugin.addDisableFunction(() -> {
             try {
                 Connection connection = connectionReference.get();
                 if (connection != null && !connection.isClosed()) {
                     connection.close();
                 }
             } catch (SQLException e) {
-                instance.getLogger().log(Level.SEVERE, "disable()", e);
+                plugin.getLogger().log(Level.SEVERE, "disable()", e);
             }
         });
     }
