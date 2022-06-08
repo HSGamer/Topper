@@ -55,6 +55,7 @@ public abstract class NumberTopHolder extends DataWithAgentHolder<Double> {
         this.snapshotAgent = new SnapshotAgent<>(this);
         snapshotAgent.setRunTaskFunction(runnable -> instance.getServer().getScheduler().runTaskTimerAsynchronously(instance, runnable, 20L, 20L));
         snapshotAgent.setCancelTaskConsumer(BukkitTask::cancel);
+        snapshotAgent.setComparator(Double::compare);
     }
 
     @Override

@@ -9,10 +9,11 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class SnapshotAgent<T extends Comparable<T>, R> extends TaskAgent<R> {
+public class SnapshotAgent<T, R> extends TaskAgent<R> {
     private final AtomicReference<List<DataSnapshot<T>>> topSnapshot = new AtomicReference<>(Collections.emptyList());
     private final AtomicReference<Map<UUID, Integer>> indexMap = new AtomicReference<>(Collections.emptyMap());
     private final DataHolder<T> holder;
+    private Comparator<T> comparator;
 
     public SnapshotAgent(DataHolder<T> holder) {
         this.holder = holder;
@@ -23,7 +24,7 @@ public class SnapshotAgent<T extends Comparable<T>, R> extends TaskAgent<R> {
         return () -> {
             List<DataSnapshot<T>> list = holder.getEntryMap().entrySet().stream()
                     .map(entry -> new DataSnapshot<>(entry.getKey(), entry.getValue().getValue()))
-                    .sorted(Comparator.<DataSnapshot<T>, T>comparing(DataSnapshot::getValue).reversed())
+                    .sorted(Comparator.<DataSnapshot<T>, T>comparing(DataSnapshot::getValue, comparator).reversed())
                     .collect(Collectors.toList());
             topSnapshot.set(list);
 
@@ -35,24 +36,36 @@ public class SnapshotAgent<T extends Comparable<T>, R> extends TaskAgent<R> {
     }
 
     @Override
+    public void start() {
+        if (comparator == null) {
+            throw new IllegalStateException("Comparator is null");
+        }
+        super.start();
+    }
+
+    @Override
     public void stop() {
         super.stop();
         topSnapshot.set(Collections.emptyList());
         indexMap.set(Collections.emptyMap());
     }
 
-    public final List<DataSnapshot<T>> getTop() {
+    public List<DataSnapshot<T>> getTop() {
         return topSnapshot.get();
     }
 
-    public final int getTopIndex(UUID uuid) {
+    public int getTopIndex(UUID uuid) {
         return indexMap.get().getOrDefault(uuid, -1);
     }
 
-    public final Optional<DataEntry<T>> getEntryByIndex(int index) {
+    public Optional<DataEntry<T>> getEntryByIndex(int index) {
         List<DataSnapshot<T>> list = getTop();
         if (index < 0 || index >= list.size()) return Optional.empty();
         UUID uuid = list.get(index).getUuid();
         return holder.getEntry(uuid);
+    }
+
+    public void setComparator(Comparator<T> comparator) {
+        this.comparator = comparator;
     }
 }

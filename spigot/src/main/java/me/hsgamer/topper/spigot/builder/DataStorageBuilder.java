@@ -10,10 +10,10 @@ import me.hsgamer.topper.spigot.storage.YamlStorageSupplier;
 
 import java.util.function.Function;
 
-public class TopStorageBuilder extends Builder<BasePlugin, Function<DataHolder<Double>, DataStorage<Double>>> {
-    public static final TopStorageBuilder INSTANCE = new TopStorageBuilder();
+public class DataStorageBuilder extends Builder<BasePlugin, Function<DataHolder<Double>, DataStorage<Double>>> {
+    public static final DataStorageBuilder INSTANCE = new DataStorageBuilder();
 
-    private TopStorageBuilder() {
+    private DataStorageBuilder() {
         register(YamlStorageSupplier::new, "yaml", "yml");
         register(SqliteStorageSupplier::new, "sqlite", "sqlite3");
         register(MySqlStorageSupplier::new, "mysql", "mysql-connector-java", "mysql-connector");

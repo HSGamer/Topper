@@ -14,7 +14,9 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class StorageAgent<T extends Comparable<T>, R> extends TaskAgent<R> {
+public class StorageAgent<T, R> extends TaskAgent<R> {
+    public static final EntryTempFlag NEED_SAVING = new EntryTempFlag("needSaving");
+    public static final EntryTempFlag IS_SAVING = new EntryTempFlag("isSaving");
     private static final Logger LOGGER = Logger.getLogger(StorageAgent.class.getName());
     private final Queue<UUID> saveQueue = new ConcurrentLinkedQueue<>();
     private final List<Runnable> onLoadListeners = new ArrayList<>();
@@ -28,11 +30,11 @@ public class StorageAgent<T extends Comparable<T>, R> extends TaskAgent<R> {
     }
 
     private void save(DataEntry<T> entry, boolean onUnregister) {
-        if (entry.hasFlag(EntryTempFlag.IS_SAVING)) return;
-        if (!entry.hasFlag(EntryTempFlag.NEED_SAVING)) return;
-        entry.removeFlag(EntryTempFlag.NEED_SAVING);
-        entry.addFlag(EntryTempFlag.IS_SAVING);
-        storage.save(entry.getUuid(), entry.getValue(), onUnregister).whenComplete((result, throwable) -> entry.removeFlag(EntryTempFlag.IS_SAVING));
+        if (entry.hasFlag(IS_SAVING)) return;
+        if (!entry.hasFlag(NEED_SAVING)) return;
+        entry.removeFlag(NEED_SAVING);
+        entry.addFlag(IS_SAVING);
+        storage.save(entry.getUuid(), entry.getValue(), onUnregister).whenComplete((result, throwable) -> entry.removeFlag(IS_SAVING));
     }
 
     @Override
@@ -42,7 +44,7 @@ public class StorageAgent<T extends Comparable<T>, R> extends TaskAgent<R> {
             save(entry, true);
             saveQueue.remove(entry.getUuid());
         });
-        holder.addUpdateListener(entry -> entry.addFlag(EntryTempFlag.NEED_SAVING));
+        holder.addUpdateListener(entry -> entry.addFlag(NEED_SAVING));
         storage.onRegister();
         storage.load()
                 .whenComplete((entries, throwable) -> {

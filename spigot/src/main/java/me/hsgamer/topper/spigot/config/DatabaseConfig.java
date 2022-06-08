@@ -7,7 +7,6 @@ import me.hsgamer.hscore.config.path.impl.StringConfigPath;
 import org.bukkit.plugin.Plugin;
 
 public class DatabaseConfig extends PathableConfig {
-    public static final StringConfigPath DATA_FOLDER = new StringConfigPath("data-folder", "top");
     public static final StringConfigPath HOST = new StringConfigPath("host", "localhost");
     public static final StringConfigPath PORT = new StringConfigPath("port", "3306");
     public static final StringConfigPath DATABASE = new StringConfigPath("database", "topper");

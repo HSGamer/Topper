@@ -1,9 +1,9 @@
-package me.hsgamer.topper.placeholderleaderboard.config.path;
+package me.hsgamer.topper.spigot.config.path;
 
 import me.hsgamer.hscore.common.CollectionUtils;
 import me.hsgamer.hscore.config.Config;
 import me.hsgamer.hscore.config.path.AdvancedConfigPath;
-import me.hsgamer.topper.placeholderleaderboard.block.BlockEntry;
+import me.hsgamer.topper.spigot.block.BlockEntry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

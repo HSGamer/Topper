@@ -5,10 +5,8 @@ import me.hsgamer.topper.core.entry.DataEntry;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
-import java.util.logging.Logger;
 
-public abstract class DataHolder<T extends Comparable<T>> {
-    public static final Logger LOGGER = Logger.getLogger(DataHolder.class.getName());
+public abstract class DataHolder<T> {
     private final Map<UUID, DataEntry<T>> entryMap = new ConcurrentHashMap<>();
     private final List<Consumer<DataEntry<T>>> removeListeners = new ArrayList<>();
     private final List<Consumer<DataEntry<T>>> createListeners = new ArrayList<>();
@@ -88,7 +86,7 @@ public abstract class DataHolder<T extends Comparable<T>> {
     }
 
     public final Map<UUID, DataEntry<T>> getEntryMap() {
-        return entryMap;
+        return Collections.unmodifiableMap(entryMap);
     }
 
     public final Optional<DataEntry<T>> getEntry(UUID uuid) {

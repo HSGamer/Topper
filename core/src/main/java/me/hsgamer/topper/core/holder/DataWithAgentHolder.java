@@ -5,7 +5,7 @@ import me.hsgamer.topper.core.agent.Agent;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class DataWithAgentHolder<T extends Comparable<T>> extends DataHolder<T> {
+public abstract class DataWithAgentHolder<T> extends DataHolder<T> {
     private final List<Agent> agentList = new ArrayList<>();
 
     protected DataWithAgentHolder(String name) {

@@ -11,7 +11,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class UpdateAgent<T extends Comparable<T>, R> extends TaskAgent<R> {
+public class UpdateAgent<T, R> extends TaskAgent<R> {
+    public static final EntryTempFlag IS_UPDATING = new EntryTempFlag("isUpdating");
     private final Queue<UUID> updateQueue = new ConcurrentLinkedQueue<>();
     private final List<Consumer<DataEntry<T>>> updateListeners = new ArrayList<>();
     private final DataHolder<T> holder;
@@ -64,16 +65,16 @@ public class UpdateAgent<T extends Comparable<T>, R> extends TaskAgent<R> {
     }
 
     private void updateEntry(DataEntry<T> entry) {
-        if (entry.hasFlag(EntryTempFlag.IS_UPDATING)) {
+        if (entry.hasFlag(IS_UPDATING)) {
             return;
         }
-        entry.addFlag(EntryTempFlag.IS_UPDATING);
+        entry.addFlag(IS_UPDATING);
         updateFunction.apply(entry.getUuid()).thenAccept(optional -> {
             if (optional.isPresent()) {
                 entry.setValue(optional.get());
                 notifyUpdateEntry(entry);
             }
-            entry.removeFlag(EntryTempFlag.IS_UPDATING);
+            entry.removeFlag(IS_UPDATING);
         });
     }
 

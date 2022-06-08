@@ -1,4 +1,4 @@
-package me.hsgamer.topper.placeholderleaderboard.block;
+package me.hsgamer.topper.spigot.block;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

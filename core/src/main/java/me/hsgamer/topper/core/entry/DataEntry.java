@@ -9,7 +9,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
-public final class DataEntry<T extends Comparable<T>> implements Comparable<DataEntry<T>> {
+public final class DataEntry<T> {
     private final UUID uuid;
     private final DataHolder<T> holder;
     private final AtomicReference<T> value;
@@ -55,17 +55,6 @@ public final class DataEntry<T extends Comparable<T>> implements Comparable<Data
 
     public void removeFlag(EntryTempFlag flag) {
         tempFlags.put(flag, false);
-    }
-
-    @Override
-    public int compareTo(DataEntry<T> o) {
-        T v1 = value.get();
-        T v2 = o.value.get();
-        if (v1 == null) {
-            return v2 == null ? 0 : 1;
-        }
-        if (v2 == null) return -1;
-        return v1.compareTo(v2);
     }
 
     @Override
