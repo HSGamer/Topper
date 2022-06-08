@@ -4,6 +4,7 @@ import me.hsgamer.hscore.bukkit.config.BukkitConfig;
 import me.hsgamer.topper.core.holder.DataHolder;
 import me.hsgamer.topper.core.storage.DataStorage;
 import me.hsgamer.topper.spigot.config.AutoSaveConfig;
+import me.hsgamer.topper.spigot.config.DatabaseConfig;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -20,7 +21,7 @@ public class YamlStorageSupplier implements Function<DataHolder<Double>, DataSto
 
     public YamlStorageSupplier(JavaPlugin plugin) {
         this.plugin = plugin;
-        baseFolder = new File(plugin.getDataFolder(), "top");
+        baseFolder = new File(plugin.getDataFolder(), DatabaseConfig.DATA_FOLDER.getValue());
     }
 
     @Override
