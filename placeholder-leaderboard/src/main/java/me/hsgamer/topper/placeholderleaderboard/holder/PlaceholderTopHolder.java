@@ -54,9 +54,4 @@ public class PlaceholderTopHolder extends NumberTopHolder {
         }
         return future;
     }
-
-    @Override
-    public void onRegister() {
-        super.onRegister();
-    }
 }
