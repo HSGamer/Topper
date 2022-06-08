@@ -36,4 +36,8 @@ public abstract class TaskAgent<R> implements Agent {
         }
         cancelTaskConsumer.accept(task);
     }
+
+    public R getTask() {
+        return task;
+    }
 }
