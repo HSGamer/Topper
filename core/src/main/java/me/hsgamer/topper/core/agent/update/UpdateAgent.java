@@ -59,9 +59,7 @@ public class UpdateAgent<T, R> extends TaskAgent<R> {
     }
 
     private void updateEntry(DataEntry<T> entry) {
-        if (entry.hasFlag(IS_UPDATING)) {
-            return;
-        }
+        if (entry.hasFlag(IS_UPDATING)) return;
         entry.addFlag(IS_UPDATING);
         updateFunction.apply(entry.getUuid()).thenAccept(optional -> {
             optional.ifPresent(entry::setValue);

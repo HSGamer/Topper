@@ -71,9 +71,7 @@ public class StorageAgent<T, R> extends TaskAgent<R> {
             List<UUID> list = new ArrayList<>();
             for (int i = 0; i < maxEntryPerCall; i++) {
                 UUID uuid = saveQueue.poll();
-                if (uuid == null) {
-                    break;
-                }
+                if (uuid == null) break;
                 DataEntry<T> entry = holder.getOrCreateEntry(uuid);
                 save(entry, false);
                 list.add(uuid);

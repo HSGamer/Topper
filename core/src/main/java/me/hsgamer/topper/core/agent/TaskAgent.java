@@ -31,9 +31,7 @@ public abstract class TaskAgent<R> implements Agent {
 
     @Override
     public void stop() {
-        if (task == null) {
-            return;
-        }
+        if (task == null) return;
         cancelTaskConsumer.accept(task);
     }
 
