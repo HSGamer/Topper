@@ -10,12 +10,4 @@ public class DataSnapshot<T> {
         this.uuid = uuid;
         this.value = value;
     }
-
-    public UUID getUuid() {
-        return uuid;
-    }
-
-    public T getValue() {
-        return value;
-    }
 }

@@ -27,13 +27,13 @@ public class SnapshotAgent<T, R> extends TaskAgent<R> {
             List<DataSnapshot<T>> list = holder.getEntryMap().entrySet().stream()
                     .filter(entry -> filters.parallelStream().allMatch(filter -> filter.test(entry.getKey())))
                     .map(entry -> new DataSnapshot<>(entry.getKey(), entry.getValue().getValue()))
-                    .sorted(Comparator.<DataSnapshot<T>, T>comparing(DataSnapshot::getValue, comparator).reversed())
+                    .sorted(Comparator.<DataSnapshot<T>, T>comparing(snapshot -> snapshot.value, comparator).reversed())
                     .collect(Collectors.toList());
             topSnapshot.set(list);
 
             Map<UUID, Integer> map = IntStream.range(0, list.size())
                     .boxed()
-                    .collect(Collectors.toMap(i -> list.get(i).getUuid(), i -> i));
+                    .collect(Collectors.toMap(i -> list.get(i).uuid, i -> i));
             indexMap.set(map);
         };
     }
@@ -64,7 +64,7 @@ public class SnapshotAgent<T, R> extends TaskAgent<R> {
     public Optional<DataEntry<T>> getEntryByIndex(int index) {
         List<DataSnapshot<T>> list = getTop();
         if (index < 0 || index >= list.size()) return Optional.empty();
-        UUID uuid = list.get(index).getUuid();
+        UUID uuid = list.get(index).uuid;
         return holder.getEntry(uuid);
     }
 
