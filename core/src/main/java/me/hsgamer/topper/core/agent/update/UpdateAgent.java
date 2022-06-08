@@ -8,23 +8,17 @@ import me.hsgamer.topper.core.holder.DataHolder;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class UpdateAgent<T, R> extends TaskAgent<R> {
     public static final EntryTempFlag IS_UPDATING = new EntryTempFlag("isUpdating");
     private final Queue<UUID> updateQueue = new ConcurrentLinkedQueue<>();
-    private final List<Consumer<DataEntry<T>>> updateListeners = new ArrayList<>();
     private final DataHolder<T> holder;
     private int maxEntryPerCall = 10;
     private Function<UUID, CompletableFuture<Optional<T>>> updateFunction;
 
     public UpdateAgent(DataHolder<T> holder) {
         this.holder = holder;
-    }
-
-    public void addUpdateListener(Consumer<DataEntry<T>> listener) {
-        updateListeners.add(listener);
     }
 
     public void setMaxEntryPerCall(int maxEntryPerCall) {
@@ -70,15 +64,8 @@ public class UpdateAgent<T, R> extends TaskAgent<R> {
         }
         entry.addFlag(IS_UPDATING);
         updateFunction.apply(entry.getUuid()).thenAccept(optional -> {
-            if (optional.isPresent()) {
-                entry.setValue(optional.get());
-                notifyUpdateEntry(entry);
-            }
+            optional.ifPresent(entry::setValue);
             entry.removeFlag(IS_UPDATING);
         });
-    }
-
-    private void notifyUpdateEntry(DataEntry<T> entry) {
-        updateListeners.forEach(listener -> listener.accept(entry));
     }
 }
