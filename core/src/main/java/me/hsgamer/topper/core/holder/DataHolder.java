@@ -100,4 +100,8 @@ public abstract class DataHolder<T> {
             return entry;
         });
     }
+
+    public final void removeEntry(UUID uuid) {
+        Optional.ofNullable(entryMap.remove(uuid)).ifPresent(this::notifyRemoveEntry);
+    }
 }
