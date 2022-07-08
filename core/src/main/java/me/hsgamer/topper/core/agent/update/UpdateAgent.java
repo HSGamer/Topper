@@ -12,6 +12,7 @@ import java.util.function.Function;
 
 public class UpdateAgent<T, R> extends TaskAgent<R> {
     public static final EntryTempFlag IS_UPDATING = new EntryTempFlag("isUpdating");
+    public static final EntryTempFlag IGNORE_UPDATE = new EntryTempFlag("ignoreUpdate");
     private final Queue<UUID> updateQueue = new ConcurrentLinkedQueue<>();
     private final DataHolder<T> holder;
     private int maxEntryPerCall = 10;
@@ -59,6 +60,7 @@ public class UpdateAgent<T, R> extends TaskAgent<R> {
     }
 
     private void updateEntry(DataEntry<T> entry) {
+        if (entry.hasFlag(IGNORE_UPDATE)) return;
         if (entry.hasFlag(IS_UPDATING)) return;
         entry.addFlag(IS_UPDATING);
         updateFunction.apply(entry.getUuid()).thenAccept(optional -> {
