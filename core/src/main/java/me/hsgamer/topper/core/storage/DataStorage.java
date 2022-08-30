@@ -17,7 +17,7 @@ public abstract class DataStorage<T> {
 
     public abstract CompletableFuture<Map<UUID, T>> load();
 
-    public abstract CompletableFuture<Void> save(UUID uuid, T value, boolean onUnregister);
+    public abstract CompletableFuture<Void> save(UUID uuid, T value, boolean urgent);
 
     public DataHolder<T> getHolder() {
         return holder;

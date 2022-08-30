@@ -60,7 +60,7 @@ public abstract class SqlStorageSupplier implements Function<DataHolder<Double>,
             }
 
             @Override
-            public CompletableFuture<Void> save(UUID uuid, Double value, boolean onUnregister) {
+            public CompletableFuture<Void> save(UUID uuid, Double value, boolean urgent) {
                 String name = holder.getName();
                 Runnable runnable = () -> {
                     Connection connection = null;
@@ -91,7 +91,7 @@ public abstract class SqlStorageSupplier implements Function<DataHolder<Double>,
                         }
                     }
                 };
-                if (onUnregister) {
+                if (urgent) {
                     runnable.run();
                     return CompletableFuture.completedFuture(null);
                 } else {

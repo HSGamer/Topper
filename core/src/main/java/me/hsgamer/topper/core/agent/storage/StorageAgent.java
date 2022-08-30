@@ -23,25 +23,26 @@ public class StorageAgent<T, R> extends TaskAgent<R> {
     private final DataHolder<T> holder;
     private final DataStorage<T> storage;
     private int maxEntryPerCall = 10;
+    private boolean urgentSave = false;
 
     public StorageAgent(DataStorage<T> storage) {
         this.holder = storage.getHolder();
         this.storage = storage;
     }
 
-    private void save(DataEntry<T> entry, boolean onUnregister) {
+    private void save(DataEntry<T> entry) {
         if (entry.hasFlag(IS_SAVING)) return;
         if (!entry.hasFlag(NEED_SAVING)) return;
         entry.removeFlag(NEED_SAVING);
         entry.addFlag(IS_SAVING);
-        storage.save(entry.getUuid(), entry.getValue(), onUnregister).whenComplete((result, throwable) -> entry.removeFlag(IS_SAVING));
+        storage.save(entry.getUuid(), entry.getValue(), urgentSave).whenComplete((result, throwable) -> entry.removeFlag(IS_SAVING));
     }
 
     @Override
     public void start() {
         holder.addCreateListener(entry -> saveQueue.add(entry.getUuid()));
         holder.addRemoveListener(entry -> {
-            save(entry, true);
+            save(entry);
             saveQueue.remove(entry.getUuid());
         });
         holder.addUpdateListener(entry -> entry.addFlag(NEED_SAVING));
@@ -66,6 +67,11 @@ public class StorageAgent<T, R> extends TaskAgent<R> {
     }
 
     @Override
+    public void beforeStop() {
+        urgentSave = true;
+    }
+
+    @Override
     protected Runnable getRunnable() {
         return () -> {
             List<UUID> list = new ArrayList<>();
@@ -73,7 +79,7 @@ public class StorageAgent<T, R> extends TaskAgent<R> {
                 UUID uuid = saveQueue.poll();
                 if (uuid == null) break;
                 DataEntry<T> entry = holder.getOrCreateEntry(uuid);
-                save(entry, false);
+                save(entry);
                 list.add(uuid);
             }
             if (!list.isEmpty()) {

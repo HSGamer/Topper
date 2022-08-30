@@ -4,4 +4,8 @@ public interface Agent {
     void start();
 
     void stop();
+
+    default void beforeStop() {
+        // EMPTY
+    }
 }

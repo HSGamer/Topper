@@ -44,7 +44,7 @@ public class YamlStorageSupplier implements Function<DataHolder<Double>, DataSto
             }
 
             @Override
-            public CompletableFuture<Void> save(UUID uuid, Double value, boolean onUnregister) {
+            public CompletableFuture<Void> save(UUID uuid, Double value, boolean urgent) {
                 CompletableFuture<Void> future = new CompletableFuture<>();
                 BukkitRunnable runnable = new BukkitRunnable() {
                     @Override
@@ -53,7 +53,7 @@ public class YamlStorageSupplier implements Function<DataHolder<Double>, DataSto
                         future.complete(null);
                     }
                 };
-                if (onUnregister) {
+                if (urgent) {
                     runnable.run();
                 } else {
                     runnable.runTask(plugin);

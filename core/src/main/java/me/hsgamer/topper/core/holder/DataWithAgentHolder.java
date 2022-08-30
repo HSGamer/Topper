@@ -23,6 +23,7 @@ public abstract class DataWithAgentHolder<T> extends DataHolder<T> {
 
     @Override
     public void onUnregister() {
+        agentList.forEach(Agent::beforeStop);
         super.onUnregister();
         agentList.forEach(Agent::stop);
         agentList.clear();
