@@ -38,11 +38,9 @@ public class TopManager {
     }
 
     public void addTopHolder(String key, NumberTopHolder topHolder) {
-        if (topHolders.containsKey(key)) {
-            topHolders.get(key).unregister();
-        }
         topHolder.register();
-        topHolders.put(key, topHolder);
+        NumberTopHolder oldHolder = topHolders.put(key, topHolder);
+        if (oldHolder != null) oldHolder.unregister();
     }
 
     public Function<DataHolder<Double>, DataStorage<Double>> getStorageSupplier() {

@@ -1,6 +1,5 @@
 package me.hsgamer.topper.placeholderleaderboard.holder;
 
-import me.hsgamer.topper.core.agent.Agent;
 import me.hsgamer.topper.core.agent.snapshot.SnapshotAgent;
 import me.hsgamer.topper.core.agent.storage.StorageAgent;
 import me.hsgamer.topper.core.agent.update.UpdateAgent;
@@ -10,8 +9,6 @@ import me.hsgamer.topper.placeholderleaderboard.config.MainConfig;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -34,6 +31,7 @@ public abstract class NumberTopHolder extends DataWithAgentHolder<Double> {
             return instance.getServer().getScheduler().runTaskTimerAsynchronously(instance, runnable, updateDelay, updateDelay);
         });
         updateAgent.setCancelTaskConsumer(BukkitTask::cancel);
+        addAgent(updateAgent);
 
         this.storageAgent = new StorageAgent<>(instance.getTopManager().getStorageSupplier().apply(this));
         storageAgent.setMaxEntryPerCall(MainConfig.TASK_SAVE_ENTRY_PER_TICK.getValue());
@@ -51,11 +49,13 @@ public abstract class NumberTopHolder extends DataWithAgentHolder<Double> {
                 });
             }
         });
+        addAgent(storageAgent);
 
         this.snapshotAgent = new SnapshotAgent<>(this);
         snapshotAgent.setRunTaskFunction(runnable -> instance.getServer().getScheduler().runTaskTimerAsynchronously(instance, runnable, 20L, 20L));
         snapshotAgent.setCancelTaskConsumer(BukkitTask::cancel);
         snapshotAgent.setComparator(Double::compare);
+        addAgent(snapshotAgent);
     }
 
     @Override
@@ -64,11 +64,6 @@ public abstract class NumberTopHolder extends DataWithAgentHolder<Double> {
     }
 
     protected abstract CompletableFuture<Optional<Double>> updateNewValue(UUID uuid);
-
-    @Override
-    public List<Agent> getAgentList() {
-        return Arrays.asList(updateAgent, storageAgent, snapshotAgent);
-    }
 
     public UpdateAgent<Double, BukkitTask> getUpdateAgent() {
         return updateAgent;

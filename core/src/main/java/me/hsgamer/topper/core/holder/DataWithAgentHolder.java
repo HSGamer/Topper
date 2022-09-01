@@ -5,27 +5,20 @@ import me.hsgamer.topper.core.agent.Agent;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class DataWithAgentHolder<T> extends DataHolder<T> {
+public class DataWithAgentHolder<T> extends DataHolder<T> {
     private final List<Agent> agentList = new ArrayList<>();
 
     protected DataWithAgentHolder(String name) {
         super(name);
+        addRegisterListener(() -> agentList.forEach(Agent::start));
+        addBeforeUnregisterListener(() -> agentList.forEach(Agent::beforeStop));
+        addUnregisterListener(() -> {
+            agentList.forEach(Agent::stop);
+            agentList.clear();
+        });
     }
 
-    public abstract List<Agent> getAgentList();
-
-    @Override
-    public void onRegister() {
-        super.onRegister();
-        agentList.addAll(getAgentList());
-        agentList.forEach(Agent::start);
-    }
-
-    @Override
-    public void onUnregister() {
-        agentList.forEach(Agent::beforeStop);
-        super.onUnregister();
-        agentList.forEach(Agent::stop);
-        agentList.clear();
+    public void addAgent(Agent agent) {
+        agentList.add(agent);
     }
 }

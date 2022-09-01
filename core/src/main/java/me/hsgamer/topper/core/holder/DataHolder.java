@@ -6,35 +6,18 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
-public abstract class DataHolder<T> {
+public class DataHolder<T> {
     private final Map<UUID, DataEntry<T>> entryMap = new ConcurrentHashMap<>();
     private final List<Consumer<DataEntry<T>>> removeListeners = new ArrayList<>();
     private final List<Consumer<DataEntry<T>>> createListeners = new ArrayList<>();
     private final List<Consumer<DataEntry<T>>> updateListeners = new ArrayList<>();
+    private final List<Runnable> registerListeners = new ArrayList<>();
+    private final List<Runnable> beforeUnregisterListeners = new ArrayList<>();
+    private final List<Runnable> unregisterListeners = new ArrayList<>();
     private final String name;
 
     protected DataHolder(String name) {
         this.name = name;
-    }
-
-    public void onCreateEntry(DataEntry<T> entry) {
-        // EMPTY
-    }
-
-    public void onRemoveEntry(DataEntry<T> entry) {
-        // EMPTY
-    }
-
-    public void onUpdateEntry(DataEntry<T> entry) {
-        // EMPTY
-    }
-
-    public void onRegister() {
-        // EMPTY
-    }
-
-    public void onUnregister() {
-        // EMPTY
     }
 
     public T getDefaultValue() {
@@ -42,17 +25,14 @@ public abstract class DataHolder<T> {
     }
 
     public final void notifyCreateEntry(DataEntry<T> entry) {
-        onCreateEntry(entry);
         createListeners.forEach(listener -> listener.accept(entry));
     }
 
     public final void notifyRemoveEntry(DataEntry<T> entry) {
-        onRemoveEntry(entry);
         removeListeners.forEach(listener -> listener.accept(entry));
     }
 
     public final void notifyUpdateEntry(DataEntry<T> entry) {
-        onUpdateEntry(entry);
         updateListeners.forEach(listener -> listener.accept(entry));
     }
 
@@ -68,17 +48,36 @@ public abstract class DataHolder<T> {
         updateListeners.add(listener);
     }
 
+    public final void addRegisterListener(Runnable listener) {
+        registerListeners.add(listener);
+    }
+
+    public final void addBeforeUnregisterListener(Runnable listener) {
+        beforeUnregisterListeners.add(listener);
+    }
+
+    public final void addUnregisterListener(Runnable listener) {
+        unregisterListeners.add(listener);
+    }
+
     public final void register() {
-        onRegister();
+        registerListeners.forEach(Runnable::run);
     }
 
     public final void unregister() {
+        beforeUnregisterListeners.forEach(Runnable::run);
+
         entryMap.values().forEach(this::notifyRemoveEntry);
-        onUnregister();
         entryMap.clear();
+
+        unregisterListeners.forEach(Runnable::run);
+
         createListeners.clear();
         removeListeners.clear();
         updateListeners.clear();
+        registerListeners.clear();
+        beforeUnregisterListeners.clear();
+        unregisterListeners.clear();
     }
 
     public final String getName() {
