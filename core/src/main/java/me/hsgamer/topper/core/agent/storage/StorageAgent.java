@@ -24,6 +24,8 @@ public class StorageAgent<T, R> extends TaskAgent<R> {
     private final DataStorage<T> storage;
     private int maxEntryPerCall = 10;
     private boolean urgentSave = false;
+    private boolean loadOnCreate = false;
+    private boolean urgentLoad = true;
 
     public StorageAgent(DataStorage<T> storage) {
         this.holder = storage.getHolder();
@@ -40,7 +42,18 @@ public class StorageAgent<T, R> extends TaskAgent<R> {
 
     @Override
     public void start() {
-        holder.addCreateListener(entry -> saveQueue.add(entry.getUuid()));
+        holder.addCreateListener(entry -> {
+            saveQueue.add(entry.getUuid());
+            if (loadOnCreate) {
+                storage.load(entry.getUuid(), urgentLoad).whenComplete((result, throwable) -> {
+                    if (throwable != null) {
+                        LOGGER.log(Level.WARNING, "Failed to load " + entry.getUuid(), throwable);
+                    } else {
+                        result.ifPresent(entry::setValue);
+                    }
+                });
+            }
+        });
         holder.addRemoveListener(entry -> {
             save(entry);
             saveQueue.remove(entry.getUuid());
@@ -94,5 +107,13 @@ public class StorageAgent<T, R> extends TaskAgent<R> {
 
     public void addOnLoadListener(Runnable runnable) {
         onLoadListeners.add(runnable);
+    }
+
+    public void setUrgentLoad(boolean urgentLoad) {
+        this.urgentLoad = urgentLoad;
+    }
+
+    public void setLoadOnCreate(boolean loadOnCreate) {
+        this.loadOnCreate = loadOnCreate;
     }
 }

@@ -8,9 +8,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
@@ -51,6 +49,32 @@ public class YamlStorageSupplier implements Function<DataHolder<Double>, DataSto
                     public void run() {
                         config.set(uuid.toString(), value);
                         future.complete(null);
+                    }
+                };
+                if (urgent) {
+                    runnable.run();
+                } else {
+                    runnable.runTask(plugin);
+                }
+                return future;
+            }
+
+            @Override
+            public CompletableFuture<Optional<Double>> load(UUID uuid, boolean urgent) {
+                CompletableFuture<Optional<Double>> future = new CompletableFuture<>();
+                BukkitRunnable runnable = new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        Optional<Double> optional = Optional.ofNullable(config.get(uuid.toString()))
+                                .map(Objects::toString)
+                                .map(s -> {
+                                    try {
+                                        return Double.parseDouble(s);
+                                    } catch (Exception e) {
+                                        return null;
+                                    }
+                                });
+                        future.complete(optional);
                     }
                 };
                 if (urgent) {

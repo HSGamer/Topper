@@ -7,10 +7,7 @@ import me.hsgamer.topper.core.storage.DataStorage;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.logging.Level;
@@ -97,6 +94,28 @@ public abstract class SqlStorageSupplier implements Function<DataHolder<Double>,
                 } else {
                     return CompletableFuture.runAsync(runnable);
                 }
+            }
+
+            @Override
+            public CompletableFuture<Optional<Double>> load(UUID uuid, boolean urgent) {
+                String name = holder.getName();
+                return CompletableFuture.supplyAsync(() -> {
+                    Connection connection = null;
+                    try {
+                        connection = getAndCreateTable(name);
+                        return StatementBuilder.create(connection)
+                                .setStatement("SELECT * FROM `" + name + "` WHERE `uuid` = ?;")
+                                .addValues(uuid.toString())
+                                .querySafe(resultSet -> resultSet.next() ? resultSet.getDouble("value") : 0D);
+                    } catch (SQLException e) {
+                        LOGGER.log(Level.SEVERE, "Failed to load top entry", e);
+                        return Optional.empty();
+                    } finally {
+                        if (connection != null) {
+                            flushConnection(connection);
+                        }
+                    }
+                });
             }
         };
     }
