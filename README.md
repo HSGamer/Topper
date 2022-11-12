@@ -1,10 +1,10 @@
 # Topper
 
-A project / framework to handle leaderboards
+A project / framework to handle single-value data tables.
 
 ## Spigot
 
-### Feature
+### Leaderboard
 
 - Lightweight
 - Simple
