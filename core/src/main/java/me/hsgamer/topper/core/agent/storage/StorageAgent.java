@@ -40,18 +40,26 @@ public class StorageAgent<T, R> extends TaskAgent<R> {
         storage.save(entry.getUuid(), entry.getValue(), urgentSave).whenComplete((result, throwable) -> entry.removeFlag(IS_SAVING));
     }
 
+    private void load(DataEntry<T> entry) {
+        storage.load(entry.getUuid(), urgentLoad).whenComplete((result, throwable) -> {
+            if (throwable != null) {
+                LOGGER.log(Level.WARNING, throwable, () -> "Failed to load " + entry.getUuid());
+            } else {
+                result.ifPresent(entry::setValue);
+            }
+        });
+    }
+
+    public void loadIfExist(UUID uuid) {
+        holder.getEntry(uuid).ifPresent(this::load);
+    }
+
     @Override
     public void start() {
         holder.addCreateListener(entry -> {
             saveQueue.add(entry.getUuid());
             if (loadOnCreate) {
-                storage.load(entry.getUuid(), urgentLoad).whenComplete((result, throwable) -> {
-                    if (throwable != null) {
-                        LOGGER.log(Level.WARNING, "Failed to load " + entry.getUuid(), throwable);
-                    } else {
-                        result.ifPresent(entry::setValue);
-                    }
-                });
+                load(entry);
             }
         });
         holder.addRemoveListener(entry -> {
