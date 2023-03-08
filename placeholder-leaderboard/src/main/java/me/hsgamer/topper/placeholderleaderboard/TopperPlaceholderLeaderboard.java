@@ -17,6 +17,8 @@ import me.hsgamer.topper.placeholderleaderboard.manager.TopManager;
 import me.hsgamer.topper.spigot.config.DatabaseConfig;
 import org.bstats.bukkit.Metrics;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.logging.Level;
 
 public class TopperPlaceholderLeaderboard extends BasePlugin {
@@ -60,7 +62,6 @@ public class TopperPlaceholderLeaderboard extends BasePlugin {
 
     @Override
     public void enable() {
-        Permissions.register();
         topManager.register();
         registerListener(new JoinListener(this));
         topPlaceholderExpansion.register();
@@ -86,7 +87,11 @@ public class TopperPlaceholderLeaderboard extends BasePlugin {
         skullManager.unregister();
         topPlaceholderExpansion.unregister();
         topManager.unregister();
-        Permissions.unregister();
+    }
+
+    @Override
+    protected List<Class<?>> getPermissionClasses() {
+        return Collections.singletonList(Permissions.class);
     }
 
     public TopManager getTopManager() {

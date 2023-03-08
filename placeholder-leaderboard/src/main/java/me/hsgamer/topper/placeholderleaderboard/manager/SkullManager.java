@@ -79,6 +79,6 @@ public class SkullManager extends BlockManager {
 
     @Override
     protected Permission getBreakPermission() {
-        return Permissions.SIGN_BREAK;
+        return Permissions.SKULL_BREAK;
     }
 }

@@ -1,6 +1,5 @@
 package me.hsgamer.topper.placeholderleaderboard;
 
-import org.bukkit.Bukkit;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 
@@ -14,23 +13,5 @@ public final class Permissions {
 
     private Permissions() {
         // EMPTY
-    }
-
-    public static void register() {
-        Bukkit.getPluginManager().addPermission(SIGN_BREAK);
-        Bukkit.getPluginManager().addPermission(SIGN);
-        Bukkit.getPluginManager().addPermission(SKULL_BREAK);
-        Bukkit.getPluginManager().addPermission(SKULL);
-        Bukkit.getPluginManager().addPermission(TOP);
-        Bukkit.getPluginManager().addPermission(RELOAD);
-    }
-
-    public static void unregister() {
-        Bukkit.getPluginManager().removePermission(SIGN_BREAK);
-        Bukkit.getPluginManager().removePermission(SIGN);
-        Bukkit.getPluginManager().removePermission(SKULL_BREAK);
-        Bukkit.getPluginManager().removePermission(SKULL);
-        Bukkit.getPluginManager().removePermission(TOP);
-        Bukkit.getPluginManager().removePermission(RELOAD);
     }
 }
