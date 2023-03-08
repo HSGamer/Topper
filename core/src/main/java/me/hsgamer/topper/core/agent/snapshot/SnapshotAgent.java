@@ -9,6 +9,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class SnapshotAgent<T, R> extends TaskAgent<R> {
     private final AtomicReference<List<DataSnapshot<T>>> topSnapshot = new AtomicReference<>(Collections.emptyList());
@@ -24,11 +25,13 @@ public class SnapshotAgent<T, R> extends TaskAgent<R> {
     @Override
     protected Runnable getRunnable() {
         return () -> {
-            List<DataSnapshot<T>> list = holder.getEntryMap().entrySet().stream()
+            Stream<DataSnapshot<T>> stream = holder.getEntryMap().entrySet().stream()
                     .filter(entry -> filters.parallelStream().allMatch(filter -> filter.test(entry.getKey())))
-                    .map(entry -> new DataSnapshot<>(entry.getKey(), entry.getValue().getValue()))
-                    .sorted(Comparator.<DataSnapshot<T>, T>comparing(snapshot -> snapshot.value, comparator).reversed())
-                    .collect(Collectors.toList());
+                    .map(entry -> new DataSnapshot<>(entry.getKey(), entry.getValue().getValue()));
+            if (comparator != null) {
+                stream = stream.sorted(Comparator.<DataSnapshot<T>, T>comparing(snapshot -> snapshot.value, comparator).reversed());
+            }
+            List<DataSnapshot<T>> list = stream.collect(Collectors.toList());
             topSnapshot.set(list);
 
             Map<UUID, Integer> map = IntStream.range(0, list.size())
@@ -39,30 +42,22 @@ public class SnapshotAgent<T, R> extends TaskAgent<R> {
     }
 
     @Override
-    public void start() {
-        if (comparator == null) {
-            throw new IllegalStateException("Comparator is null");
-        }
-        super.start();
-    }
-
-    @Override
     public void stop() {
         super.stop();
         topSnapshot.set(Collections.emptyList());
         indexMap.set(Collections.emptyMap());
     }
 
-    public List<DataSnapshot<T>> getTop() {
+    public List<DataSnapshot<T>> getSnapshot() {
         return topSnapshot.get();
     }
 
-    public int getTopIndex(UUID uuid) {
+    public int getSnapshotIndex(UUID uuid) {
         return indexMap.get().getOrDefault(uuid, -1);
     }
 
     public Optional<DataEntry<T>> getEntryByIndex(int index) {
-        List<DataSnapshot<T>> list = getTop();
+        List<DataSnapshot<T>> list = getSnapshot();
         if (index < 0 || index >= list.size()) return Optional.empty();
         UUID uuid = list.get(index).uuid;
         return holder.getEntry(uuid);

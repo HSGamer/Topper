@@ -80,7 +80,7 @@ public class TopPlaceholderExpansion extends PlaceholderExpansion {
                         .orElseGet(MainConfig.NULL_DISPLAY_VALUE::getValue);
             }
             case "top_rank":
-                return Integer.toString(holder.getSnapshotAgent().getTopIndex(player.getUniqueId()) + 1);
+                return Integer.toString(holder.getSnapshotAgent().getSnapshotIndex(player.getUniqueId()) + 1);
             case "value":
             case "value_raw":
                 return holder.getEntry(player.getUniqueId())
