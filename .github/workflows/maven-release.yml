@@ -22,5 +22,4 @@ jobs:
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           prerelease: false
-          files: |
-            ./placeholder-leaderboard/target/topper*.jar
+          files: "**/topper*.jar"
