@@ -6,7 +6,7 @@ import me.hsgamer.topper.placeholderleaderboard.TopperPlaceholderLeaderboard;
 import me.hsgamer.topper.placeholderleaderboard.config.MainConfig;
 import me.hsgamer.topper.placeholderleaderboard.holder.NumberTopHolder;
 import me.hsgamer.topper.placeholderleaderboard.holder.PlaceholderTopHolder;
-import me.hsgamer.topper.spigot.builder.DataStorageBuilder;
+import me.hsgamer.topper.spigot.builder.NumberStorageBuilder;
 import me.hsgamer.topper.spigot.formatter.NumberFormatter;
 
 import java.util.*;
@@ -24,7 +24,7 @@ public class TopManager {
     }
 
     public void register() {
-        storageSupplier = DataStorageBuilder.buildSupplier(MainConfig.STORAGE_TYPE.getValue(), instance);
+        storageSupplier = NumberStorageBuilder.buildSupplier(MainConfig.STORAGE_TYPE.getValue(), instance);
         NumberFormatter.setNullDisplayName(MainConfig.NULL_DISPLAY_NAME::getValue);
         NumberFormatter.setNullDisplayValue(MainConfig.NULL_DISPLAY_VALUE::getValue);
         MainConfig.PLACEHOLDERS.getValue().forEach((key, value) -> addTopHolder(key, new PlaceholderTopHolder(instance, key, value)));

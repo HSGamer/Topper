@@ -8,18 +8,23 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
-public class YamlStorageSupplier implements Function<DataHolder<Double>, DataStorage<Double>> {
+public class YamlStorageSupplier<T> implements Function<DataHolder<T>, DataStorage<T>> {
     private static String baseFolderPath = "top";
     private final JavaPlugin plugin;
     private final File baseFolder;
+    private final Converter<T> converter;
 
-    public YamlStorageSupplier(JavaPlugin plugin) {
+    public YamlStorageSupplier(JavaPlugin plugin, Converter<T> converter) {
         this.plugin = plugin;
         baseFolder = new File(plugin.getDataFolder(), baseFolderPath);
+        this.converter = converter;
     }
 
     public static void setBaseFolderPath(String baseFolderPath) {
@@ -27,27 +32,32 @@ public class YamlStorageSupplier implements Function<DataHolder<Double>, DataSto
     }
 
     @Override
-    public DataStorage<Double> apply(DataHolder<Double> holder) {
-        return new DataStorage<Double>(holder) {
+    public DataStorage<T> apply(DataHolder<T> holder) {
+        return new DataStorage<T>(holder) {
             private final AutoSaveConfig config = new AutoSaveConfig(plugin, new BukkitConfig(new File(baseFolder, holder.getName() + ".yml")));
 
             @Override
-            public CompletableFuture<Map<UUID, Double>> load() {
+            public CompletableFuture<Map<UUID, T>> load() {
                 Map<String, Object> values = config.getValues(false);
                 return CompletableFuture.supplyAsync(() -> {
-                    Map<UUID, Double> map = new HashMap<>();
-                    values.forEach((uuid, value) -> map.put(UUID.fromString(uuid), Double.parseDouble(String.valueOf(value))));
+                    Map<UUID, T> map = new HashMap<>();
+                    values.forEach((uuid, value) -> {
+                        T finalValue = converter.toValue(value);
+                        if (finalValue != null) {
+                            map.put(UUID.fromString(uuid), finalValue);
+                        }
+                    });
                     return map;
                 });
             }
 
             @Override
-            public CompletableFuture<Void> save(UUID uuid, Double value, boolean urgent) {
+            public CompletableFuture<Void> save(UUID uuid, T value, boolean urgent) {
                 CompletableFuture<Void> future = new CompletableFuture<>();
                 BukkitRunnable runnable = new BukkitRunnable() {
                     @Override
                     public void run() {
-                        config.set(uuid.toString(), value);
+                        config.set(uuid.toString(), converter.toRaw(value));
                         future.complete(null);
                     }
                 };
@@ -60,20 +70,12 @@ public class YamlStorageSupplier implements Function<DataHolder<Double>, DataSto
             }
 
             @Override
-            public CompletableFuture<Optional<Double>> load(UUID uuid, boolean urgent) {
-                CompletableFuture<Optional<Double>> future = new CompletableFuture<>();
+            public CompletableFuture<Optional<T>> load(UUID uuid, boolean urgent) {
+                CompletableFuture<Optional<T>> future = new CompletableFuture<>();
                 BukkitRunnable runnable = new BukkitRunnable() {
                     @Override
                     public void run() {
-                        Optional<Double> optional = Optional.ofNullable(config.get(uuid.toString()))
-                                .map(Objects::toString)
-                                .map(s -> {
-                                    try {
-                                        return Double.parseDouble(s);
-                                    } catch (Exception e) {
-                                        return null;
-                                    }
-                                });
+                        Optional<T> optional = Optional.ofNullable(config.get(uuid.toString())).map(converter::toValue);
                         future.complete(optional);
                     }
                 };
@@ -95,5 +97,11 @@ public class YamlStorageSupplier implements Function<DataHolder<Double>, DataSto
                 config.finalSave();
             }
         };
+    }
+
+    public interface Converter<T> {
+        T toValue(Object object);
+
+        Object toRaw(T object);
     }
 }

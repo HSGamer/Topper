@@ -10,11 +10,12 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.logging.Level;
 
-public class MySqlStorageSupplier extends SqlStorageSupplier {
+public class MySqlStorageSupplier<T> extends SqlStorageSupplier<T> {
     private final JavaPlugin plugin;
     private final JavaSqlClient client;
 
-    public MySqlStorageSupplier(JavaPlugin plugin) {
+    public MySqlStorageSupplier(JavaPlugin plugin, Converter<T> converter) {
+        super(converter);
         this.plugin = plugin;
         Setting setting = Setting.create()
                 .setDatabaseName(DatabaseConfig.DATABASE.getValue())
