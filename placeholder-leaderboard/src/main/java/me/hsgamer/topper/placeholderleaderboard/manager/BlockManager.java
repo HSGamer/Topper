@@ -7,7 +7,7 @@ import me.hsgamer.topper.placeholderleaderboard.TopperPlaceholderLeaderboard;
 import me.hsgamer.topper.placeholderleaderboard.holder.NumberTopHolder;
 import me.hsgamer.topper.spigot.block.BlockEntry;
 import me.hsgamer.topper.spigot.config.path.BlockEntryConfigPath;
-import me.hsgamer.topper.spigot.formatter.DataFormatter;
+import me.hsgamer.topper.spigot.formatter.NumberFormatter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -43,7 +43,7 @@ public abstract class BlockManager implements Listener {
 
     protected abstract String getEntriesPath();
 
-    protected abstract void updateBlock(Block block, UUID uuid, Double value, int index, DataFormatter formatter);
+    protected abstract void updateBlock(Block block, UUID uuid, Double value, int index, NumberFormatter formatter);
 
     protected abstract String getBreakMessage();
 
@@ -119,7 +119,7 @@ public abstract class BlockManager implements Listener {
         Optional<NumberTopHolder> optional = instance.getTopManager().getTopHolder(entry.topHolderName);
         if (!optional.isPresent()) return;
         NumberTopHolder topHolder = optional.get();
-        DataFormatter formatter = instance.getTopManager().getTopFormatter(entry.topHolderName);
+        NumberFormatter formatter = instance.getTopManager().getTopFormatter(entry.topHolderName);
         Optional<DataEntry<Double>> optionalEntry = topHolder.getSnapshotAgent().getEntryByIndex(entry.index);
         UUID uuid = optionalEntry.map(DataEntry::getUuid).orElse(null);
         Double value = optionalEntry.map(DataEntry::getValue).orElse(null);

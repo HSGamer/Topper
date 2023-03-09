@@ -7,15 +7,15 @@ import me.hsgamer.topper.placeholderleaderboard.config.MainConfig;
 import me.hsgamer.topper.placeholderleaderboard.holder.NumberTopHolder;
 import me.hsgamer.topper.placeholderleaderboard.holder.PlaceholderTopHolder;
 import me.hsgamer.topper.spigot.builder.DataStorageBuilder;
-import me.hsgamer.topper.spigot.formatter.DataFormatter;
+import me.hsgamer.topper.spigot.formatter.NumberFormatter;
 
 import java.util.*;
 import java.util.function.Function;
 
 public class TopManager {
     private final Map<String, NumberTopHolder> topHolders = new HashMap<>();
-    private final Map<String, DataFormatter> topFormatters = new HashMap<>();
-    private final DataFormatter defaultFormatter = new DataFormatter();
+    private final Map<String, NumberFormatter> topFormatters = new HashMap<>();
+    private final NumberFormatter defaultFormatter = new NumberFormatter();
     private final TopperPlaceholderLeaderboard instance;
     private Function<DataHolder<Double>, DataStorage<Double>> storageSupplier;
 
@@ -25,8 +25,8 @@ public class TopManager {
 
     public void register() {
         storageSupplier = DataStorageBuilder.buildSupplier(MainConfig.STORAGE_TYPE.getValue(), instance);
-        DataFormatter.setNullDisplayName(MainConfig.NULL_DISPLAY_NAME::getValue);
-        DataFormatter.setNullDisplayValue(MainConfig.NULL_DISPLAY_VALUE::getValue);
+        NumberFormatter.setNullDisplayName(MainConfig.NULL_DISPLAY_NAME::getValue);
+        NumberFormatter.setNullDisplayValue(MainConfig.NULL_DISPLAY_VALUE::getValue);
         MainConfig.PLACEHOLDERS.getValue().forEach((key, value) -> addTopHolder(key, new PlaceholderTopHolder(instance, key, value)));
         topFormatters.putAll(MainConfig.FORMATTERS.getValue());
     }
@@ -55,7 +55,7 @@ public class TopManager {
         return Collections.unmodifiableList(new ArrayList<>(topHolders.keySet()));
     }
 
-    public DataFormatter getTopFormatter(String name) {
+    public NumberFormatter getTopFormatter(String name) {
         return topFormatters.getOrDefault(name, defaultFormatter);
     }
 

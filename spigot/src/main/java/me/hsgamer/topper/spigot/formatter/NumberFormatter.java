@@ -13,11 +13,11 @@ import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
-public class DataFormatter {
+public class NumberFormatter {
     private static Supplier<String> nullDisplayUuid = () -> "";
     private static Supplier<String> nullDisplayName = () -> "";
     private static Supplier<String> nullDisplayValue = () -> "";
-    private final Map<String, BiFunction<UUID, Double, String>> replacers = new HashMap<>();
+    private final Map<String, BiFunction<UUID, Number, String>> replacers = new HashMap<>();
     private String displayName = "";
     private String prefix = "";
     private String suffix = "";
@@ -27,7 +27,7 @@ public class DataFormatter {
     private boolean showGroupSeparator = false;
     private DecimalFormat format;
 
-    public DataFormatter(Map<String, Object> map) {
+    public NumberFormatter(Map<String, Object> map) {
         Optional.ofNullable(map.get("display-name")).ifPresent(s -> displayName = String.valueOf(s));
         Optional.ofNullable(map.get("prefix")).ifPresent(s -> prefix = String.valueOf(s));
         Optional.ofNullable(map.get("suffix")).ifPresent(s -> suffix = String.valueOf(s));
@@ -37,23 +37,23 @@ public class DataFormatter {
         Optional.ofNullable(map.get("show-group-separator")).ifPresent(s -> showGroupSeparator = Boolean.parseBoolean(String.valueOf(s)));
     }
 
-    public DataFormatter() {
+    public NumberFormatter() {
         // EMPTY
     }
 
     public static void setNullDisplayUuid(Supplier<String> nullDisplayUuid) {
-        DataFormatter.nullDisplayUuid = nullDisplayUuid;
+        NumberFormatter.nullDisplayUuid = nullDisplayUuid;
     }
 
     public static void setNullDisplayName(Supplier<String> nullDisplayName) {
-        DataFormatter.nullDisplayName = nullDisplayName;
+        NumberFormatter.nullDisplayName = nullDisplayName;
     }
 
     public static void setNullDisplayValue(Supplier<String> nullDisplayValue) {
-        DataFormatter.nullDisplayValue = nullDisplayValue;
+        NumberFormatter.nullDisplayValue = nullDisplayValue;
     }
 
-    public void addReplacer(String key, BiFunction<UUID, Double, String> replacer) {
+    public void addReplacer(String key, BiFunction<UUID, Number, String> replacer) {
         replacers.put(key, replacer);
     }
 
@@ -131,11 +131,11 @@ public class DataFormatter {
         return format;
     }
 
-    public String format(double value) {
+    public String format(Number value) {
         return getFormat().format(value);
     }
 
-    public String replace(String text, UUID uuid, Double value) {
+    public String replace(String text, UUID uuid, Number value) {
         String replaced = text.replace("{prefix}", prefix)
                 .replace("{suffix}", suffix)
                 .replace("{uuid}", Optional.ofNullable(uuid).map(UUID::toString).orElseGet(nullDisplayUuid))
@@ -143,7 +143,7 @@ public class DataFormatter {
                 .replace("{name}", Optional.ofNullable(uuid).map(Bukkit::getOfflinePlayer).map(OfflinePlayer::getName).orElseGet(nullDisplayName))
                 .replace("{value_raw}", Optional.ofNullable(value).map(String::valueOf).orElseGet(nullDisplayValue))
                 .replace("{display_name}", displayName);
-        for (Map.Entry<String, BiFunction<UUID, Double, String>> entry : replacers.entrySet()) {
+        for (Map.Entry<String, BiFunction<UUID, Number, String>> entry : replacers.entrySet()) {
             replaced = replaced.replace("{" + entry.getKey() + "}", entry.getValue().apply(uuid, value));
         }
         return replaced;

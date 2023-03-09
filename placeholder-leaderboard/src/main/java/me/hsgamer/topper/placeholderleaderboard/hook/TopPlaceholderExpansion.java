@@ -5,7 +5,7 @@ import me.hsgamer.topper.core.entry.DataEntry;
 import me.hsgamer.topper.placeholderleaderboard.TopperPlaceholderLeaderboard;
 import me.hsgamer.topper.placeholderleaderboard.config.MainConfig;
 import me.hsgamer.topper.placeholderleaderboard.holder.NumberTopHolder;
-import me.hsgamer.topper.spigot.formatter.DataFormatter;
+import me.hsgamer.topper.spigot.formatter.NumberFormatter;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
@@ -46,7 +46,7 @@ public class TopPlaceholderExpansion extends PlaceholderExpansion {
         Optional<NumberTopHolder> optionalHolder = instance.getTopManager().getTopHolder(args[0]);
         if (!optionalHolder.isPresent()) return null;
         NumberTopHolder holder = optionalHolder.get();
-        DataFormatter formatter = instance.getTopManager().getTopFormatter(args[0]);
+        NumberFormatter formatter = instance.getTopManager().getTopFormatter(args[0]);
 
         switch (args[1]) {
             case "top_name": {

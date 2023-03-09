@@ -6,7 +6,7 @@ import me.hsgamer.topper.placeholderleaderboard.Permissions;
 import me.hsgamer.topper.placeholderleaderboard.TopperPlaceholderLeaderboard;
 import me.hsgamer.topper.placeholderleaderboard.config.MessageConfig;
 import me.hsgamer.topper.placeholderleaderboard.holder.NumberTopHolder;
-import me.hsgamer.topper.spigot.formatter.DataFormatter;
+import me.hsgamer.topper.spigot.formatter.NumberFormatter;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
@@ -39,7 +39,7 @@ public class GetTopListCommand extends Command {
             return false;
         }
         NumberTopHolder topHolder = optional.get();
-        DataFormatter dataFormatter = instance.getTopManager().getTopFormatter(args[0]);
+        NumberFormatter numberFormatter = instance.getTopManager().getTopFormatter(args[0]);
 
         int fromIndex = 1;
         int toIndex = 10;
@@ -70,7 +70,7 @@ public class GetTopListCommand extends Command {
             UUID uuid = optionalTopEntry.map(DataEntry::getUuid).orElse(null);
             Double value = optionalTopEntry.map(DataEntry::getValue).orElse(null);
             topList.add(
-                    dataFormatter.replace(MessageConfig.TOP_ENTRY_LINE.getValue(), uuid, value)
+                    numberFormatter.replace(MessageConfig.TOP_ENTRY_LINE.getValue(), uuid, value)
                             .replace("{index}", String.valueOf(i))
             );
         }

@@ -8,7 +8,7 @@ import me.hsgamer.hscore.config.path.BaseConfigPath;
 import me.hsgamer.hscore.config.path.impl.BooleanConfigPath;
 import me.hsgamer.hscore.config.path.impl.IntegerConfigPath;
 import me.hsgamer.hscore.config.path.impl.StringConfigPath;
-import me.hsgamer.topper.spigot.formatter.DataFormatter;
+import me.hsgamer.topper.spigot.formatter.NumberFormatter;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,7 +25,7 @@ public class MainConfig extends PathableConfig {
         }
         return map;
     });
-    public static final AdvancedConfigPath<Map<String, Map<String, Object>>, Map<String, DataFormatter>> FORMATTERS = new AdvancedConfigPath<Map<String, Map<String, Object>>, Map<String, DataFormatter>>("formatters", Collections.emptyMap()) {
+    public static final AdvancedConfigPath<Map<String, Map<String, Object>>, Map<String, NumberFormatter>> FORMATTERS = new AdvancedConfigPath<Map<String, Map<String, Object>>, Map<String, NumberFormatter>>("formatters", Collections.emptyMap()) {
         @Override
         public @NotNull Map<String, Map<String, Object>> getFromConfig(@NotNull Config config) {
             Map<String, Map<String, Object>> map = new HashMap<>();
@@ -34,14 +34,14 @@ public class MainConfig extends PathableConfig {
         }
 
         @Override
-        public @NotNull Map<String, DataFormatter> convert(@NotNull Map<String, Map<String, Object>> rawValue) {
-            Map<String, DataFormatter> map = new HashMap<>();
-            rawValue.forEach((key, value) -> map.put(key, new DataFormatter(value)));
+        public @NotNull Map<String, NumberFormatter> convert(@NotNull Map<String, Map<String, Object>> rawValue) {
+            Map<String, NumberFormatter> map = new HashMap<>();
+            rawValue.forEach((key, value) -> map.put(key, new NumberFormatter(value)));
             return map;
         }
 
         @Override
-        public @NotNull Map<String, Map<String, Object>> convertToRaw(@NotNull Map<String, DataFormatter> value) {
+        public @NotNull Map<String, Map<String, Object>> convertToRaw(@NotNull Map<String, NumberFormatter> value) {
             Map<String, Map<String, Object>> map = new HashMap<>();
             value.forEach((key, formatter) -> map.put(key, formatter.toMap()));
             return map;
