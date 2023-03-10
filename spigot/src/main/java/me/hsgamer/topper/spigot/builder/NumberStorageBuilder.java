@@ -82,7 +82,7 @@ public class NumberStorageBuilder extends Builder<BasePlugin, Function<DataHolde
         }
 
         @Override
-        public Double getValue(ResultSet resultSet) throws SQLException {
+        public Double getValue(UUID uuid, ResultSet resultSet) throws SQLException {
             return resultSet.getDouble("value");
         }
 
@@ -96,7 +96,7 @@ public class NumberStorageBuilder extends Builder<BasePlugin, Function<DataHolde
         }
 
         @Override
-        public Double getDefaultValue() {
+        public Double getDefaultValue(UUID uuid) {
             return 0D;
         }
     }

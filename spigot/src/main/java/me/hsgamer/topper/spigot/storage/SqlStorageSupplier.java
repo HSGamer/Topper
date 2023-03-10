@@ -90,7 +90,7 @@ public abstract class SqlStorageSupplier<T> implements Function<DataHolder<T>, D
                     Connection connection = null;
                     try {
                         connection = getAndCreateTable(name);
-                        return converter.select(connection, name, uuid).querySafe(resultSet -> resultSet.next() ? converter.getValue(resultSet) : converter.getDefaultValue());
+                        return converter.select(connection, name, uuid).querySafe(resultSet -> resultSet.next() ? converter.getValue(uuid, resultSet) : converter.getDefaultValue(uuid));
                     } catch (SQLException e) {
                         LOGGER.log(Level.SEVERE, "Failed to load top entry", e);
                         return Optional.empty();
@@ -115,10 +115,10 @@ public abstract class SqlStorageSupplier<T> implements Function<DataHolder<T>, D
 
         StatementBuilder update(Connection connection, String name, UUID uuid, T value);
 
-        T getValue(ResultSet resultSet) throws SQLException;
+        T getValue(UUID uuid, ResultSet resultSet) throws SQLException;
 
         Map<UUID, T> getMap(ResultSet resultSet) throws SQLException;
 
-        T getDefaultValue();
+        T getDefaultValue(UUID uuid);
     }
 }
