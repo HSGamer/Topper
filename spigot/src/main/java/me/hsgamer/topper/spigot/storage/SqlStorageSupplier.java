@@ -14,11 +14,14 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public abstract class SqlStorageSupplier<T> implements Function<DataHolder<T>, DataStorage<T>> {
+    private final Logger logger;
     private final SqlEntryConverter<T> converter;
 
-    protected SqlStorageSupplier(SqlEntryConverter<T> converter) {
+    protected SqlStorageSupplier(Logger logger, SqlEntryConverter<T> converter) {
+        this.logger = logger;
         this.converter = converter;
     }
 
@@ -44,7 +47,7 @@ public abstract class SqlStorageSupplier<T> implements Function<DataHolder<T>, D
                         connection = getAndCreateTable(name);
                         return converter.selectAll(connection, name).querySafe(converter::getMap).orElseGet(Collections::emptyMap);
                     } catch (SQLException e) {
-                        LOGGER.log(Level.SEVERE, "Failed to load top holder", e);
+                        logger.log(Level.SEVERE, "Failed to load top holder", e);
                         return Collections.emptyMap();
                     } finally {
                         if (connection != null) {
@@ -68,7 +71,7 @@ public abstract class SqlStorageSupplier<T> implements Function<DataHolder<T>, D
                             converter.insert(connection, name, uuid, value).update();
                         }
                     } catch (SQLException e) {
-                        LOGGER.log(Level.SEVERE, "Failed to save entry", e);
+                        logger.log(Level.SEVERE, "Failed to save entry", e);
                     } finally {
                         if (connection != null) {
                             flushConnection(connection);
@@ -92,7 +95,7 @@ public abstract class SqlStorageSupplier<T> implements Function<DataHolder<T>, D
                         connection = getAndCreateTable(name);
                         return converter.select(connection, name, uuid).querySafe(resultSet -> resultSet.next() ? converter.getValue(uuid, resultSet) : converter.getDefaultValue(uuid));
                     } catch (SQLException e) {
-                        LOGGER.log(Level.SEVERE, "Failed to load top entry", e);
+                        logger.log(Level.SEVERE, "Failed to load top entry", e);
                         return Optional.empty();
                     } finally {
                         if (connection != null) {

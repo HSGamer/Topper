@@ -17,9 +17,9 @@ import java.util.logging.Logger;
 public class StorageAgent<T, R> extends TaskAgent<R> {
     public static final EntryTempFlag NEED_SAVING = new EntryTempFlag("needSaving");
     public static final EntryTempFlag IS_SAVING = new EntryTempFlag("isSaving");
-    private static final Logger LOGGER = Logger.getLogger(StorageAgent.class.getName());
     private final Queue<UUID> saveQueue = new ConcurrentLinkedQueue<>();
     private final List<Runnable> onLoadListeners = new ArrayList<>();
+    private final Logger logger;
     private final DataHolder<T> holder;
     private final DataStorage<T> storage;
     private int maxEntryPerCall = 10;
@@ -27,7 +27,8 @@ public class StorageAgent<T, R> extends TaskAgent<R> {
     private boolean loadOnCreate = false;
     private boolean urgentLoad = true;
 
-    public StorageAgent(DataStorage<T> storage) {
+    public StorageAgent(Logger logger, DataStorage<T> storage) {
+        this.logger = logger;
         this.holder = storage.getHolder();
         this.storage = storage;
     }
@@ -43,7 +44,7 @@ public class StorageAgent<T, R> extends TaskAgent<R> {
     private void load(DataEntry<T> entry) {
         storage.load(entry.getUuid(), urgentLoad).whenComplete((result, throwable) -> {
             if (throwable != null) {
-                LOGGER.log(Level.WARNING, throwable, () -> "Failed to load " + entry.getUuid());
+                logger.log(Level.WARNING, throwable, () -> "Failed to load " + entry.getUuid());
             } else {
                 result.ifPresent(entry::setValue);
             }
@@ -71,7 +72,7 @@ public class StorageAgent<T, R> extends TaskAgent<R> {
         storage.load()
                 .whenComplete((entries, throwable) -> {
                     if (throwable != null) {
-                        LOGGER.log(Level.SEVERE, "Failed to load top entries", throwable);
+                        logger.log(Level.SEVERE, "Failed to load top entries", throwable);
                     }
                     if (entries != null) {
                         entries.forEach((uuid, value) -> holder.getOrCreateEntry(uuid).setValue(value, false));

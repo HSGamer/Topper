@@ -6,10 +6,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.logging.Logger;
 
 public abstract class DataStorage<T> {
-    protected static final Logger LOGGER = Logger.getLogger(DataStorage.class.getName());
     protected final DataHolder<T> holder;
 
     protected DataStorage(DataHolder<T> holder) {

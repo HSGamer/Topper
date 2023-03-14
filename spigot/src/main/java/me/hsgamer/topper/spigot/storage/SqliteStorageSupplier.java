@@ -20,7 +20,7 @@ public class SqliteStorageSupplier<T> extends SqlStorageSupplier<T> {
     private final AtomicReference<Connection> connectionReference = new AtomicReference<>();
 
     public SqliteStorageSupplier(SimplePlugin plugin, File baseFolder, SqlEntryConverter<T> converter) {
-        super(converter);
+        super(plugin.getLogger(), converter);
         DatabaseConfig databaseConfig = ConfigGenerator.newInstance(DatabaseConfig.class, new BukkitConfig(plugin, "database.yml"));
         client = new JavaSqlClient(
                 Setting.create().setDatabaseName(databaseConfig.getDatabase()),

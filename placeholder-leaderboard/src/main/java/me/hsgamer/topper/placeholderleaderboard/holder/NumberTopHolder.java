@@ -32,7 +32,7 @@ public abstract class NumberTopHolder extends DataWithAgentHolder<Double> {
         updateAgent.setCancelTaskConsumer(BukkitTask::cancel);
         addAgent(updateAgent);
 
-        this.storageAgent = new StorageAgent<>(instance.getTopManager().getStorageSupplier().apply(this));
+        this.storageAgent = new StorageAgent<>(instance.getLogger(), instance.getTopManager().getStorageSupplier().apply(this));
         storageAgent.setMaxEntryPerCall(instance.getMainConfig().getTaskSaveEntryPerTick());
         storageAgent.setRunTaskFunction(runnable -> {
             int saveDelay = instance.getMainConfig().getTaskSaveDelay();

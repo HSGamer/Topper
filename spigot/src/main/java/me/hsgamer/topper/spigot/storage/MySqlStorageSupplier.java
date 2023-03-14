@@ -18,7 +18,7 @@ public class MySqlStorageSupplier<T> extends SqlStorageSupplier<T> {
     private final JavaSqlClient client;
 
     public MySqlStorageSupplier(JavaPlugin plugin, SqlEntryConverter<T> converter) {
-        super(converter);
+        super(plugin.getLogger(), converter);
         this.plugin = plugin;
         DatabaseConfig databaseConfig = ConfigGenerator.newInstance(DatabaseConfig.class, new BukkitConfig(plugin, "database.yml"));
         Setting setting = Setting.create()
