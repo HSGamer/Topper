@@ -3,7 +3,6 @@ package me.hsgamer.topper.placeholderleaderboard.hook;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import me.hsgamer.topper.core.entry.DataEntry;
 import me.hsgamer.topper.placeholderleaderboard.TopperPlaceholderLeaderboard;
-import me.hsgamer.topper.placeholderleaderboard.config.MainConfig;
 import me.hsgamer.topper.placeholderleaderboard.holder.NumberTopHolder;
 import me.hsgamer.topper.spigot.formatter.NumberFormatter;
 import org.bukkit.Bukkit;
@@ -62,7 +61,7 @@ public class TopPlaceholderExpansion extends PlaceholderExpansion {
                         .map(DataEntry::getUuid)
                         .map(Bukkit::getOfflinePlayer)
                         .map(OfflinePlayer::getName)
-                        .orElseGet(MainConfig.NULL_DISPLAY_NAME::getValue);
+                        .orElseGet(instance.getMainConfig()::getNullDisplayName);
             }
             case "top_value_raw":
             case "top_value": {
@@ -77,7 +76,7 @@ public class TopPlaceholderExpansion extends PlaceholderExpansion {
                 return holder.getSnapshotAgent().getEntryByIndex(i - 1)
                         .map(DataEntry::getValue)
                         .map(value -> args[1].endsWith("raw") ? String.valueOf(value) : formatter.format(value))
-                        .orElseGet(MainConfig.NULL_DISPLAY_VALUE::getValue);
+                        .orElseGet(instance.getMainConfig()::getNullDisplayValue);
             }
             case "top_rank":
                 return Integer.toString(holder.getSnapshotAgent().getSnapshotIndex(player.getUniqueId()) + 1);
@@ -86,7 +85,7 @@ public class TopPlaceholderExpansion extends PlaceholderExpansion {
                 return holder.getEntry(player.getUniqueId())
                         .map(DataEntry::getValue)
                         .map(value -> args[1].endsWith("raw") ? String.valueOf(value) : formatter.format(value))
-                        .orElseGet(MainConfig.NULL_DISPLAY_NAME::getValue);
+                        .orElseGet(instance.getMainConfig()::getNullDisplayName);
             default:
                 break;
         }

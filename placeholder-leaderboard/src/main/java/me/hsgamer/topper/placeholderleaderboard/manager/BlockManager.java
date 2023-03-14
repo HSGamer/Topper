@@ -1,12 +1,11 @@
 package me.hsgamer.topper.placeholderleaderboard.manager;
 
-import me.hsgamer.hscore.bukkit.config.BukkitConfig;
 import me.hsgamer.hscore.bukkit.utils.MessageUtils;
 import me.hsgamer.topper.core.entry.DataEntry;
 import me.hsgamer.topper.placeholderleaderboard.TopperPlaceholderLeaderboard;
 import me.hsgamer.topper.placeholderleaderboard.holder.NumberTopHolder;
 import me.hsgamer.topper.spigot.block.BlockEntry;
-import me.hsgamer.topper.spigot.config.path.BlockEntryConfigPath;
+import me.hsgamer.topper.spigot.config.BlockEntryConfig;
 import me.hsgamer.topper.spigot.formatter.NumberFormatter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -26,22 +25,16 @@ import java.util.*;
 
 public abstract class BlockManager implements Listener {
     protected final TopperPlaceholderLeaderboard instance;
-    private final BlockEntryConfigPath configPath;
+    private final BlockEntryConfig blockEntryConfig;
     private final Map<Location, BlockEntry> entries = new HashMap<>();
     private BukkitTask task;
 
     protected BlockManager(TopperPlaceholderLeaderboard instance) {
         this.instance = instance;
-        BukkitConfig config = getConfig();
-        config.setup();
-        this.configPath = new BlockEntryConfigPath(getEntriesPath(), Collections.emptyList());
-        configPath.setConfig(config);
-        config.save();
+        this.blockEntryConfig = getConfig();
     }
 
-    protected abstract BukkitConfig getConfig();
-
-    protected abstract String getEntriesPath();
+    protected abstract BlockEntryConfig getConfig();
 
     protected abstract void updateBlock(Block block, UUID uuid, Double value, int index, NumberFormatter formatter);
 
@@ -51,7 +44,7 @@ public abstract class BlockManager implements Listener {
 
     public void register() {
         this.registerEvents();
-        configPath.getValue().forEach(this::add);
+        blockEntryConfig.getEntries().forEach(this::add);
 
         final Queue<BlockEntry> entryQueue = new LinkedList<>();
         task = Bukkit.getScheduler().runTaskTimer(instance, () -> {
@@ -68,7 +61,7 @@ public abstract class BlockManager implements Listener {
     public void unregister() {
         task.cancel();
         HandlerList.unregisterAll(this);
-        configPath.setAndSave(new ArrayList<>(entries.values()));
+        blockEntryConfig.setEntries(new ArrayList<>(entries.values()));
     }
 
     private void registerEvents() {

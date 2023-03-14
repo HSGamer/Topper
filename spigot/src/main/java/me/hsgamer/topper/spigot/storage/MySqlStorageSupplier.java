@@ -1,5 +1,7 @@
 package me.hsgamer.topper.spigot.storage;
 
+import me.hsgamer.hscore.bukkit.config.BukkitConfig;
+import me.hsgamer.hscore.config.proxy.ConfigGenerator;
 import me.hsgamer.hscore.database.Setting;
 import me.hsgamer.hscore.database.client.sql.java.JavaSqlClient;
 import me.hsgamer.hscore.database.driver.mysql.MySqlDriver;
@@ -18,13 +20,14 @@ public class MySqlStorageSupplier<T> extends SqlStorageSupplier<T> {
     public MySqlStorageSupplier(JavaPlugin plugin, SqlEntryConverter<T> converter) {
         super(converter);
         this.plugin = plugin;
+        DatabaseConfig databaseConfig = ConfigGenerator.newInstance(DatabaseConfig.class, new BukkitConfig(plugin, "database.yml"));
         Setting setting = Setting.create()
-                .setDatabaseName(DatabaseConfig.DATABASE.getValue())
-                .setHost(DatabaseConfig.HOST.getValue())
-                .setPort(DatabaseConfig.PORT.getValue())
-                .setUsername(DatabaseConfig.USERNAME.getValue())
-                .setPassword(DatabaseConfig.PASSWORD.getValue());
-        if (Boolean.TRUE.equals(DatabaseConfig.USE_SSL.getValue())) {
+                .setDatabaseName(databaseConfig.getDatabase())
+                .setHost(databaseConfig.getHost())
+                .setPort(databaseConfig.getPort())
+                .setUsername(databaseConfig.getUsername())
+                .setPassword(databaseConfig.getPassword());
+        if (databaseConfig.isUseSSL()) {
             setting.setDriverProperty("useSSL", "true");
         }
         client = new JavaSqlClient(setting, new MySqlDriver());

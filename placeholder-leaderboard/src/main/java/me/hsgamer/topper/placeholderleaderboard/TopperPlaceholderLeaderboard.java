@@ -1,8 +1,10 @@
 package me.hsgamer.topper.placeholderleaderboard;
 
 import me.hsgamer.hscore.bukkit.baseplugin.BasePlugin;
+import me.hsgamer.hscore.bukkit.config.BukkitConfig;
 import me.hsgamer.hscore.bukkit.utils.MessageUtils;
 import me.hsgamer.hscore.checker.spigotmc.SpigotVersionChecker;
+import me.hsgamer.hscore.config.proxy.ConfigGenerator;
 import me.hsgamer.topper.placeholderleaderboard.command.GetTopListCommand;
 import me.hsgamer.topper.placeholderleaderboard.command.ReloadCommand;
 import me.hsgamer.topper.placeholderleaderboard.command.SetTopSignCommand;
@@ -14,17 +16,23 @@ import me.hsgamer.topper.placeholderleaderboard.listener.JoinListener;
 import me.hsgamer.topper.placeholderleaderboard.manager.SignManager;
 import me.hsgamer.topper.placeholderleaderboard.manager.SkullManager;
 import me.hsgamer.topper.placeholderleaderboard.manager.TopManager;
-import me.hsgamer.topper.spigot.config.DatabaseConfig;
+import me.hsgamer.topper.spigot.builder.NumberStorageBuilder;
+import me.hsgamer.topper.spigot.config.DefaultConverterRegistry;
 import org.bstats.bukkit.Metrics;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 
 public class TopperPlaceholderLeaderboard extends BasePlugin {
-    private final MainConfig mainConfig = new MainConfig(this);
-    private final MessageConfig messageConfig = new MessageConfig(this);
-    private final DatabaseConfig databaseConfig = new DatabaseConfig(this);
+    static {
+        DefaultConverterRegistry.register();
+    }
+
+    private final NumberStorageBuilder numberStorageBuilder = new NumberStorageBuilder(this, new File(getDataFolder(), "top"));
+    private final MainConfig mainConfig = ConfigGenerator.newInstance(MainConfig.class, new BukkitConfig(this, "config.yml"));
+    private final MessageConfig messageConfig = ConfigGenerator.newInstance(MessageConfig.class, new BukkitConfig(this, "messages.yml"));
     private final TopManager topManager = new TopManager(this);
     private final SignManager signManager = new SignManager(this);
     private final SkullManager skullManager = new SkullManager(this);
@@ -54,10 +62,7 @@ public class TopperPlaceholderLeaderboard extends BasePlugin {
 
     @Override
     public void load() {
-        MessageUtils.setPrefix(MessageConfig.PREFIX::getValue);
-        mainConfig.setup();
-        messageConfig.setup();
-        databaseConfig.setup();
+        MessageUtils.setPrefix(messageConfig::getPrefix);
     }
 
     @Override
@@ -66,9 +71,7 @@ public class TopperPlaceholderLeaderboard extends BasePlugin {
         registerListener(new JoinListener(this));
         topPlaceholderExpansion.register();
 
-        if (Boolean.TRUE.equals(MainConfig.METRICS.getValue())) {
-            new Metrics(this, 14938);
-        }
+        new Metrics(this, 14938);
     }
 
     @Override
@@ -94,6 +97,10 @@ public class TopperPlaceholderLeaderboard extends BasePlugin {
         return Collections.singletonList(Permissions.class);
     }
 
+    public NumberStorageBuilder getNumberStorageBuilder() {
+        return numberStorageBuilder;
+    }
+
     public TopManager getTopManager() {
         return topManager;
     }
@@ -112,9 +119,5 @@ public class TopperPlaceholderLeaderboard extends BasePlugin {
 
     public MessageConfig getMessageConfig() {
         return messageConfig;
-    }
-
-    public DatabaseConfig getDatabaseConfig() {
-        return databaseConfig;
     }
 }

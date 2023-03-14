@@ -17,19 +17,14 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
 public class YamlStorageSupplier<T> implements Function<DataHolder<T>, DataStorage<T>> {
-    private static String baseFolderPath = "top";
     private final JavaPlugin plugin;
     private final File baseFolder;
     private final FlatEntryConverter<T> converter;
 
-    public YamlStorageSupplier(JavaPlugin plugin, FlatEntryConverter<T> converter) {
+    public YamlStorageSupplier(JavaPlugin plugin, File baseFolder, FlatEntryConverter<T> converter) {
         this.plugin = plugin;
-        baseFolder = new File(plugin.getDataFolder(), baseFolderPath);
+        this.baseFolder = baseFolder;
         this.converter = converter;
-    }
-
-    public static void setBaseFolderPath(String baseFolderPath) {
-        YamlStorageSupplier.baseFolderPath = baseFolderPath;
     }
 
     @Override

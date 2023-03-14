@@ -3,10 +3,8 @@ package me.hsgamer.topper.placeholderleaderboard.manager;
 import me.hsgamer.topper.core.holder.DataHolder;
 import me.hsgamer.topper.core.storage.DataStorage;
 import me.hsgamer.topper.placeholderleaderboard.TopperPlaceholderLeaderboard;
-import me.hsgamer.topper.placeholderleaderboard.config.MainConfig;
 import me.hsgamer.topper.placeholderleaderboard.holder.NumberTopHolder;
 import me.hsgamer.topper.placeholderleaderboard.holder.PlaceholderTopHolder;
-import me.hsgamer.topper.spigot.builder.NumberStorageBuilder;
 import me.hsgamer.topper.spigot.formatter.NumberFormatter;
 
 import java.util.*;
@@ -24,11 +22,11 @@ public class TopManager {
     }
 
     public void register() {
-        storageSupplier = NumberStorageBuilder.buildSupplier(MainConfig.STORAGE_TYPE.getValue(), instance);
-        NumberFormatter.setNullDisplayName(MainConfig.NULL_DISPLAY_NAME::getValue);
-        NumberFormatter.setNullDisplayValue(MainConfig.NULL_DISPLAY_VALUE::getValue);
-        MainConfig.PLACEHOLDERS.getValue().forEach((key, value) -> addTopHolder(key, new PlaceholderTopHolder(instance, key, value)));
-        topFormatters.putAll(MainConfig.FORMATTERS.getValue());
+        storageSupplier = instance.getNumberStorageBuilder().buildSupplier(instance.getMainConfig().getStorageType());
+        NumberFormatter.setNullDisplayName(instance.getMainConfig()::getNullDisplayName);
+        NumberFormatter.setNullDisplayValue(instance.getMainConfig()::getNullDisplayValue);
+        instance.getMainConfig().getPlaceholders().forEach((key, value) -> addTopHolder(key, new PlaceholderTopHolder(instance, key, value)));
+        topFormatters.putAll(instance.getMainConfig().getFormatters());
     }
 
     public void unregister() {

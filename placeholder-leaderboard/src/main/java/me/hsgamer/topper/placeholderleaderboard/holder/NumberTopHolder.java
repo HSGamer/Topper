@@ -5,7 +5,6 @@ import me.hsgamer.topper.core.agent.storage.StorageAgent;
 import me.hsgamer.topper.core.agent.update.UpdateAgent;
 import me.hsgamer.topper.core.holder.DataWithAgentHolder;
 import me.hsgamer.topper.placeholderleaderboard.TopperPlaceholderLeaderboard;
-import me.hsgamer.topper.placeholderleaderboard.config.MainConfig;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -24,24 +23,24 @@ public abstract class NumberTopHolder extends DataWithAgentHolder<Double> {
         this.instance = instance;
 
         this.updateAgent = new UpdateAgent<>(this);
-        updateAgent.setMaxEntryPerCall(MainConfig.TASK_UPDATE_ENTRY_PER_TICK.getValue());
+        updateAgent.setMaxEntryPerCall(instance.getMainConfig().getTaskSaveEntryPerTick());
         updateAgent.setUpdateFunction(this::updateNewValue);
         updateAgent.setRunTaskFunction(runnable -> {
-            int updateDelay = MainConfig.TASK_UPDATE_DELAY.getValue();
+            int updateDelay = instance.getMainConfig().getTaskUpdateDelay();
             return instance.getServer().getScheduler().runTaskTimerAsynchronously(instance, runnable, updateDelay, updateDelay);
         });
         updateAgent.setCancelTaskConsumer(BukkitTask::cancel);
         addAgent(updateAgent);
 
         this.storageAgent = new StorageAgent<>(instance.getTopManager().getStorageSupplier().apply(this));
-        storageAgent.setMaxEntryPerCall(MainConfig.TASK_SAVE_ENTRY_PER_TICK.getValue());
+        storageAgent.setMaxEntryPerCall(instance.getMainConfig().getTaskSaveEntryPerTick());
         storageAgent.setRunTaskFunction(runnable -> {
-            int saveDelay = MainConfig.TASK_SAVE_DELAY.getValue();
+            int saveDelay = instance.getMainConfig().getTaskSaveDelay();
             return instance.getServer().getScheduler().runTaskTimerAsynchronously(instance, runnable, saveDelay, saveDelay);
         });
         storageAgent.setCancelTaskConsumer(BukkitTask::cancel);
         storageAgent.addOnLoadListener(() -> {
-            if (Boolean.TRUE.equals(MainConfig.LOAD_ALL_OFFLINE_PLAYERS.getValue())) {
+            if (instance.getMainConfig().isLoadAllOfflinePlayers()) {
                 instance.getServer().getScheduler().scheduleSyncDelayedTask(instance, () -> {
                     for (OfflinePlayer player : instance.getServer().getOfflinePlayers()) {
                         getOrCreateEntry(player.getUniqueId());

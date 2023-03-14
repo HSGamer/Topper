@@ -2,7 +2,6 @@ package me.hsgamer.topper.placeholderleaderboard.command;
 
 import me.hsgamer.topper.placeholderleaderboard.Permissions;
 import me.hsgamer.topper.placeholderleaderboard.TopperPlaceholderLeaderboard;
-import me.hsgamer.topper.placeholderleaderboard.config.MessageConfig;
 import me.hsgamer.topper.placeholderleaderboard.manager.BlockManager;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
@@ -30,6 +29,6 @@ public class SetTopSignCommand extends SetTopBlockCommand {
 
     @Override
     protected String getBlockRequiredMessage() {
-        return MessageConfig.SIGN_REQUIRED.getValue();
+        return instance.getMessageConfig().getSignRequired();
     }
 }

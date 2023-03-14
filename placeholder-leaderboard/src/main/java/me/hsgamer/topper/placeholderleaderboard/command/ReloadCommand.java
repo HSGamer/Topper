@@ -3,7 +3,6 @@ package me.hsgamer.topper.placeholderleaderboard.command;
 import me.hsgamer.hscore.bukkit.utils.MessageUtils;
 import me.hsgamer.topper.placeholderleaderboard.Permissions;
 import me.hsgamer.topper.placeholderleaderboard.TopperPlaceholderLeaderboard;
-import me.hsgamer.topper.placeholderleaderboard.config.MessageConfig;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
@@ -26,13 +25,12 @@ public class ReloadCommand extends Command {
         instance.getSignManager().unregister();
         instance.getSkullManager().unregister();
         instance.getTopManager().unregister();
-        instance.getMainConfig().reload();
-        instance.getMessageConfig().reload();
-        instance.getDatabaseConfig().reload();
+        instance.getMainConfig().reloadConfig();
+        instance.getMessageConfig().reloadConfig();
         instance.getTopManager().register();
         instance.getSignManager().register();
         instance.getSkullManager().register();
-        MessageUtils.sendMessage(sender, MessageConfig.SUCCESS.getValue());
+        MessageUtils.sendMessage(sender, instance.getMessageConfig().getSuccess());
         return true;
     }
 }

@@ -1,9 +1,11 @@
 package me.hsgamer.topper.placeholderleaderboard.manager;
 
 import me.hsgamer.hscore.bukkit.config.BukkitConfig;
+import me.hsgamer.hscore.config.Config;
+import me.hsgamer.hscore.config.proxy.ConfigGenerator;
 import me.hsgamer.topper.placeholderleaderboard.Permissions;
 import me.hsgamer.topper.placeholderleaderboard.TopperPlaceholderLeaderboard;
-import me.hsgamer.topper.placeholderleaderboard.config.MessageConfig;
+import me.hsgamer.topper.spigot.config.BlockEntryConfig;
 import me.hsgamer.topper.spigot.formatter.NumberFormatter;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -36,13 +38,15 @@ public class SkullManager extends BlockManager {
     }
 
     @Override
-    protected BukkitConfig getConfig() {
-        return new BukkitConfig(instance, "skull.yml");
-    }
-
-    @Override
-    protected String getEntriesPath() {
-        return "skull-entries";
+    protected BlockEntryConfig getConfig() {
+        Config config = new BukkitConfig(instance, "skull.yml");
+        config.setup();
+        if (config.contains("skull-entries")) {
+            config.set("entries", config.get("skull-entries"));
+            config.set("skull-entries", null);
+            config.save();
+        }
+        return ConfigGenerator.newInstance(BlockEntryConfig.class, config, false);
     }
 
     @Override
@@ -74,7 +78,7 @@ public class SkullManager extends BlockManager {
 
     @Override
     protected String getBreakMessage() {
-        return MessageConfig.SKULL_REMOVED.getValue();
+        return instance.getMessageConfig().getSkullRemoved();
     }
 
     @Override

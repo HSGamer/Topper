@@ -4,7 +4,6 @@ import me.hsgamer.hscore.bukkit.utils.MessageUtils;
 import me.hsgamer.topper.core.entry.DataEntry;
 import me.hsgamer.topper.placeholderleaderboard.Permissions;
 import me.hsgamer.topper.placeholderleaderboard.TopperPlaceholderLeaderboard;
-import me.hsgamer.topper.placeholderleaderboard.config.MessageConfig;
 import me.hsgamer.topper.placeholderleaderboard.holder.NumberTopHolder;
 import me.hsgamer.topper.spigot.formatter.NumberFormatter;
 import org.bukkit.command.Command;
@@ -35,7 +34,7 @@ public class GetTopListCommand extends Command {
         }
         Optional<NumberTopHolder> optional = instance.getTopManager().getTopHolder(args[0]);
         if (!optional.isPresent()) {
-            MessageUtils.sendMessage(sender, MessageConfig.TOP_HOLDER_NOT_FOUND.getValue());
+            MessageUtils.sendMessage(sender, instance.getMessageConfig().getTopHolderNotFound());
             return false;
         }
         NumberTopHolder topHolder = optional.get();
@@ -47,7 +46,7 @@ public class GetTopListCommand extends Command {
             try {
                 toIndex = Integer.parseInt(args[1]);
             } catch (NumberFormatException e) {
-                sendMessage(sender, MessageConfig.NUMBER_REQUIRED.getValue());
+                sendMessage(sender, instance.getMessageConfig().getNumberRequired());
                 return false;
             }
         } else if (args.length > 2) {
@@ -55,12 +54,12 @@ public class GetTopListCommand extends Command {
                 fromIndex = Integer.parseInt(args[1]);
                 toIndex = Integer.parseInt(args[2]);
             } catch (NumberFormatException e) {
-                sendMessage(sender, MessageConfig.NUMBER_REQUIRED.getValue());
+                sendMessage(sender, instance.getMessageConfig().getNumberRequired());
                 return false;
             }
         }
         if (fromIndex >= toIndex) {
-            sendMessage(sender, MessageConfig.ILLEGAL_FROM_TO_INDEX.getValue());
+            sendMessage(sender, instance.getMessageConfig().getIllegalFromToIndex());
             return false;
         }
 
@@ -70,12 +69,12 @@ public class GetTopListCommand extends Command {
             UUID uuid = optionalTopEntry.map(DataEntry::getUuid).orElse(null);
             Double value = optionalTopEntry.map(DataEntry::getValue).orElse(null);
             topList.add(
-                    numberFormatter.replace(MessageConfig.TOP_ENTRY_LINE.getValue(), uuid, value)
+                    numberFormatter.replace(instance.getMessageConfig().getTopEntryLine(), uuid, value)
                             .replace("{index}", String.valueOf(i))
             );
         }
         if (topList.isEmpty()) {
-            sendMessage(sender, MessageConfig.TOP_EMPTY.getValue());
+            sendMessage(sender, instance.getMessageConfig().getTopEmpty());
         } else {
             topList.forEach(s -> sendMessage(sender, s));
         }

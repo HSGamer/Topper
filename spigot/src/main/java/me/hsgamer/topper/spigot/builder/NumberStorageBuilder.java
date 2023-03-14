@@ -1,35 +1,21 @@
 package me.hsgamer.topper.spigot.builder;
 
-import me.hsgamer.hscore.builder.Builder;
-import me.hsgamer.hscore.bukkit.baseplugin.BasePlugin;
+import me.hsgamer.hscore.bukkit.simpleplugin.SimplePlugin;
 import me.hsgamer.hscore.database.client.sql.StatementBuilder;
-import me.hsgamer.topper.core.holder.DataHolder;
-import me.hsgamer.topper.core.storage.DataStorage;
 import me.hsgamer.topper.extra.storage.converter.FlatEntryConverter;
 import me.hsgamer.topper.extra.storage.converter.SqlEntryConverter;
-import me.hsgamer.topper.spigot.storage.MySqlStorageSupplier;
-import me.hsgamer.topper.spigot.storage.SqliteStorageSupplier;
-import me.hsgamer.topper.spigot.storage.YamlStorageSupplier;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.function.Function;
 
-public class NumberStorageBuilder extends Builder<BasePlugin, Function<DataHolder<Double>, DataStorage<Double>>> {
-    public static final NumberStorageBuilder INSTANCE = new NumberStorageBuilder();
-
-    private NumberStorageBuilder() {
-        register(plugin -> new YamlStorageSupplier<>(plugin, new FlatNumberEntryConverter()), "yaml", "yml");
-        register(plugin -> new SqliteStorageSupplier<>(plugin, new SqlNumberEntryConverter()), "sqlite", "sqlite3");
-        register(plugin -> new MySqlStorageSupplier<>(plugin, new SqlNumberEntryConverter()), "mysql", "mysql-connector-java", "mysql-connector");
-    }
-
-    public static Function<DataHolder<Double>, DataStorage<Double>> buildSupplier(String type, BasePlugin plugin) {
-        return INSTANCE.build(type, plugin).orElseGet(() -> new YamlStorageSupplier<>(plugin, new FlatNumberEntryConverter()));
+public class NumberStorageBuilder extends DataStorageBuilder<Double> {
+    public NumberStorageBuilder(SimplePlugin plugin, File baseFolder) {
+        super(plugin, baseFolder, new FlatNumberEntryConverter(), new SqlNumberEntryConverter());
     }
 
     private static class FlatNumberEntryConverter implements FlatEntryConverter<Double> {

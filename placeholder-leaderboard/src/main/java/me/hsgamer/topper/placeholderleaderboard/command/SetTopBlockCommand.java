@@ -2,7 +2,6 @@ package me.hsgamer.topper.placeholderleaderboard.command;
 
 import me.hsgamer.hscore.bukkit.utils.MessageUtils;
 import me.hsgamer.topper.placeholderleaderboard.TopperPlaceholderLeaderboard;
-import me.hsgamer.topper.placeholderleaderboard.config.MessageConfig;
 import me.hsgamer.topper.placeholderleaderboard.manager.BlockManager;
 import me.hsgamer.topper.spigot.block.BlockEntry;
 import org.bukkit.block.Block;
@@ -41,7 +40,7 @@ public abstract class SetTopBlockCommand extends Command {
             return false;
         }
         if (!(sender instanceof Player)) {
-            MessageUtils.sendMessage(sender, MessageConfig.PLAYER_ONLY.getValue());
+            MessageUtils.sendMessage(sender, instance.getMessageConfig().getPlayerOnly());
             return false;
         }
         if (args.length < 2) {
@@ -49,14 +48,14 @@ public abstract class SetTopBlockCommand extends Command {
             return false;
         }
         if (!instance.getTopManager().getTopHolder(args[0]).isPresent()) {
-            sendMessage(sender, MessageConfig.TOP_HOLDER_NOT_FOUND.getValue());
+            sendMessage(sender, instance.getMessageConfig().getTopHolderNotFound());
             return false;
         }
         int index;
         try {
             index = Integer.parseInt(args[1]);
         } catch (NumberFormatException e) {
-            sendMessage(sender, MessageConfig.NUMBER_REQUIRED.getValue());
+            sendMessage(sender, instance.getMessageConfig().getNumberRequired());
             return false;
         }
         Block block = ((Player) sender).getTargetBlock(null, 5);
@@ -65,7 +64,7 @@ public abstract class SetTopBlockCommand extends Command {
             return false;
         }
         getBlockManager().add(new BlockEntry(block.getLocation(), args[0], index - 1));
-        sendMessage(sender, MessageConfig.SUCCESS.getValue());
+        sendMessage(sender, instance.getMessageConfig().getSuccess());
         return true;
     }
 
