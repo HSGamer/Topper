@@ -4,6 +4,7 @@ import me.hsgamer.hscore.bukkit.simpleplugin.SimplePlugin;
 import me.hsgamer.hscore.database.Setting;
 import me.hsgamer.hscore.database.client.sql.java.JavaSqlClient;
 import me.hsgamer.hscore.database.driver.sqlite.SqliteFileDriver;
+import me.hsgamer.topper.extra.storage.converter.SqlEntryConverter;
 import me.hsgamer.topper.spigot.config.DatabaseConfig;
 
 import java.sql.Connection;
@@ -15,7 +16,7 @@ public class SqliteStorageSupplier<T> extends SqlStorageSupplier<T> {
     private final JavaSqlClient client;
     private final AtomicReference<Connection> connectionReference = new AtomicReference<>();
 
-    public SqliteStorageSupplier(SimplePlugin plugin, Converter<T> converter) {
+    public SqliteStorageSupplier(SimplePlugin plugin, SqlEntryConverter<T> converter) {
         super(converter);
         client = new JavaSqlClient(
                 Setting.create().setDatabaseName(DatabaseConfig.DATABASE.getValue()),

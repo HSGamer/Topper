@@ -1,8 +1,8 @@
 package me.hsgamer.topper.spigot.storage;
 
-import me.hsgamer.hscore.database.client.sql.StatementBuilder;
 import me.hsgamer.topper.core.holder.DataHolder;
 import me.hsgamer.topper.core.storage.DataStorage;
+import me.hsgamer.topper.extra.storage.converter.SqlEntryConverter;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -16,9 +16,9 @@ import java.util.function.Function;
 import java.util.logging.Level;
 
 public abstract class SqlStorageSupplier<T> implements Function<DataHolder<T>, DataStorage<T>> {
-    private final Converter<T> converter;
+    private final SqlEntryConverter<T> converter;
 
-    protected SqlStorageSupplier(Converter<T> converter) {
+    protected SqlStorageSupplier(SqlEntryConverter<T> converter) {
         this.converter = converter;
     }
 
@@ -102,23 +102,5 @@ public abstract class SqlStorageSupplier<T> implements Function<DataHolder<T>, D
                 });
             }
         };
-    }
-
-    public interface Converter<T> {
-        StatementBuilder createTable(Connection connection, String name);
-
-        StatementBuilder selectAll(Connection connection, String name);
-
-        StatementBuilder select(Connection connection, String name, UUID uuid);
-
-        StatementBuilder insert(Connection connection, String name, UUID uuid, T value);
-
-        StatementBuilder update(Connection connection, String name, UUID uuid, T value);
-
-        T getValue(UUID uuid, ResultSet resultSet) throws SQLException;
-
-        Map<UUID, T> getMap(ResultSet resultSet) throws SQLException;
-
-        T getDefaultValue(UUID uuid);
     }
 }

@@ -5,8 +5,9 @@ import me.hsgamer.hscore.bukkit.baseplugin.BasePlugin;
 import me.hsgamer.hscore.database.client.sql.StatementBuilder;
 import me.hsgamer.topper.core.holder.DataHolder;
 import me.hsgamer.topper.core.storage.DataStorage;
+import me.hsgamer.topper.extra.storage.converter.FlatEntryConverter;
+import me.hsgamer.topper.extra.storage.converter.SqlEntryConverter;
 import me.hsgamer.topper.spigot.storage.MySqlStorageSupplier;
-import me.hsgamer.topper.spigot.storage.SqlStorageSupplier;
 import me.hsgamer.topper.spigot.storage.SqliteStorageSupplier;
 import me.hsgamer.topper.spigot.storage.YamlStorageSupplier;
 
@@ -22,16 +23,16 @@ public class NumberStorageBuilder extends Builder<BasePlugin, Function<DataHolde
     public static final NumberStorageBuilder INSTANCE = new NumberStorageBuilder();
 
     private NumberStorageBuilder() {
-        register(plugin -> new YamlStorageSupplier<>(plugin, new YamlNumberStorageConverter()), "yaml", "yml");
-        register(plugin -> new SqliteStorageSupplier<>(plugin, new SqlNumberStorageConverter()), "sqlite", "sqlite3");
-        register(plugin -> new MySqlStorageSupplier<>(plugin, new SqlNumberStorageConverter()), "mysql", "mysql-connector-java", "mysql-connector");
+        register(plugin -> new YamlStorageSupplier<>(plugin, new FlatNumberEntryConverter()), "yaml", "yml");
+        register(plugin -> new SqliteStorageSupplier<>(plugin, new SqlNumberEntryConverter()), "sqlite", "sqlite3");
+        register(plugin -> new MySqlStorageSupplier<>(plugin, new SqlNumberEntryConverter()), "mysql", "mysql-connector-java", "mysql-connector");
     }
 
     public static Function<DataHolder<Double>, DataStorage<Double>> buildSupplier(String type, BasePlugin plugin) {
-        return INSTANCE.build(type, plugin).orElseGet(() -> new YamlStorageSupplier<>(plugin, new YamlNumberStorageConverter()));
+        return INSTANCE.build(type, plugin).orElseGet(() -> new YamlStorageSupplier<>(plugin, new FlatNumberEntryConverter()));
     }
 
-    private static class YamlNumberStorageConverter implements YamlStorageSupplier.Converter<Double> {
+    private static class FlatNumberEntryConverter implements FlatEntryConverter<Double> {
         @Override
         public Double toValue(Object object) {
             try {
@@ -47,7 +48,7 @@ public class NumberStorageBuilder extends Builder<BasePlugin, Function<DataHolde
         }
     }
 
-    private static class SqlNumberStorageConverter implements SqlStorageSupplier.Converter<Double> {
+    private static class SqlNumberEntryConverter implements SqlEntryConverter<Double> {
         @Override
         public StatementBuilder createTable(Connection connection, String name) {
             return StatementBuilder.create(connection).setStatement("CREATE TABLE IF NOT EXISTS `" + name + "` (`uuid` varchar(36) NOT NULL UNIQUE, `value` double DEFAULT 0);");

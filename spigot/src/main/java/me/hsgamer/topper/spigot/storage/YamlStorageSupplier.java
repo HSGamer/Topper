@@ -3,6 +3,7 @@ package me.hsgamer.topper.spigot.storage;
 import me.hsgamer.hscore.bukkit.config.BukkitConfig;
 import me.hsgamer.topper.core.holder.DataHolder;
 import me.hsgamer.topper.core.storage.DataStorage;
+import me.hsgamer.topper.extra.storage.converter.FlatEntryConverter;
 import me.hsgamer.topper.spigot.config.AutoSaveConfig;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -19,9 +20,9 @@ public class YamlStorageSupplier<T> implements Function<DataHolder<T>, DataStora
     private static String baseFolderPath = "top";
     private final JavaPlugin plugin;
     private final File baseFolder;
-    private final Converter<T> converter;
+    private final FlatEntryConverter<T> converter;
 
-    public YamlStorageSupplier(JavaPlugin plugin, Converter<T> converter) {
+    public YamlStorageSupplier(JavaPlugin plugin, FlatEntryConverter<T> converter) {
         this.plugin = plugin;
         baseFolder = new File(plugin.getDataFolder(), baseFolderPath);
         this.converter = converter;
@@ -97,11 +98,5 @@ public class YamlStorageSupplier<T> implements Function<DataHolder<T>, DataStora
                 config.finalSave();
             }
         };
-    }
-
-    public interface Converter<T> {
-        T toValue(Object object);
-
-        Object toRaw(T object);
     }
 }

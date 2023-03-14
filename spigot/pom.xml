@@ -28,6 +28,11 @@
             <artifactId>topper-core</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>me.hsgamer</groupId>
+            <artifactId>topper-extra</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>me.hsgamer</groupId>

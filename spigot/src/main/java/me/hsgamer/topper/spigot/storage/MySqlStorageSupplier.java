@@ -3,6 +3,7 @@ package me.hsgamer.topper.spigot.storage;
 import me.hsgamer.hscore.database.Setting;
 import me.hsgamer.hscore.database.client.sql.java.JavaSqlClient;
 import me.hsgamer.hscore.database.driver.mysql.MySqlDriver;
+import me.hsgamer.topper.extra.storage.converter.SqlEntryConverter;
 import me.hsgamer.topper.spigot.config.DatabaseConfig;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -14,7 +15,7 @@ public class MySqlStorageSupplier<T> extends SqlStorageSupplier<T> {
     private final JavaPlugin plugin;
     private final JavaSqlClient client;
 
-    public MySqlStorageSupplier(JavaPlugin plugin, Converter<T> converter) {
+    public MySqlStorageSupplier(JavaPlugin plugin, SqlEntryConverter<T> converter) {
         super(converter);
         this.plugin = plugin;
         Setting setting = Setting.create()
