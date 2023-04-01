@@ -1,5 +1,7 @@
 package me.hsgamer.topper.placeholderleaderboard.manager;
 
+import me.hsgamer.hscore.bukkit.scheduler.Scheduler;
+import me.hsgamer.hscore.bukkit.scheduler.Task;
 import me.hsgamer.hscore.bukkit.utils.MessageUtils;
 import me.hsgamer.topper.core.entry.DataEntry;
 import me.hsgamer.topper.placeholderleaderboard.TopperPlaceholderLeaderboard;
@@ -19,7 +21,6 @@ import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.permissions.Permission;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.util.*;
 
@@ -27,7 +28,7 @@ public abstract class BlockManager implements Listener {
     protected final TopperPlaceholderLeaderboard instance;
     private final BlockEntryConfig blockEntryConfig;
     private final Map<Location, BlockEntry> entries = new HashMap<>();
-    private BukkitTask task;
+    private Task task;
 
     protected BlockManager(TopperPlaceholderLeaderboard instance) {
         this.instance = instance;
@@ -47,7 +48,7 @@ public abstract class BlockManager implements Listener {
         blockEntryConfig.getEntries().forEach(this::add);
 
         final Queue<BlockEntry> entryQueue = new LinkedList<>();
-        task = Bukkit.getScheduler().runTaskTimer(instance, () -> {
+        task = Scheduler.CURRENT.runTaskTimer(instance, () -> {
             if (entryQueue.isEmpty()) {
                 entryQueue.addAll(this.entries.values());
                 return;
@@ -55,7 +56,7 @@ public abstract class BlockManager implements Listener {
             BlockEntry entry = entryQueue.poll();
             if (entry == null) return;
             this.update(entry);
-        }, 20L, 20L);
+        }, 20L, 20L, false);
     }
 
     public void unregister() {

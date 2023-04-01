@@ -1,10 +1,10 @@
 package me.hsgamer.topper.spigot.config;
 
+import me.hsgamer.hscore.bukkit.scheduler.Scheduler;
+import me.hsgamer.hscore.bukkit.scheduler.Task;
 import me.hsgamer.hscore.config.Config;
 import me.hsgamer.hscore.config.DecorativeConfig;
-import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class AutoSaveConfig extends DecorativeConfig {
     private final Plugin plugin;
     private final AtomicBoolean isSaving = new AtomicBoolean(false);
-    private final AtomicReference<BukkitTask> currentSaveTask = new AtomicReference<>();
+    private final AtomicReference<Task> currentSaveTask = new AtomicReference<>();
 
     public AutoSaveConfig(Plugin plugin, Config config) {
         super(config);
@@ -25,10 +25,10 @@ public class AutoSaveConfig extends DecorativeConfig {
         super.set(path, value);
         if (!isSaving.get()) {
             isSaving.set(true);
-            BukkitTask task = Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            Task task = Scheduler.CURRENT.runTaskLater(plugin, () -> {
                 save();
                 isSaving.set(false);
-            }, 40L);
+            }, 40L, false);
             currentSaveTask.set(task);
         }
     }

@@ -1,12 +1,13 @@
 package me.hsgamer.topper.placeholderleaderboard.holder;
 
+import me.hsgamer.hscore.bukkit.scheduler.Scheduler;
+import me.hsgamer.hscore.bukkit.scheduler.Task;
 import me.hsgamer.topper.core.agent.snapshot.SnapshotAgent;
 import me.hsgamer.topper.core.agent.storage.StorageAgent;
 import me.hsgamer.topper.core.agent.update.UpdateAgent;
 import me.hsgamer.topper.core.holder.DataWithAgentHolder;
 import me.hsgamer.topper.placeholderleaderboard.TopperPlaceholderLeaderboard;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -14,9 +15,9 @@ import java.util.concurrent.CompletableFuture;
 
 public abstract class NumberTopHolder extends DataWithAgentHolder<Double> {
     protected final TopperPlaceholderLeaderboard instance;
-    private final UpdateAgent<Double, BukkitTask> updateAgent;
-    private final StorageAgent<Double, BukkitTask> storageAgent;
-    private final SnapshotAgent<Double, BukkitTask> snapshotAgent;
+    private final UpdateAgent<Double, Task> updateAgent;
+    private final StorageAgent<Double, Task> storageAgent;
+    private final SnapshotAgent<Double, Task> snapshotAgent;
 
     protected NumberTopHolder(TopperPlaceholderLeaderboard instance, String name) {
         super(name);
@@ -27,18 +28,18 @@ public abstract class NumberTopHolder extends DataWithAgentHolder<Double> {
         updateAgent.setUpdateFunction(this::updateNewValue);
         updateAgent.setRunTaskFunction(runnable -> {
             int updateDelay = instance.getMainConfig().getTaskUpdateDelay();
-            return instance.getServer().getScheduler().runTaskTimerAsynchronously(instance, runnable, updateDelay, updateDelay);
+            return Scheduler.CURRENT.runTaskTimer(instance, runnable, updateDelay, updateDelay, true);
         });
-        updateAgent.setCancelTaskConsumer(BukkitTask::cancel);
+        updateAgent.setCancelTaskConsumer(Task::cancel);
         addAgent(updateAgent);
 
         this.storageAgent = new StorageAgent<>(instance.getLogger(), instance.getTopManager().getStorageSupplier().apply(this));
         storageAgent.setMaxEntryPerCall(instance.getMainConfig().getTaskSaveEntryPerTick());
         storageAgent.setRunTaskFunction(runnable -> {
             int saveDelay = instance.getMainConfig().getTaskSaveDelay();
-            return instance.getServer().getScheduler().runTaskTimerAsynchronously(instance, runnable, saveDelay, saveDelay);
+            return Scheduler.CURRENT.runTaskTimer(instance, runnable, saveDelay, saveDelay, true);
         });
-        storageAgent.setCancelTaskConsumer(BukkitTask::cancel);
+        storageAgent.setCancelTaskConsumer(Task::cancel);
         storageAgent.addOnLoadListener(() -> {
             if (instance.getMainConfig().isLoadAllOfflinePlayers()) {
                 instance.getServer().getScheduler().scheduleSyncDelayedTask(instance, () -> {
@@ -51,8 +52,8 @@ public abstract class NumberTopHolder extends DataWithAgentHolder<Double> {
         addAgent(storageAgent);
 
         this.snapshotAgent = new SnapshotAgent<>(this);
-        snapshotAgent.setRunTaskFunction(runnable -> instance.getServer().getScheduler().runTaskTimerAsynchronously(instance, runnable, 20L, 20L));
-        snapshotAgent.setCancelTaskConsumer(BukkitTask::cancel);
+        snapshotAgent.setRunTaskFunction(runnable -> Scheduler.CURRENT.runTaskTimer(instance, runnable, 20L, 20L, true));
+        snapshotAgent.setCancelTaskConsumer(Task::cancel);
         snapshotAgent.setComparator(Double::compare);
         addAgent(snapshotAgent);
     }
@@ -64,15 +65,15 @@ public abstract class NumberTopHolder extends DataWithAgentHolder<Double> {
 
     protected abstract CompletableFuture<Optional<Double>> updateNewValue(UUID uuid);
 
-    public UpdateAgent<Double, BukkitTask> getUpdateAgent() {
+    public UpdateAgent<Double, Task> getUpdateAgent() {
         return updateAgent;
     }
 
-    public StorageAgent<Double, BukkitTask> getStorageAgent() {
+    public StorageAgent<Double, Task> getStorageAgent() {
         return storageAgent;
     }
 
-    public SnapshotAgent<Double, BukkitTask> getSnapshotAgent() {
+    public SnapshotAgent<Double, Task> getSnapshotAgent() {
         return snapshotAgent;
     }
 }

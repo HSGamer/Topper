@@ -1,6 +1,7 @@
 package me.hsgamer.topper.placeholderleaderboard.holder;
 
 import me.clip.placeholderapi.PlaceholderAPI;
+import me.hsgamer.hscore.bukkit.scheduler.Scheduler;
 import me.hsgamer.topper.placeholderleaderboard.TopperPlaceholderLeaderboard;
 import org.bukkit.OfflinePlayer;
 
@@ -36,19 +37,14 @@ public class PlaceholderTopHolder extends NumberTopHolder {
         CompletableFuture<Optional<Double>> future = new CompletableFuture<>();
         OfflinePlayer player = instance.getServer().getOfflinePlayer(uuid);
         if (player.isOnline() || !isOnlineOnly) {
-            Runnable runnable = () -> {
+            Scheduler.CURRENT.runTask(instance, () -> {
                 try {
                     String parsed = PlaceholderAPI.setPlaceholders(player, placeholder);
                     future.complete(Optional.of(Double.parseDouble(parsed)));
                 } catch (Exception e) {
                     future.complete(Optional.empty());
                 }
-            };
-            if (isAsync) {
-                instance.getServer().getScheduler().runTaskAsynchronously(instance, runnable);
-            } else {
-                instance.getServer().getScheduler().runTask(instance, runnable);
-            }
+            }, isAsync);
         } else {
             future.complete(Optional.empty());
         }
