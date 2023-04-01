@@ -1,7 +1,7 @@
 package me.hsgamer.topper.placeholderleaderboard.manager;
 
 import me.hsgamer.hscore.bukkit.config.BukkitConfig;
-import me.hsgamer.hscore.bukkit.utils.MessageUtils;
+import me.hsgamer.hscore.bukkit.utils.ColorUtils;
 import me.hsgamer.hscore.config.Config;
 import me.hsgamer.hscore.config.proxy.ConfigGenerator;
 import me.hsgamer.topper.placeholderleaderboard.Permissions;
@@ -64,7 +64,7 @@ public class SignManager extends BlockManager {
         list.replaceAll(s -> formatter.replace(s, uuid, value).replace("{index}", String.valueOf(index + 1)));
         String[] lines = new String[4];
         for (int i = 0; i < 4; i++) {
-            lines[i] = MessageUtils.colorize(i < list.size() ? list.get(i) : "");
+            lines[i] = ColorUtils.colorize(i < list.size() ? list.get(i) : "");
         }
         return lines;
     }
