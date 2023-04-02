@@ -1,21 +1,21 @@
 package me.hsgamer.topper.core.agent;
 
-import java.util.function.Consumer;
-import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
-public abstract class TaskAgent<R> implements Agent {
-    private R task;
-    private Function<Runnable, R> runTaskFunction;
-    private Consumer<R> cancelTaskConsumer;
+public abstract class TaskAgent implements Agent {
+    private UnaryOperator<Runnable> runTaskFunction;
+    private Runnable cancelTaskRunnable;
 
     protected abstract Runnable getRunnable();
 
-    public void setRunTaskFunction(Function<Runnable, R> runTaskFunction) {
+    /**
+     * Set the function to run the task.
+     * The function provides a {@link Runnable} and should return a {@link Runnable} that cancels the task.
+     *
+     * @param runTaskFunction the function to run the task
+     */
+    public void setRunTaskFunction(UnaryOperator<Runnable> runTaskFunction) {
         this.runTaskFunction = runTaskFunction;
-    }
-
-    public void setCancelTaskConsumer(Consumer<R> cancelTaskConsumer) {
-        this.cancelTaskConsumer = cancelTaskConsumer;
     }
 
     @Override
@@ -23,19 +23,12 @@ public abstract class TaskAgent<R> implements Agent {
         if (runTaskFunction == null) {
             throw new IllegalStateException("runTaskFunction is null");
         }
-        if (cancelTaskConsumer == null) {
-            throw new IllegalStateException("cancelTaskConsumer is null");
-        }
-        task = runTaskFunction.apply(getRunnable());
+        cancelTaskRunnable = runTaskFunction.apply(getRunnable());
     }
 
     @Override
     public void stop() {
-        if (task == null) return;
-        cancelTaskConsumer.accept(task);
-    }
-
-    public R getTask() {
-        return task;
+        if (cancelTaskRunnable == null) return;
+        cancelTaskRunnable.run();
     }
 }

@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class StorageAgent<T, R> extends TaskAgent<R> {
+public class StorageAgent<T> extends TaskAgent {
     public static final EntryTempFlag NEED_SAVING = new EntryTempFlag("needSaving");
     public static final EntryTempFlag IS_SAVING = new EntryTempFlag("isSaving");
     private final Queue<UUID> saveQueue = new ConcurrentLinkedQueue<>();

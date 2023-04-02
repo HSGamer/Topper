@@ -10,7 +10,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Function;
 
-public class UpdateAgent<T, R> extends TaskAgent<R> {
+public class UpdateAgent<T> extends TaskAgent {
     public static final EntryTempFlag IS_UPDATING = new EntryTempFlag("isUpdating");
     public static final EntryTempFlag IGNORE_UPDATE = new EntryTempFlag("ignoreUpdate");
     private final Queue<UUID> updateQueue = new ConcurrentLinkedQueue<>();

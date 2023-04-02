@@ -1,7 +1,6 @@
 package me.hsgamer.topper.placeholderleaderboard.holder;
 
 import me.hsgamer.hscore.bukkit.scheduler.Scheduler;
-import me.hsgamer.hscore.bukkit.scheduler.Task;
 import me.hsgamer.topper.core.agent.snapshot.SnapshotAgent;
 import me.hsgamer.topper.core.agent.storage.StorageAgent;
 import me.hsgamer.topper.core.agent.update.UpdateAgent;
@@ -15,9 +14,9 @@ import java.util.concurrent.CompletableFuture;
 
 public abstract class NumberTopHolder extends DataWithAgentHolder<Double> {
     protected final TopperPlaceholderLeaderboard instance;
-    private final UpdateAgent<Double, Task> updateAgent;
-    private final StorageAgent<Double, Task> storageAgent;
-    private final SnapshotAgent<Double, Task> snapshotAgent;
+    private final UpdateAgent<Double> updateAgent;
+    private final StorageAgent<Double> storageAgent;
+    private final SnapshotAgent<Double> snapshotAgent;
 
     protected NumberTopHolder(TopperPlaceholderLeaderboard instance, String name) {
         super(name);
@@ -28,18 +27,16 @@ public abstract class NumberTopHolder extends DataWithAgentHolder<Double> {
         updateAgent.setUpdateFunction(this::updateNewValue);
         updateAgent.setRunTaskFunction(runnable -> {
             int updateDelay = instance.getMainConfig().getTaskUpdateDelay();
-            return Scheduler.CURRENT.runTaskTimer(instance, runnable, updateDelay, updateDelay, true);
+            return Scheduler.CURRENT.runTaskTimer(instance, runnable, updateDelay, updateDelay, true)::cancel;
         });
-        updateAgent.setCancelTaskConsumer(Task::cancel);
         addAgent(updateAgent);
 
         this.storageAgent = new StorageAgent<>(instance.getLogger(), instance.getTopManager().getStorageSupplier().apply(this));
         storageAgent.setMaxEntryPerCall(instance.getMainConfig().getTaskSaveEntryPerTick());
         storageAgent.setRunTaskFunction(runnable -> {
             int saveDelay = instance.getMainConfig().getTaskSaveDelay();
-            return Scheduler.CURRENT.runTaskTimer(instance, runnable, saveDelay, saveDelay, true);
+            return Scheduler.CURRENT.runTaskTimer(instance, runnable, saveDelay, saveDelay, true)::cancel;
         });
-        storageAgent.setCancelTaskConsumer(Task::cancel);
         storageAgent.addOnLoadListener(() -> {
             if (instance.getMainConfig().isLoadAllOfflinePlayers()) {
                 instance.getServer().getScheduler().scheduleSyncDelayedTask(instance, () -> {
@@ -52,8 +49,7 @@ public abstract class NumberTopHolder extends DataWithAgentHolder<Double> {
         addAgent(storageAgent);
 
         this.snapshotAgent = new SnapshotAgent<>(this);
-        snapshotAgent.setRunTaskFunction(runnable -> Scheduler.CURRENT.runTaskTimer(instance, runnable, 20L, 20L, true));
-        snapshotAgent.setCancelTaskConsumer(Task::cancel);
+        snapshotAgent.setRunTaskFunction(runnable -> Scheduler.CURRENT.runTaskTimer(instance, runnable, 20L, 20L, true)::cancel);
         snapshotAgent.setComparator(Double::compare);
         addAgent(snapshotAgent);
     }
@@ -65,15 +61,15 @@ public abstract class NumberTopHolder extends DataWithAgentHolder<Double> {
 
     protected abstract CompletableFuture<Optional<Double>> updateNewValue(UUID uuid);
 
-    public UpdateAgent<Double, Task> getUpdateAgent() {
+    public UpdateAgent<Double> getUpdateAgent() {
         return updateAgent;
     }
 
-    public StorageAgent<Double, Task> getStorageAgent() {
+    public StorageAgent<Double> getStorageAgent() {
         return storageAgent;
     }
 
-    public SnapshotAgent<Double, Task> getSnapshotAgent() {
+    public SnapshotAgent<Double> getSnapshotAgent() {
         return snapshotAgent;
     }
 }
