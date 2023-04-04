@@ -1,4 +1,4 @@
-package me.hsgamer.topper.spigot.placeholderleaderboard.manager;
+package me.hsgamer.topper.placeholderleaderboard.manager;
 
 import me.hsgamer.hscore.bukkit.config.BukkitConfig;
 import me.hsgamer.hscore.bukkit.utils.MessageUtils;
@@ -8,9 +8,9 @@ import me.hsgamer.topper.core.entry.DataEntry;
 import me.hsgamer.topper.spigot.block.BlockEntry;
 import me.hsgamer.topper.spigot.block.BlockEntryConfig;
 import me.hsgamer.topper.spigot.block.BlockManager;
-import me.hsgamer.topper.spigot.placeholderleaderboard.Permissions;
-import me.hsgamer.topper.spigot.placeholderleaderboard.TopperPlaceholderLeaderboard;
-import me.hsgamer.topper.spigot.placeholderleaderboard.holder.NumberTopHolder;
+import me.hsgamer.topper.placeholderleaderboard.Permissions;
+import me.hsgamer.topper.placeholderleaderboard.TopperPlaceholderLeaderboard;
+import me.hsgamer.topper.placeholderleaderboard.holder.NumberTopHolder;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;

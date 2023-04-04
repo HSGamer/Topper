@@ -1,8 +1,8 @@
-package me.hsgamer.topper.spigot.placeholderleaderboard.holder;
+package me.hsgamer.topper.placeholderleaderboard.holder;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 import me.hsgamer.hscore.bukkit.scheduler.Scheduler;
-import me.hsgamer.topper.spigot.placeholderleaderboard.TopperPlaceholderLeaderboard;
+import me.hsgamer.topper.placeholderleaderboard.TopperPlaceholderLeaderboard;
 import org.bukkit.OfflinePlayer;
 
 import java.util.Optional;

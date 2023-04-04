@@ -1,4 +1,4 @@
-package me.hsgamer.topper.spigot.placeholderleaderboard;
+package me.hsgamer.topper.placeholderleaderboard;
 
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;

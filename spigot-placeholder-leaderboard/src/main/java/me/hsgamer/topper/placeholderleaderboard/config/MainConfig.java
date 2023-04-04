@@ -1,4 +1,4 @@
-package me.hsgamer.topper.spigot.placeholderleaderboard.config;
+package me.hsgamer.topper.placeholderleaderboard.config;
 
 import me.hsgamer.hscore.config.annotation.ConfigPath;
 import me.hsgamer.topper.spigot.number.NumberFormatter;

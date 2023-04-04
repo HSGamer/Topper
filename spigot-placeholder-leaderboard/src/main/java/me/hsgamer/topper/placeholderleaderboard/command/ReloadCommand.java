@@ -1,8 +1,8 @@
-package me.hsgamer.topper.spigot.placeholderleaderboard.command;
+package me.hsgamer.topper.placeholderleaderboard.command;
 
 import me.hsgamer.hscore.bukkit.utils.MessageUtils;
-import me.hsgamer.topper.spigot.placeholderleaderboard.Permissions;
-import me.hsgamer.topper.spigot.placeholderleaderboard.TopperPlaceholderLeaderboard;
+import me.hsgamer.topper.placeholderleaderboard.Permissions;
+import me.hsgamer.topper.placeholderleaderboard.TopperPlaceholderLeaderboard;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 

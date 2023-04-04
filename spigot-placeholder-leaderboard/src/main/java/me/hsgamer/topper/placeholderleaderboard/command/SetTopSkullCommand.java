@@ -1,8 +1,8 @@
-package me.hsgamer.topper.spigot.placeholderleaderboard.command;
+package me.hsgamer.topper.placeholderleaderboard.command;
 
-import me.hsgamer.topper.spigot.placeholderleaderboard.Permissions;
-import me.hsgamer.topper.spigot.placeholderleaderboard.TopperPlaceholderLeaderboard;
-import me.hsgamer.topper.spigot.placeholderleaderboard.manager.SkullManager;
+import me.hsgamer.topper.placeholderleaderboard.Permissions;
+import me.hsgamer.topper.placeholderleaderboard.manager.SkullManager;
+import me.hsgamer.topper.placeholderleaderboard.TopperPlaceholderLeaderboard;
 import org.bukkit.block.Block;
 import org.bukkit.block.Skull;
 import org.bukkit.permissions.Permission;

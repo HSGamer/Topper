@@ -35,12 +35,24 @@
                             <minimizeJar>false</minimizeJar>
                             <relocations>
                                 <relocation>
+                                    <pattern>me.hsgamer.topper.spigot</pattern>
+                                    <shadedPattern>me.hsgamer.topper.placeholderleaderboard.core</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>me.hsgamer.topper.core</pattern>
+                                    <shadedPattern>me.hsgamer.topper.placeholderleaderboard.core</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>me.hsgamer.topper.extra</pattern>
+                                    <shadedPattern>me.hsgamer.topper.placeholderleaderboard.core</shadedPattern>
+                                </relocation>
+                                <relocation>
                                     <pattern>me.hsgamer.hscore</pattern>
-                                    <shadedPattern>me.hsgamer.topper.lib.core</shadedPattern>
+                                    <shadedPattern>me.hsgamer.topper.placeholderleaderboard.lib.core</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>org.bstats</pattern>
-                                    <shadedPattern>me.hsgamer.topper.lib.bstats</shadedPattern>
+                                    <shadedPattern>me.hsgamer.topper.placeholderleaderboard.lib.bstats</shadedPattern>
                                 </relocation>
                             </relocations>
                             <filters>
