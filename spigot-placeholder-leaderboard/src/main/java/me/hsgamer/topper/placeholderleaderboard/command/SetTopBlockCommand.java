@@ -26,7 +26,7 @@ public abstract class SetTopBlockCommand extends Command {
         setPermission(getRequiredPermission().getName());
     }
 
-    protected abstract BlockManager<Double> getBlockManager();
+    protected abstract BlockManager<TopperPlaceholderLeaderboard, Double> getBlockManager();
 
     protected abstract Permission getRequiredPermission();
 

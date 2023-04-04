@@ -25,7 +25,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Level;
 
-public class SkullManager extends BlockManager<Double> {
+public class SkullManager extends BlockManager<TopperPlaceholderLeaderboard, Double> {
     private static final UUID skullUUID = UUID.fromString("832b9c2d-f6c2-4c5f-8e0d-e7e7c4e9f9c8");
     private static Method setOwningPlayerMethod;
     private static Method setOwnerMethod;
@@ -39,16 +39,13 @@ public class SkullManager extends BlockManager<Double> {
         }
     }
 
-    private final TopperPlaceholderLeaderboard instance;
-
-    public SkullManager(TopperPlaceholderLeaderboard instance) {
-        super(instance);
-        this.instance = instance;
+    public SkullManager(TopperPlaceholderLeaderboard plugin) {
+        super(plugin);
     }
 
     @Override
     protected BlockEntryConfig getConfig() {
-        Config config = new BukkitConfig(instance, "skull.yml");
+        Config config = new BukkitConfig(plugin, "skull.yml");
         config.setup();
         if (config.contains("skull-entries")) {
             config.set("entries", config.get("skull-entries"));
@@ -71,7 +68,7 @@ public class SkullManager extends BlockManager<Double> {
 
     @Override
     protected void onBreak(Player player, Location location) {
-        MessageUtils.sendMessage(player, instance.getMessageConfig().getSkullRemoved());
+        MessageUtils.sendMessage(player, plugin.getMessageConfig().getSkullRemoved());
     }
 
     @Override
@@ -84,20 +81,20 @@ public class SkullManager extends BlockManager<Double> {
             try {
                 setOwningPlayerMethod.invoke(skull, owner);
             } catch (IllegalAccessException | InvocationTargetException e) {
-                instance.getLogger().log(Level.WARNING, "Error when setting owner for skulls", e);
+                plugin.getLogger().log(Level.WARNING, "Error when setting owner for skulls", e);
             }
         } else {
             try {
                 setOwnerMethod.invoke(skull, owner == null ? null : owner.getName());
             } catch (IllegalAccessException | InvocationTargetException e) {
-                instance.getLogger().log(Level.WARNING, "Error when setting owner for skulls", e);
+                plugin.getLogger().log(Level.WARNING, "Error when setting owner for skulls", e);
             }
         }
     }
 
     @Override
     protected Optional<DataEntry<Double>> getEntry(BlockEntry blockEntry) {
-        return instance.getTopManager().getTopHolder(blockEntry.holderName)
+        return plugin.getTopManager().getTopHolder(blockEntry.holderName)
                 .map(NumberTopHolder::getSnapshotAgent)
                 .flatMap(snapshotAgent -> snapshotAgent.getEntryByIndex(blockEntry.index));
     }

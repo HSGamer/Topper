@@ -24,17 +24,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public class SignManager extends BlockManager<Double> {
-    private final TopperPlaceholderLeaderboard instance;
-
-    public SignManager(TopperPlaceholderLeaderboard instance) {
-        super(instance);
-        this.instance = instance;
+public class SignManager extends BlockManager<TopperPlaceholderLeaderboard, Double> {
+    public SignManager(TopperPlaceholderLeaderboard plugin) {
+        super(plugin);
     }
 
     @Override
     protected BlockEntryConfig getConfig() {
-        Config config = new BukkitConfig(instance, "sign.yml");
+        Config config = new BukkitConfig(plugin, "sign.yml");
         config.setup();
         if (config.contains("sign-entries")) {
             config.set("entries", config.get("sign-entries"));
@@ -49,7 +46,7 @@ public class SignManager extends BlockManager<Double> {
         BlockState blockState = block.getState();
         if (blockState instanceof Sign) {
             Sign sign = (Sign) blockState;
-            NumberFormatter formatter = instance.getTopManager().getTopFormatter(holderName);
+            NumberFormatter formatter = plugin.getTopManager().getTopFormatter(holderName);
             String[] lines = getSignLines(uuid, value, index, formatter);
             for (int i = 0; i < 4; i++) {
                 sign.setLine(i, lines[i]);
@@ -62,7 +59,7 @@ public class SignManager extends BlockManager<Double> {
 
     @Override
     protected void onBreak(Player player, Location location) {
-        MessageUtils.sendMessage(player, instance.getMessageConfig().getSignRemoved());
+        MessageUtils.sendMessage(player, plugin.getMessageConfig().getSignRemoved());
     }
 
     @Override
@@ -72,13 +69,13 @@ public class SignManager extends BlockManager<Double> {
 
     @Override
     protected Optional<DataEntry<Double>> getEntry(BlockEntry blockEntry) {
-        return instance.getTopManager().getTopHolder(blockEntry.holderName)
+        return plugin.getTopManager().getTopHolder(blockEntry.holderName)
                 .map(NumberTopHolder::getSnapshotAgent)
                 .flatMap(snapshotAgent -> snapshotAgent.getEntryByIndex(blockEntry.index));
     }
 
     private String[] getSignLines(UUID uuid, Double value, int index, NumberFormatter formatter) {
-        List<String> list = new ArrayList<>(instance.getMessageConfig().getSignLines());
+        List<String> list = new ArrayList<>(plugin.getMessageConfig().getSignLines());
         list.replaceAll(s -> formatter.replace(s, uuid, value).replace("{index}", String.valueOf(index + 1)));
         String[] lines = new String[4];
         for (int i = 0; i < 4; i++) {

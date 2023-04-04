@@ -18,13 +18,13 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.*;
 
-public abstract class BlockManager<T> implements Listener {
-    private final Plugin plugin;
+public abstract class BlockManager<P extends Plugin, T> implements Listener {
+    protected final P plugin;
     private final BlockEntryConfig blockEntryConfig;
     private final Map<Location, BlockEntry> entries = new HashMap<>();
     private Task task;
 
-    protected BlockManager(Plugin plugin) {
+    protected BlockManager(P plugin) {
         this.plugin = plugin;
         this.blockEntryConfig = getConfig();
     }
