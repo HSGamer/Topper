@@ -2,10 +2,10 @@ package me.hsgamer.topper.spigot.placeholderleaderboard.command;
 
 import me.hsgamer.hscore.bukkit.utils.MessageUtils;
 import me.hsgamer.topper.core.entry.DataEntry;
+import me.hsgamer.topper.spigot.number.NumberFormatter;
 import me.hsgamer.topper.spigot.placeholderleaderboard.Permissions;
 import me.hsgamer.topper.spigot.placeholderleaderboard.TopperPlaceholderLeaderboard;
 import me.hsgamer.topper.spigot.placeholderleaderboard.holder.NumberTopHolder;
-import me.hsgamer.topper.spigot.number.NumberFormatter;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 

@@ -39,10 +39,6 @@
                                     <shadedPattern>me.hsgamer.topper.lib.core</shadedPattern>
                                 </relocation>
                                 <relocation>
-                                    <pattern>me.hsgamer.topper.spigot</pattern>
-                                    <shadedPattern>me.hsgamer.topper.placeholderleaderboard.core</shadedPattern>
-                                </relocation>
-                                <relocation>
                                     <pattern>org.bstats</pattern>
                                     <shadedPattern>me.hsgamer.topper.lib.bstats</shadedPattern>
                                 </relocation>
