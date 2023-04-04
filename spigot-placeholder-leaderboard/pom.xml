@@ -120,6 +120,11 @@
 
         <dependency>
             <groupId>me.hsgamer</groupId>
+            <artifactId>hscore-bukkit-baseplugin</artifactId>
+            <version>${core.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>me.hsgamer</groupId>
             <artifactId>hscore-bukkit-utils</artifactId>
             <version>${core.version}</version>
         </dependency>

@@ -36,7 +36,7 @@
 
         <dependency>
             <groupId>me.hsgamer</groupId>
-            <artifactId>hscore-bukkit-baseplugin</artifactId>
+            <artifactId>hscore-bukkit-simpleplugin</artifactId>
             <version>${core.version}</version>
         </dependency>
         <dependency>
