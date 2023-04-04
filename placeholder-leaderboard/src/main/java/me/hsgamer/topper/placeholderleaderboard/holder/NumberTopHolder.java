@@ -39,11 +39,11 @@ public abstract class NumberTopHolder extends DataWithAgentHolder<Double> {
         });
         storageAgent.addOnLoadListener(() -> {
             if (instance.getMainConfig().isLoadAllOfflinePlayers()) {
-                instance.getServer().getScheduler().scheduleSyncDelayedTask(instance, () -> {
+                Scheduler.CURRENT.runTask(instance, () -> {
                     for (OfflinePlayer player : instance.getServer().getOfflinePlayers()) {
                         getOrCreateEntry(player.getUniqueId());
                     }
-                });
+                }, false);
             }
         });
         addAgent(storageAgent);
