@@ -2,24 +2,34 @@ package me.hsgamer.topper.placeholderleaderboard.manager;
 
 import me.hsgamer.hscore.bukkit.config.BukkitConfig;
 import me.hsgamer.hscore.bukkit.utils.ColorUtils;
+import me.hsgamer.hscore.bukkit.utils.MessageUtils;
 import me.hsgamer.hscore.config.Config;
 import me.hsgamer.hscore.config.proxy.ConfigGenerator;
+import me.hsgamer.topper.core.entry.DataEntry;
 import me.hsgamer.topper.placeholderleaderboard.Permissions;
 import me.hsgamer.topper.placeholderleaderboard.TopperPlaceholderLeaderboard;
+import me.hsgamer.topper.placeholderleaderboard.holder.NumberTopHolder;
+import me.hsgamer.topper.spigot.block.BlockEntry;
 import me.hsgamer.topper.spigot.config.BlockEntryConfig;
 import me.hsgamer.topper.spigot.formatter.NumberFormatter;
+import me.hsgamer.topper.spigot.manager.BlockManager;
+import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
-import org.bukkit.permissions.Permission;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
-public class SignManager extends BlockManager {
+public class SignManager extends BlockManager<Double> {
+    private final TopperPlaceholderLeaderboard instance;
+
     public SignManager(TopperPlaceholderLeaderboard instance) {
         super(instance);
+        this.instance = instance;
     }
 
     @Override
@@ -35,10 +45,11 @@ public class SignManager extends BlockManager {
     }
 
     @Override
-    protected void updateBlock(Block block, UUID uuid, Double value, int index, NumberFormatter formatter) {
+    protected void updateBlock(String holderName, Block block, UUID uuid, Double value, int index) {
         BlockState blockState = block.getState();
         if (blockState instanceof Sign) {
             Sign sign = (Sign) blockState;
+            NumberFormatter formatter = instance.getTopManager().getTopFormatter(holderName);
             String[] lines = getSignLines(uuid, value, index, formatter);
             for (int i = 0; i < 4; i++) {
                 sign.setLine(i, lines[i]);
@@ -50,13 +61,20 @@ public class SignManager extends BlockManager {
     }
 
     @Override
-    protected String getBreakMessage() {
-        return instance.getMessageConfig().getSignRemoved();
+    protected void onBreak(Player player, Location location) {
+        MessageUtils.sendMessage(player, instance.getMessageConfig().getSignRemoved());
     }
 
     @Override
-    protected Permission getBreakPermission() {
-        return Permissions.SIGN_BREAK;
+    protected boolean canBreak(Player player, Location location) {
+        return player.hasPermission(Permissions.SIGN_BREAK);
+    }
+
+    @Override
+    protected Optional<DataEntry<Double>> getEntry(BlockEntry blockEntry) {
+        return instance.getTopManager().getTopHolder(blockEntry.holderName)
+                .map(NumberTopHolder::getSnapshotAgent)
+                .flatMap(snapshotAgent -> snapshotAgent.getEntryByIndex(blockEntry.index));
     }
 
     private String[] getSignLines(UUID uuid, Double value, int index, NumberFormatter formatter) {

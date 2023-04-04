@@ -5,12 +5,12 @@ import org.bukkit.Location;
 
 public class BlockEntry {
     public final Location location;
-    public final String topHolderName;
+    public final String holderName;
     public final int index;
 
-    public BlockEntry(Location location, String topHolderName, int index) {
+    public BlockEntry(Location location, String holderName, int index) {
         this.location = location;
-        this.topHolderName = topHolderName;
+        this.holderName = holderName;
         this.index = index;
     }
 
@@ -33,7 +33,7 @@ public class BlockEntry {
                 Double.toString(location.getX()),
                 Double.toString(location.getY()),
                 Double.toString(location.getZ()),
-                topHolderName,
+                holderName,
                 String.valueOf(index)
         );
     }

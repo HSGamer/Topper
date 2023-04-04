@@ -1,25 +1,31 @@
 package me.hsgamer.topper.placeholderleaderboard.manager;
 
 import me.hsgamer.hscore.bukkit.config.BukkitConfig;
+import me.hsgamer.hscore.bukkit.utils.MessageUtils;
 import me.hsgamer.hscore.config.Config;
 import me.hsgamer.hscore.config.proxy.ConfigGenerator;
+import me.hsgamer.topper.core.entry.DataEntry;
 import me.hsgamer.topper.placeholderleaderboard.Permissions;
 import me.hsgamer.topper.placeholderleaderboard.TopperPlaceholderLeaderboard;
+import me.hsgamer.topper.placeholderleaderboard.holder.NumberTopHolder;
+import me.hsgamer.topper.spigot.block.BlockEntry;
 import me.hsgamer.topper.spigot.config.BlockEntryConfig;
-import me.hsgamer.topper.spigot.formatter.NumberFormatter;
+import me.hsgamer.topper.spigot.manager.BlockManager;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Skull;
-import org.bukkit.permissions.Permission;
+import org.bukkit.entity.Player;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Level;
 
-public class SkullManager extends BlockManager {
+public class SkullManager extends BlockManager<Double> {
     private static final UUID skullUUID = UUID.fromString("832b9c2d-f6c2-4c5f-8e0d-e7e7c4e9f9c8");
     private static Method setOwningPlayerMethod;
     private static Method setOwnerMethod;
@@ -33,8 +39,11 @@ public class SkullManager extends BlockManager {
         }
     }
 
+    private final TopperPlaceholderLeaderboard instance;
+
     public SkullManager(TopperPlaceholderLeaderboard instance) {
         super(instance);
+        this.instance = instance;
     }
 
     @Override
@@ -50,7 +59,7 @@ public class SkullManager extends BlockManager {
     }
 
     @Override
-    protected void updateBlock(Block block, UUID uuid, Double value, int index, NumberFormatter formatter) {
+    protected void updateBlock(String holderName, Block block, UUID uuid, Double value, int index) {
         OfflinePlayer topPlayer = Bukkit.getOfflinePlayer(uuid == null ? skullUUID : uuid);
         BlockState blockState = block.getState();
         if (blockState instanceof Skull) {
@@ -58,6 +67,16 @@ public class SkullManager extends BlockManager {
             setOwner(skull, topPlayer);
             skull.update(false, false);
         }
+    }
+
+    @Override
+    protected void onBreak(Player player, Location location) {
+        MessageUtils.sendMessage(player, instance.getMessageConfig().getSkullRemoved());
+    }
+
+    @Override
+    protected boolean canBreak(Player player, Location location) {
+        return player.hasPermission(Permissions.SKULL_BREAK);
     }
 
     private void setOwner(Skull skull, OfflinePlayer owner) {
@@ -77,12 +96,9 @@ public class SkullManager extends BlockManager {
     }
 
     @Override
-    protected String getBreakMessage() {
-        return instance.getMessageConfig().getSkullRemoved();
-    }
-
-    @Override
-    protected Permission getBreakPermission() {
-        return Permissions.SKULL_BREAK;
+    protected Optional<DataEntry<Double>> getEntry(BlockEntry blockEntry) {
+        return instance.getTopManager().getTopHolder(blockEntry.holderName)
+                .map(NumberTopHolder::getSnapshotAgent)
+                .flatMap(snapshotAgent -> snapshotAgent.getEntryByIndex(blockEntry.index));
     }
 }

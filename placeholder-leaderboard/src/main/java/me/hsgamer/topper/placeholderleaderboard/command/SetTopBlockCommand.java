@@ -2,8 +2,8 @@ package me.hsgamer.topper.placeholderleaderboard.command;
 
 import me.hsgamer.hscore.bukkit.utils.MessageUtils;
 import me.hsgamer.topper.placeholderleaderboard.TopperPlaceholderLeaderboard;
-import me.hsgamer.topper.placeholderleaderboard.manager.BlockManager;
 import me.hsgamer.topper.spigot.block.BlockEntry;
+import me.hsgamer.topper.spigot.manager.BlockManager;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -26,7 +26,7 @@ public abstract class SetTopBlockCommand extends Command {
         setPermission(getRequiredPermission().getName());
     }
 
-    protected abstract BlockManager getBlockManager();
+    protected abstract BlockManager<Double> getBlockManager();
 
     protected abstract Permission getRequiredPermission();
 
