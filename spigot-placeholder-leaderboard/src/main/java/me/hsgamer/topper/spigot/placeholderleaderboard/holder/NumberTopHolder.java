@@ -1,11 +1,11 @@
-package me.hsgamer.topper.placeholderleaderboard.holder;
+package me.hsgamer.topper.spigot.placeholderleaderboard.holder;
 
 import me.hsgamer.hscore.bukkit.scheduler.Scheduler;
 import me.hsgamer.topper.core.agent.snapshot.SnapshotAgent;
 import me.hsgamer.topper.core.agent.storage.StorageAgent;
 import me.hsgamer.topper.core.agent.update.UpdateAgent;
 import me.hsgamer.topper.core.holder.DataWithAgentHolder;
-import me.hsgamer.topper.placeholderleaderboard.TopperPlaceholderLeaderboard;
+import me.hsgamer.topper.spigot.placeholderleaderboard.TopperPlaceholderLeaderboard;
 import org.bukkit.OfflinePlayer;
 
 import java.util.Optional;

@@ -1,6 +1,6 @@
-package me.hsgamer.topper.placeholderleaderboard.listener;
+package me.hsgamer.topper.spigot.placeholderleaderboard.listener;
 
-import me.hsgamer.topper.placeholderleaderboard.TopperPlaceholderLeaderboard;
+import me.hsgamer.topper.spigot.placeholderleaderboard.TopperPlaceholderLeaderboard;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;

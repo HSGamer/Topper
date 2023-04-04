@@ -1,4 +1,4 @@
-package me.hsgamer.topper.placeholderleaderboard.config;
+package me.hsgamer.topper.spigot.placeholderleaderboard.config;
 
 import me.hsgamer.hscore.config.annotation.ConfigPath;
 

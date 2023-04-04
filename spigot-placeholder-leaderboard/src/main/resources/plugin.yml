@@ -1,6 +1,6 @@
 name: Topper
 version: '${project.version}'
-main: me.hsgamer.topper.placeholderleaderboard.TopperPlaceholderLeaderboard
+main: me.hsgamer.topper.spigot.placeholderleaderboard.TopperPlaceholderLeaderboard
 api-version: 1.13
 depend: [ PlaceholderAPI ]
 folia-supported: true

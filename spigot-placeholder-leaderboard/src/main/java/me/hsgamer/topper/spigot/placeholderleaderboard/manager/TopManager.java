@@ -1,10 +1,10 @@
-package me.hsgamer.topper.placeholderleaderboard.manager;
+package me.hsgamer.topper.spigot.placeholderleaderboard.manager;
 
 import me.hsgamer.topper.core.holder.DataHolder;
 import me.hsgamer.topper.core.storage.DataStorage;
-import me.hsgamer.topper.placeholderleaderboard.TopperPlaceholderLeaderboard;
-import me.hsgamer.topper.placeholderleaderboard.holder.NumberTopHolder;
-import me.hsgamer.topper.placeholderleaderboard.holder.PlaceholderTopHolder;
+import me.hsgamer.topper.spigot.placeholderleaderboard.TopperPlaceholderLeaderboard;
+import me.hsgamer.topper.spigot.placeholderleaderboard.holder.NumberTopHolder;
+import me.hsgamer.topper.spigot.placeholderleaderboard.holder.PlaceholderTopHolder;
 import me.hsgamer.topper.spigot.number.NumberFormatter;
 
 import java.util.*;
