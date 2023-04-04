@@ -17,6 +17,7 @@ import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.plugin.Plugin;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public abstract class BlockManager<P extends Plugin, T> implements Listener {
     protected final P plugin;
@@ -46,15 +47,30 @@ public abstract class BlockManager<P extends Plugin, T> implements Listener {
         blockEntryConfig.getEntries().forEach(this::add);
 
         final Queue<BlockEntry> entryQueue = new LinkedList<>();
+        final AtomicBoolean isBlockUpdating = new AtomicBoolean(false);
         task = Scheduler.CURRENT.runTaskTimer(plugin, () -> {
+            if (isBlockUpdating.get()) return;
+
             if (entryQueue.isEmpty()) {
                 entryQueue.addAll(this.entries.values());
                 return;
             }
-            BlockEntry entry = entryQueue.poll();
-            if (entry == null) return;
-            this.update(entry);
-        }, 20L, 20L, false);
+            BlockEntry blockEntry = entryQueue.poll();
+            if (blockEntry == null) return;
+
+            Optional<DataEntry<T>> optionalEntry = getEntry(blockEntry);
+            UUID uuid = optionalEntry.map(DataEntry::getUuid).orElse(null);
+            T value = optionalEntry.map(DataEntry::getValue).orElse(null);
+
+            isBlockUpdating.set(true);
+            Scheduler.CURRENT.runLocationTask(plugin, blockEntry.location, () -> {
+                Block block = blockEntry.location.getBlock();
+                if (block.getChunk().isLoaded()) {
+                    updateBlock(blockEntry.holderName, block, uuid, value, blockEntry.index);
+                }
+                isBlockUpdating.set(false);
+            });
+        }, 20L, 20L, true);
     }
 
     public void unregister() {
@@ -105,16 +121,6 @@ public abstract class BlockManager<P extends Plugin, T> implements Listener {
             EntityExplodeEvent event = (EntityExplodeEvent) e;
             event.blockList().removeIf(block -> contains(block.getLocation()));
         }, plugin, true);
-    }
-
-    private void update(BlockEntry blockEntry) {
-        Optional<DataEntry<T>> optionalEntry = getEntry(blockEntry);
-        UUID uuid = optionalEntry.map(DataEntry::getUuid).orElse(null);
-        T value = optionalEntry.map(DataEntry::getValue).orElse(null);
-
-        Block block = blockEntry.location.getBlock();
-        if (!block.getChunk().isLoaded()) return;
-        updateBlock(blockEntry.holderName, block, uuid, value, blockEntry.index);
     }
 
     public void add(BlockEntry entry) {
