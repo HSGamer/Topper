@@ -14,7 +14,7 @@
         <module>spigot</module>
         <module>spigot-number</module>
         <module>spigot-block</module>
-        <module>placeholder-leaderboard</module>
+        <module>spigot-placeholder-leaderboard</module>
     </modules>
 
     <properties>

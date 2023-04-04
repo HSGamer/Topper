@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>topper-placeholder-leaderboard</artifactId>
+    <artifactId>topper-spigot-placeholder-leaderboard</artifactId>
 
     <build>
         <resources>
