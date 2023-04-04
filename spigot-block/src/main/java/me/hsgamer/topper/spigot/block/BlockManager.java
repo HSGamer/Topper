@@ -1,10 +1,8 @@
-package me.hsgamer.topper.spigot.manager;
+package me.hsgamer.topper.spigot.block;
 
 import me.hsgamer.hscore.bukkit.scheduler.Scheduler;
 import me.hsgamer.hscore.bukkit.scheduler.Task;
 import me.hsgamer.topper.core.entry.DataEntry;
-import me.hsgamer.topper.spigot.block.BlockEntry;
-import me.hsgamer.topper.spigot.config.BlockEntryConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;

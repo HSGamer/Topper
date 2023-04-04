@@ -16,8 +16,10 @@ import me.hsgamer.topper.placeholderleaderboard.listener.JoinListener;
 import me.hsgamer.topper.placeholderleaderboard.manager.SignManager;
 import me.hsgamer.topper.placeholderleaderboard.manager.SkullManager;
 import me.hsgamer.topper.placeholderleaderboard.manager.TopManager;
-import me.hsgamer.topper.spigot.builder.NumberStorageBuilder;
+import me.hsgamer.topper.spigot.block.BlockEntryConverterRegistry;
 import me.hsgamer.topper.spigot.config.DefaultConverterRegistry;
+import me.hsgamer.topper.spigot.number.NumberConverterRegistry;
+import me.hsgamer.topper.spigot.number.NumberStorageBuilder;
 import org.bstats.bukkit.Metrics;
 
 import java.io.File;
@@ -28,6 +30,8 @@ import java.util.logging.Level;
 public class TopperPlaceholderLeaderboard extends BasePlugin {
     static {
         DefaultConverterRegistry.register();
+        NumberConverterRegistry.register();
+        BlockEntryConverterRegistry.register();
     }
 
     private final NumberStorageBuilder numberStorageBuilder = new NumberStorageBuilder(this, new File(getDataFolder(), "top"));

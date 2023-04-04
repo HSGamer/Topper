@@ -1,4 +1,4 @@
-package me.hsgamer.topper.spigot.formatter;
+package me.hsgamer.topper.spigot.number;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;

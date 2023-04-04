@@ -12,6 +12,8 @@
         <module>core</module>
         <module>extra</module>
         <module>spigot</module>
+        <module>spigot-number</module>
+        <module>spigot-block</module>
         <module>placeholder-leaderboard</module>
     </modules>
 

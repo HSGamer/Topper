@@ -1,9 +1,10 @@
-package me.hsgamer.topper.spigot.builder;
+package me.hsgamer.topper.spigot.number;
 
 import me.hsgamer.hscore.bukkit.simpleplugin.SimplePlugin;
 import me.hsgamer.hscore.database.client.sql.StatementBuilder;
 import me.hsgamer.topper.extra.storage.converter.FlatEntryConverter;
 import me.hsgamer.topper.extra.storage.converter.SqlEntryConverter;
+import me.hsgamer.topper.spigot.builder.DataStorageBuilder;
 
 import java.io.File;
 import java.sql.Connection;

@@ -1,7 +1,7 @@
 package me.hsgamer.topper.placeholderleaderboard.config;
 
 import me.hsgamer.hscore.config.annotation.ConfigPath;
-import me.hsgamer.topper.spigot.formatter.NumberFormatter;
+import me.hsgamer.topper.spigot.number.NumberFormatter;
 
 import java.util.Collections;
 import java.util.Map;

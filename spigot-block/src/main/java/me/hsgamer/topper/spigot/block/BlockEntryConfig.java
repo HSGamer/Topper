@@ -1,8 +1,7 @@
-package me.hsgamer.topper.spigot.config;
+package me.hsgamer.topper.spigot.block;
 
 import me.hsgamer.hscore.config.Config;
 import me.hsgamer.hscore.config.annotation.ConfigPath;
-import me.hsgamer.topper.spigot.block.BlockEntry;
 
 import java.util.Collections;
 import java.util.List;
