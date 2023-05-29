@@ -19,7 +19,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <core.version>4.2.19</core.version>
+        <core.version>4.3.7</core.version>
         <java.version>1.8</java.version>
     </properties>
 
