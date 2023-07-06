@@ -1,6 +1,7 @@
 package me.hsgamer.topper.spigot.storage;
 
 import me.hsgamer.hscore.bukkit.config.BukkitConfig;
+import me.hsgamer.hscore.config.PathString;
 import me.hsgamer.topper.core.holder.DataHolder;
 import me.hsgamer.topper.core.storage.DataStorage;
 import me.hsgamer.topper.extra.storage.converter.FlatEntryConverter;
@@ -34,13 +35,13 @@ public class YamlStorageSupplier<T> implements Function<DataHolder<T>, DataStora
 
             @Override
             public CompletableFuture<Map<UUID, T>> load() {
-                Map<String, Object> values = config.getValues(false);
+                Map<PathString, Object> values = config.getValues(false);
                 return CompletableFuture.supplyAsync(() -> {
                     Map<UUID, T> map = new HashMap<>();
-                    values.forEach((uuid, value) -> {
+                    values.forEach((uuidPath, value) -> {
                         T finalValue = converter.toValue(value);
                         if (finalValue != null) {
-                            map.put(UUID.fromString(uuid), finalValue);
+                            map.put(UUID.fromString(uuidPath.getLastPath()), finalValue);
                         }
                     });
                     return map;
@@ -53,7 +54,7 @@ public class YamlStorageSupplier<T> implements Function<DataHolder<T>, DataStora
                 BukkitRunnable runnable = new BukkitRunnable() {
                     @Override
                     public void run() {
-                        config.set(uuid.toString(), converter.toRaw(value));
+                        config.set(new PathString(uuid.toString()), converter.toRaw(value));
                         future.complete(null);
                     }
                 };
@@ -71,7 +72,7 @@ public class YamlStorageSupplier<T> implements Function<DataHolder<T>, DataStora
                 BukkitRunnable runnable = new BukkitRunnable() {
                     @Override
                     public void run() {
-                        Optional<T> optional = Optional.ofNullable(config.get(uuid.toString())).map(converter::toValue);
+                        Optional<T> optional = Optional.ofNullable(config.get(new PathString(uuid.toString()))).map(converter::toValue);
                         future.complete(optional);
                     }
                 };

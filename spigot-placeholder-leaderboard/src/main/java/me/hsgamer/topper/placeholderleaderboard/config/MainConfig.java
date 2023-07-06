@@ -22,22 +22,22 @@ public interface MainConfig {
         return false;
     }
 
-    @ConfigPath("task.save.entry-per-tick")
+    @ConfigPath({"task", "save", "entry-per-tick"})
     default int getTaskSaveEntryPerTick() {
         return 10;
     }
 
-    @ConfigPath("task.save.delay")
+    @ConfigPath({"task", "save", "delay"})
     default int getTaskSaveDelay() {
         return 0;
     }
 
-    @ConfigPath("task.update.entry-per-tick")
+    @ConfigPath({"task", "update", "entry-per-tick"})
     default int getTaskUpdateEntryPerTick() {
         return 10;
     }
 
-    @ConfigPath("task.update.delay")
+    @ConfigPath({"task", "update", "delay"})
     default int getTaskUpdateDelay() {
         return 0;
     }

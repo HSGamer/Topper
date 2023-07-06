@@ -35,7 +35,7 @@ public class TopperPlaceholderLeaderboard extends BasePlugin {
     }
 
     private final NumberStorageBuilder numberStorageBuilder = new NumberStorageBuilder(this, new File(getDataFolder(), "top"));
-    private final MainConfig mainConfig = ConfigGenerator.newInstance(MainConfig.class, new BukkitConfig(this, "config.yml"));
+    private final MainConfig mainConfig = ConfigGenerator.newInstance(MainConfig.class, new BukkitConfig(this));
     private final MessageConfig messageConfig = ConfigGenerator.newInstance(MessageConfig.class, new BukkitConfig(this, "messages.yml"));
     private final TopManager topManager = new TopManager(this);
     private final SignManager signManager = new SignManager(this);

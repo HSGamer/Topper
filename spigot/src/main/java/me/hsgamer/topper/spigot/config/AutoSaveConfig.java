@@ -4,6 +4,7 @@ import me.hsgamer.hscore.bukkit.scheduler.Scheduler;
 import me.hsgamer.hscore.bukkit.scheduler.Task;
 import me.hsgamer.hscore.config.Config;
 import me.hsgamer.hscore.config.DecorativeConfig;
+import me.hsgamer.hscore.config.PathString;
 import org.bukkit.plugin.Plugin;
 
 import java.util.Optional;
@@ -21,14 +22,14 @@ public class AutoSaveConfig extends DecorativeConfig {
     }
 
     @Override
-    public void set(String path, Object value) {
+    public void set(PathString path, Object value) {
         super.set(path, value);
         if (!isSaving.get()) {
             isSaving.set(true);
-            Task task = Scheduler.CURRENT.runTaskLater(plugin, () -> {
+            Task task = Scheduler.plugin(plugin).sync().runTaskLater(() -> {
                 save();
                 isSaving.set(false);
-            }, 40L, false);
+            }, 40L);
             currentSaveTask.set(task);
         }
     }

@@ -48,7 +48,7 @@ public abstract class BlockManager<P extends Plugin, T> implements Listener {
 
         final Queue<BlockEntry> entryQueue = new LinkedList<>();
         final AtomicBoolean isBlockUpdating = new AtomicBoolean(false);
-        task = Scheduler.CURRENT.runTaskTimer(plugin, () -> {
+        task = Scheduler.plugin(plugin).async().runTaskTimer(() -> {
             if (isBlockUpdating.get()) return;
 
             if (entryQueue.isEmpty()) {
@@ -63,14 +63,14 @@ public abstract class BlockManager<P extends Plugin, T> implements Listener {
             T value = optionalEntry.map(DataEntry::getValue).orElse(null);
 
             isBlockUpdating.set(true);
-            Scheduler.CURRENT.runLocationTask(plugin, blockEntry.location, () -> {
+            Scheduler.plugin(plugin).sync().runLocationTask(blockEntry.location, () -> {
                 Block block = blockEntry.location.getBlock();
                 if (block.getChunk().isLoaded()) {
                     updateBlock(blockEntry.holderName, block, uuid, value, blockEntry.index);
                 }
                 isBlockUpdating.set(false);
             });
-        }, 20L, 20L, true);
+        }, 20L, 20L);
     }
 
     public void unregister() {

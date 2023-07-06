@@ -37,14 +37,14 @@ public class PlaceholderTopHolder extends NumberTopHolder {
         CompletableFuture<Optional<Double>> future = new CompletableFuture<>();
         OfflinePlayer player = instance.getServer().getOfflinePlayer(uuid);
         if (player.isOnline() || !isOnlineOnly) {
-            Scheduler.CURRENT.runTask(instance, () -> {
+            Scheduler.plugin(instance).runner(isAsync).runTask(() -> {
                 try {
                     String parsed = PlaceholderAPI.setPlaceholders(player, placeholder);
                     future.complete(Optional.of(Double.parseDouble(parsed)));
                 } catch (Exception e) {
                     future.complete(Optional.empty());
                 }
-            }, isAsync);
+            });
         } else {
             future.complete(Optional.empty());
         }

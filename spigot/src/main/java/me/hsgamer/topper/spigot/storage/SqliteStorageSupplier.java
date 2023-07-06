@@ -22,10 +22,7 @@ public class SqliteStorageSupplier<T> extends SqlStorageSupplier<T> {
     public SqliteStorageSupplier(SimplePlugin plugin, File baseFolder, SqlEntryConverter<T> converter) {
         super(plugin.getLogger(), converter);
         DatabaseConfig databaseConfig = ConfigGenerator.newInstance(DatabaseConfig.class, new BukkitConfig(plugin, "database.yml"));
-        client = new JavaSqlClient(
-                Setting.create().setDatabaseName(databaseConfig.getDatabase()),
-                new SqliteFileDriver(baseFolder)
-        );
+        client = new JavaSqlClient(Setting.create(new SqliteFileDriver(baseFolder)).setDatabaseName(databaseConfig.getDatabase()));
         plugin.addDisableFunction(() -> {
             try {
                 Connection connection = connectionReference.get();

@@ -21,7 +21,7 @@ public class MySqlStorageSupplier<T> extends SqlStorageSupplier<T> {
         super(plugin.getLogger(), converter);
         this.plugin = plugin;
         DatabaseConfig databaseConfig = ConfigGenerator.newInstance(DatabaseConfig.class, new BukkitConfig(plugin, "database.yml"));
-        Setting setting = Setting.create()
+        Setting setting = Setting.create(new MySqlDriver())
                 .setDatabaseName(databaseConfig.getDatabase())
                 .setHost(databaseConfig.getHost())
                 .setPort(databaseConfig.getPort())
@@ -30,7 +30,7 @@ public class MySqlStorageSupplier<T> extends SqlStorageSupplier<T> {
         if (databaseConfig.isUseSSL()) {
             setting.setDriverProperty("useSSL", "true");
         }
-        client = new JavaSqlClient(setting, new MySqlDriver());
+        client = new JavaSqlClient(setting);
     }
 
     @Override

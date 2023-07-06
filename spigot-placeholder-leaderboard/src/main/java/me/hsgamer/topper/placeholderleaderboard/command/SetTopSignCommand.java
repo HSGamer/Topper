@@ -1,8 +1,8 @@
 package me.hsgamer.topper.placeholderleaderboard.command;
 
 import me.hsgamer.topper.placeholderleaderboard.Permissions;
-import me.hsgamer.topper.placeholderleaderboard.manager.SignManager;
 import me.hsgamer.topper.placeholderleaderboard.TopperPlaceholderLeaderboard;
+import me.hsgamer.topper.placeholderleaderboard.manager.SignManager;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.permissions.Permission;

@@ -27,7 +27,7 @@ public abstract class NumberTopHolder extends DataWithAgentHolder<Double> {
         updateAgent.setUpdateFunction(this::updateNewValue);
         updateAgent.setRunTaskFunction(runnable -> {
             int updateDelay = instance.getMainConfig().getTaskUpdateDelay();
-            return Scheduler.CURRENT.runTaskTimer(instance, runnable, updateDelay, updateDelay, true)::cancel;
+            return Scheduler.plugin(instance).async().runTaskTimer(runnable, updateDelay, updateDelay)::cancel;
         });
         addAgent(updateAgent);
 
@@ -35,21 +35,21 @@ public abstract class NumberTopHolder extends DataWithAgentHolder<Double> {
         storageAgent.setMaxEntryPerCall(instance.getMainConfig().getTaskSaveEntryPerTick());
         storageAgent.setRunTaskFunction(runnable -> {
             int saveDelay = instance.getMainConfig().getTaskSaveDelay();
-            return Scheduler.CURRENT.runTaskTimer(instance, runnable, saveDelay, saveDelay, true)::cancel;
+            return Scheduler.plugin(instance).async().runTaskTimer(runnable, saveDelay, saveDelay)::cancel;
         });
         storageAgent.addOnLoadListener(() -> {
             if (instance.getMainConfig().isLoadAllOfflinePlayers()) {
-                Scheduler.CURRENT.runTask(instance, () -> {
+                Scheduler.plugin(instance).sync().runTask(() -> {
                     for (OfflinePlayer player : instance.getServer().getOfflinePlayers()) {
                         getOrCreateEntry(player.getUniqueId());
                     }
-                }, false);
+                });
             }
         });
         addAgent(storageAgent);
 
         this.snapshotAgent = new SnapshotAgent<>(this);
-        snapshotAgent.setRunTaskFunction(runnable -> Scheduler.CURRENT.runTaskTimer(instance, runnable, 20L, 20L, true)::cancel);
+        snapshotAgent.setRunTaskFunction(runnable -> Scheduler.plugin(instance).async().runTaskTimer(runnable, 20L, 20L)::cancel);
         snapshotAgent.setComparator(Double::compare);
         addAgent(snapshotAgent);
     }

@@ -2,15 +2,14 @@ package me.hsgamer.topper.placeholderleaderboard.manager;
 
 import me.hsgamer.hscore.bukkit.config.BukkitConfig;
 import me.hsgamer.hscore.bukkit.utils.MessageUtils;
-import me.hsgamer.hscore.config.Config;
 import me.hsgamer.hscore.config.proxy.ConfigGenerator;
 import me.hsgamer.topper.core.entry.DataEntry;
-import me.hsgamer.topper.spigot.block.BlockEntry;
-import me.hsgamer.topper.spigot.block.BlockEntryConfig;
-import me.hsgamer.topper.spigot.block.BlockManager;
 import me.hsgamer.topper.placeholderleaderboard.Permissions;
 import me.hsgamer.topper.placeholderleaderboard.TopperPlaceholderLeaderboard;
 import me.hsgamer.topper.placeholderleaderboard.holder.NumberTopHolder;
+import me.hsgamer.topper.spigot.block.BlockEntry;
+import me.hsgamer.topper.spigot.block.BlockEntryConfig;
+import me.hsgamer.topper.spigot.block.BlockManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -45,14 +44,7 @@ public class SkullManager extends BlockManager<TopperPlaceholderLeaderboard, Dou
 
     @Override
     protected BlockEntryConfig getConfig() {
-        Config config = new BukkitConfig(plugin, "skull.yml");
-        config.setup();
-        if (config.contains("skull-entries")) {
-            config.set("entries", config.get("skull-entries"));
-            config.set("skull-entries", null);
-            config.save();
-        }
-        return ConfigGenerator.newInstance(BlockEntryConfig.class, config, false);
+        return ConfigGenerator.newInstance(BlockEntryConfig.class, new BukkitConfig(plugin, "skull.yml"));
     }
 
     @Override

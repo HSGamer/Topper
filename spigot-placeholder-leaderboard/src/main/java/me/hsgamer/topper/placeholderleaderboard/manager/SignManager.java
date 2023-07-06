@@ -3,16 +3,15 @@ package me.hsgamer.topper.placeholderleaderboard.manager;
 import me.hsgamer.hscore.bukkit.config.BukkitConfig;
 import me.hsgamer.hscore.bukkit.utils.ColorUtils;
 import me.hsgamer.hscore.bukkit.utils.MessageUtils;
-import me.hsgamer.hscore.config.Config;
 import me.hsgamer.hscore.config.proxy.ConfigGenerator;
 import me.hsgamer.topper.core.entry.DataEntry;
 import me.hsgamer.topper.placeholderleaderboard.Permissions;
+import me.hsgamer.topper.placeholderleaderboard.TopperPlaceholderLeaderboard;
+import me.hsgamer.topper.placeholderleaderboard.holder.NumberTopHolder;
 import me.hsgamer.topper.spigot.block.BlockEntry;
 import me.hsgamer.topper.spigot.block.BlockEntryConfig;
 import me.hsgamer.topper.spigot.block.BlockManager;
 import me.hsgamer.topper.spigot.number.NumberFormatter;
-import me.hsgamer.topper.placeholderleaderboard.TopperPlaceholderLeaderboard;
-import me.hsgamer.topper.placeholderleaderboard.holder.NumberTopHolder;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
@@ -31,14 +30,7 @@ public class SignManager extends BlockManager<TopperPlaceholderLeaderboard, Doub
 
     @Override
     protected BlockEntryConfig getConfig() {
-        Config config = new BukkitConfig(plugin, "sign.yml");
-        config.setup();
-        if (config.contains("sign-entries")) {
-            config.set("entries", config.get("sign-entries"));
-            config.set("sign-entries", null);
-            config.save();
-        }
-        return ConfigGenerator.newInstance(BlockEntryConfig.class, config, false);
+        return ConfigGenerator.newInstance(BlockEntryConfig.class, new BukkitConfig(plugin, "sign.yml"));
     }
 
     @Override

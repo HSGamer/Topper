@@ -3,9 +3,9 @@ package me.hsgamer.topper.placeholderleaderboard.command;
 import me.hsgamer.hscore.bukkit.utils.MessageUtils;
 import me.hsgamer.topper.core.entry.DataEntry;
 import me.hsgamer.topper.placeholderleaderboard.Permissions;
-import me.hsgamer.topper.spigot.number.NumberFormatter;
 import me.hsgamer.topper.placeholderleaderboard.TopperPlaceholderLeaderboard;
 import me.hsgamer.topper.placeholderleaderboard.holder.NumberTopHolder;
+import me.hsgamer.topper.spigot.number.NumberFormatter;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
