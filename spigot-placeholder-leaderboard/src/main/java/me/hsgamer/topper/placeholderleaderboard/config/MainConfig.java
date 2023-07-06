@@ -47,7 +47,10 @@ public interface MainConfig {
             "    fraction-digits: 2 # How many digits after the decimal separator will be shown",
             "    decimal-separator: \".\" # The decimal separator between the integer part and the fractional part of the value",
             "    group-separator: \",\" # The separator between each three digits of the integer part",
-            "    show-group-separator: false # Should the group separator be shown in the formatted value"
+            "    show-group-separator: false # Should the group separator be shown in the formatted value",
+            "    null-display-uuid: \"N\\A\" # The UUID to display when the player is not found",
+            "    null-display-name: \"N\\A\" # The name to display when the player is not found",
+            "    null-display-value: \"N\\A\" # The value to display when the player is not found",
     })
     default Map<String, NumberFormatter> getFormatters() {
         return Collections.emptyMap();
@@ -81,18 +84,6 @@ public interface MainConfig {
     @Comment("How many ticks should the plugin wait before updating the leaderboard")
     default int getTaskUpdateDelay() {
         return 0;
-    }
-
-    @ConfigPath("null-display-name")
-    @Comment("The default display name if the player is not found in the leaderboard")
-    default String getNullDisplayName() {
-        return "---";
-    }
-
-    @ConfigPath("null-display-value")
-    @Comment("The default display value if the player is not found in the leaderboard")
-    default String getNullDisplayValue() {
-        return "---";
     }
 
     @ConfigPath("storage-type")

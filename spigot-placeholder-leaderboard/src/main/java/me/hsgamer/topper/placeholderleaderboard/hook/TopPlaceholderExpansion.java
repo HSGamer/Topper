@@ -61,7 +61,7 @@ public class TopPlaceholderExpansion extends PlaceholderExpansion {
                         .map(DataEntry::getUuid)
                         .map(Bukkit::getOfflinePlayer)
                         .map(OfflinePlayer::getName)
-                        .orElseGet(instance.getMainConfig()::getNullDisplayName);
+                        .orElseGet(formatter::getNullDisplayName);
             }
             case "top_value_raw":
             case "top_value": {
@@ -76,7 +76,7 @@ public class TopPlaceholderExpansion extends PlaceholderExpansion {
                 return holder.getSnapshotAgent().getEntryByIndex(i - 1)
                         .map(DataEntry::getValue)
                         .map(value -> args[1].endsWith("raw") ? String.valueOf(value) : formatter.format(value))
-                        .orElseGet(instance.getMainConfig()::getNullDisplayValue);
+                        .orElseGet(formatter::getNullDisplayValue);
             }
             case "top_rank":
                 return Integer.toString(holder.getSnapshotAgent().getSnapshotIndex(player.getUniqueId()) + 1);
@@ -85,7 +85,7 @@ public class TopPlaceholderExpansion extends PlaceholderExpansion {
                 return holder.getEntry(player.getUniqueId())
                         .map(DataEntry::getValue)
                         .map(value -> args[1].endsWith("raw") ? String.valueOf(value) : formatter.format(value))
-                        .orElseGet(instance.getMainConfig()::getNullDisplayName);
+                        .orElseGet(formatter::getNullDisplayValue);
             default:
                 break;
         }

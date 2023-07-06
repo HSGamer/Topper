@@ -23,8 +23,6 @@ public class TopManager {
 
     public void register() {
         storageSupplier = instance.getNumberStorageBuilder().buildSupplier(instance.getMainConfig().getStorageType());
-        NumberFormatter.setNullDisplayName(instance.getMainConfig()::getNullDisplayName);
-        NumberFormatter.setNullDisplayValue(instance.getMainConfig()::getNullDisplayValue);
         instance.getMainConfig().getPlaceholders().forEach((key, value) -> addTopHolder(key, new PlaceholderTopHolder(instance, key, value)));
         topFormatters.putAll(instance.getMainConfig().getFormatters());
     }

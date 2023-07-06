@@ -11,13 +11,12 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.BiFunction;
-import java.util.function.Supplier;
 
 public class NumberFormatter {
-    private static Supplier<String> nullDisplayUuid = () -> "";
-    private static Supplier<String> nullDisplayName = () -> "";
-    private static Supplier<String> nullDisplayValue = () -> "";
     private final Map<String, BiFunction<UUID, Number, String>> replacers = new HashMap<>();
+    private String nullDisplayUuid = "---";
+    private String nullDisplayName = "---";
+    private String nullDisplayValue = "---";
     private String displayName = "";
     private String prefix = "";
     private String suffix = "";
@@ -35,22 +34,37 @@ public class NumberFormatter {
         Optional.ofNullable(map.get("decimal-separator")).ifPresent(s -> decimalSeparator = String.valueOf(s).charAt(0));
         Optional.ofNullable(map.get("group-separator")).ifPresent(s -> groupSeparator = String.valueOf(s).charAt(0));
         Optional.ofNullable(map.get("show-group-separator")).ifPresent(s -> showGroupSeparator = Boolean.parseBoolean(String.valueOf(s)));
+        Optional.ofNullable(map.get("null-display-uuid")).ifPresent(s -> nullDisplayUuid = String.valueOf(s));
+        Optional.ofNullable(map.get("null-display-name")).ifPresent(s -> nullDisplayName = String.valueOf(s));
+        Optional.ofNullable(map.get("null-display-value")).ifPresent(s -> nullDisplayValue = String.valueOf(s));
     }
 
     public NumberFormatter() {
         // EMPTY
     }
 
-    public static void setNullDisplayUuid(Supplier<String> nullDisplayUuid) {
-        NumberFormatter.nullDisplayUuid = nullDisplayUuid;
+    public String getNullDisplayUuid() {
+        return nullDisplayUuid;
     }
 
-    public static void setNullDisplayName(Supplier<String> nullDisplayName) {
-        NumberFormatter.nullDisplayName = nullDisplayName;
+    public void setNullDisplayUuid(String nullDisplayUuid) {
+        this.nullDisplayUuid = nullDisplayUuid;
     }
 
-    public static void setNullDisplayValue(Supplier<String> nullDisplayValue) {
-        NumberFormatter.nullDisplayValue = nullDisplayValue;
+    public String getNullDisplayName() {
+        return nullDisplayName;
+    }
+
+    public void setNullDisplayName(String nullDisplayName) {
+        this.nullDisplayName = nullDisplayName;
+    }
+
+    public String getNullDisplayValue() {
+        return nullDisplayValue;
+    }
+
+    public void setNullDisplayValue(String nullDisplayValue) {
+        this.nullDisplayValue = nullDisplayValue;
     }
 
     public void addReplacer(String key, BiFunction<UUID, Number, String> replacer) {
@@ -138,10 +152,10 @@ public class NumberFormatter {
     public String replace(String text, UUID uuid, Number value) {
         String replaced = text.replace("{prefix}", prefix)
                 .replace("{suffix}", suffix)
-                .replace("{uuid}", Optional.ofNullable(uuid).map(UUID::toString).orElseGet(nullDisplayUuid))
-                .replace("{value}", Optional.ofNullable(value).map(this::format).orElseGet(nullDisplayValue))
-                .replace("{name}", Optional.ofNullable(uuid).map(Bukkit::getOfflinePlayer).map(OfflinePlayer::getName).orElseGet(nullDisplayName))
-                .replace("{value_raw}", Optional.ofNullable(value).map(String::valueOf).orElseGet(nullDisplayValue))
+                .replace("{uuid}", Optional.ofNullable(uuid).map(UUID::toString).orElse(nullDisplayUuid))
+                .replace("{value}", Optional.ofNullable(value).map(this::format).orElse(nullDisplayValue))
+                .replace("{name}", Optional.ofNullable(uuid).map(Bukkit::getOfflinePlayer).map(OfflinePlayer::getName).orElse(nullDisplayName))
+                .replace("{value_raw}", Optional.ofNullable(value).map(String::valueOf).orElse(nullDisplayValue))
                 .replace("{display_name}", displayName);
         for (Map.Entry<String, BiFunction<UUID, Number, String>> entry : replacers.entrySet()) {
             replaced = replaced.replace("{" + entry.getKey() + "}", entry.getValue().apply(uuid, value));
@@ -157,6 +171,9 @@ public class NumberFormatter {
         map.put("decimal-separator", decimalSeparator);
         map.put("group-separator", groupSeparator);
         map.put("show-group-separator", showGroupSeparator);
+        map.put("null-display-uuid", nullDisplayUuid);
+        map.put("null-display-name", nullDisplayName);
+        map.put("null-display-value", nullDisplayValue);
         return map;
     }
 }
