@@ -18,7 +18,7 @@ public interface MainConfig {
             "You can add \"[ONLINE]\" before the \"<placeholder>\" to indicate that the holder should only get values when the player is online",
             "You can add \"[ASYNC]\" before the \"<placeholder>\" to indicate that the holder should get values asynchronously",
             "",
-            "For example, If you want to create two new leaderboards",
+            "For example, If you want to create three new leaderboards",
             "- \"player_x\" listens to the placeholder \"%player_x%\"",
             "- \"player_y\" listens to the placeholder \"%player_y%\" only when the players are online",
             "- \"player_z\" listens to the placeholder \"%player_z%\" only when the players are online and get values asynchronously",
