@@ -23,7 +23,7 @@ public abstract class NumberTopHolder extends DataWithAgentHolder<Double> {
         this.instance = instance;
 
         this.updateAgent = new UpdateAgent<>(this);
-        updateAgent.setMaxEntryPerCall(instance.getMainConfig().getTaskSaveEntryPerTick());
+        updateAgent.setMaxEntryPerCall(instance.getMainConfig().getTaskUpdateEntryPerTick());
         updateAgent.setUpdateFunction(this::updateNewValue);
         updateAgent.setRunTaskFunction(runnable -> {
             int updateDelay = instance.getMainConfig().getTaskUpdateDelay();
