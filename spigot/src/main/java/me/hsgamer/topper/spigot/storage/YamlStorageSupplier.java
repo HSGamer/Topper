@@ -1,13 +1,13 @@
 package me.hsgamer.topper.spigot.storage;
 
 import me.hsgamer.hscore.bukkit.config.BukkitConfig;
+import me.hsgamer.hscore.bukkit.scheduler.Scheduler;
 import me.hsgamer.hscore.config.PathString;
 import me.hsgamer.topper.core.holder.DataHolder;
 import me.hsgamer.topper.core.storage.DataStorage;
 import me.hsgamer.topper.extra.storage.converter.FlatEntryConverter;
 import me.hsgamer.topper.spigot.config.AutoSaveConfig;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
 import java.util.HashMap;
@@ -51,17 +51,14 @@ public class YamlStorageSupplier<T> implements Function<DataHolder<T>, DataStora
             @Override
             public CompletableFuture<Void> save(UUID uuid, T value, boolean urgent) {
                 CompletableFuture<Void> future = new CompletableFuture<>();
-                BukkitRunnable runnable = new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        config.set(new PathString(uuid.toString()), converter.toRaw(value));
-                        future.complete(null);
-                    }
+                Runnable runnable = () -> {
+                    config.set(new PathString(uuid.toString()), converter.toRaw(value));
+                    future.complete(null);
                 };
                 if (urgent) {
                     runnable.run();
                 } else {
-                    runnable.runTask(plugin);
+                    Scheduler.plugin(plugin).sync().runTask(runnable);
                 }
                 return future;
             }
@@ -69,17 +66,14 @@ public class YamlStorageSupplier<T> implements Function<DataHolder<T>, DataStora
             @Override
             public CompletableFuture<Optional<T>> load(UUID uuid, boolean urgent) {
                 CompletableFuture<Optional<T>> future = new CompletableFuture<>();
-                BukkitRunnable runnable = new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        Optional<T> optional = Optional.ofNullable(config.get(new PathString(uuid.toString()))).map(converter::toValue);
-                        future.complete(optional);
-                    }
+                Runnable runnable = () -> {
+                    Optional<T> optional = Optional.ofNullable(config.get(new PathString(uuid.toString()))).map(converter::toValue);
+                    future.complete(optional);
                 };
                 if (urgent) {
                     runnable.run();
                 } else {
-                    runnable.runTask(plugin);
+                    Scheduler.plugin(plugin).sync().runTask(runnable);
                 }
                 return future;
             }
