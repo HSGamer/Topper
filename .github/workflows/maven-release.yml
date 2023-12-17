@@ -17,9 +17,23 @@ jobs:
           cache: maven
       - name: Build with Maven
         run: mvn clean package
-      - name: "Release"
-        uses: "marvinpinto/action-automatic-releases@latest"
+      - name: Release
+        uses: Kir-Antipov/mc-publish@v3.3
         with:
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          prerelease: false
-          files: "**/topper*.jar"
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          modrinth-id: 6zYtBRSV
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+          modrinth-featured: true
+          loaders: |
+            bukkit
+            spigot
+            paper
+            purpur
+            folia
+          game-versions: ">=1.8"
+          game-version-filter: releases
+          files: |
+            target/topper-*-shaded.jar
+            target/topper-*-@(sources|javadoc).jar
+          name: ${{ github.ref_name }}
+          version: ${{ github.ref_name }}
