@@ -33,7 +33,7 @@ jobs:
           game-versions: ">=1.8"
           game-version-filter: releases
           files: |
-            target/topper-*-shaded.jar
-            target/topper-*-@(sources|javadoc).jar
+            **/target/topper-*-shaded.jar
+            **/target/topper-*-@(sources|javadoc).jar
           name: ${{ github.ref_name }}
           version: ${{ github.ref_name }}
