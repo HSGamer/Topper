@@ -8,6 +8,7 @@ import org.bukkit.OfflinePlayer;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -42,6 +43,7 @@ public class PlaceholderTopHolder extends NumberTopHolder {
                     String parsed = PlaceholderAPI.setPlaceholders(player, placeholder);
                     future.complete(Optional.of(Double.parseDouble(parsed)));
                 } catch (Exception e) {
+                    instance.getLogger().log(Level.WARNING, "There is an error while parsing the placeholder for " + getName(), e);
                     future.complete(Optional.empty());
                 }
             });
