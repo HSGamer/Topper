@@ -17,6 +17,7 @@ public interface MainConfig {
             "This creates a new \"Top Holder\" with the name \"<name>\" and the placeholder \"<placeholder>\"",
             "You can add \"[ONLINE]\" before the \"<placeholder>\" to indicate that the holder should only get values when the player is online",
             "You can add \"[ASYNC]\" before the \"<placeholder>\" to indicate that the holder should get values asynchronously",
+            "You can add \"[LENIENT]\" before the \"<placeholder>\" to indicate that the holder should ignore errors while parsing the placeholder. ONLY USE THIS IF YOU ARE SURE THAT THE ERRORS ARE NOT CRITICAL",
             "",
             "For example, If you want to create three new leaderboards",
             "- \"player_x\" listens to the placeholder \"%player_x%\"",
