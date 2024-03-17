@@ -8,7 +8,7 @@ import java.util.Collections;
 import java.util.Map;
 
 public interface MainConfig {
-    @ConfigPath("placeholders")
+    @ConfigPath(value = "placeholders", priority = 1)
     @Comment({
             "This is where you add placeholders that the plugin will listen for values to store in the leaderboard",
             "Note that the placeholder should have its final value as a number (or else the leaderboard won't update)",
@@ -33,7 +33,7 @@ public interface MainConfig {
         return Collections.emptyMap();
     }
 
-    @ConfigPath("formatters")
+    @ConfigPath(value = "formatters", priority = 2)
     @Comment({
             "The formatters to display the value in the leaderboard",
             "This modifies how the value is shown in the leaderboard provided by the Top Holder",
@@ -57,37 +57,37 @@ public interface MainConfig {
         return Collections.emptyMap();
     }
 
-    @ConfigPath("load-all-offline-players")
+    @ConfigPath(value = "load-all-offline-players", priority = 3)
     @Comment("Should the plugin load all offline players when the server starts")
     default boolean isLoadAllOfflinePlayers() {
         return false;
     }
 
-    @ConfigPath({"task", "save", "entry-per-tick"})
+    @ConfigPath(value = {"task", "save", "entry-per-tick"}, priority = 4)
     @Comment("How many entries should be saved per tick")
     default int getTaskSaveEntryPerTick() {
         return 10;
     }
 
-    @ConfigPath({"task", "save", "delay"})
+    @ConfigPath(value = {"task", "save", "delay"}, priority = 4)
     @Comment("How many ticks should the plugin wait before saving the leaderboard")
     default int getTaskSaveDelay() {
         return 0;
     }
 
-    @ConfigPath({"task", "update", "entry-per-tick"})
+    @ConfigPath(value = {"task", "update", "entry-per-tick"}, priority = 5)
     @Comment("How many entries should be updated per tick")
     default int getTaskUpdateEntryPerTick() {
         return 10;
     }
 
-    @ConfigPath({"task", "update", "delay"})
+    @ConfigPath(value = {"task", "update", "delay"},  priority = 5)
     @Comment("How many ticks should the plugin wait before updating the leaderboard")
     default int getTaskUpdateDelay() {
         return 0;
     }
 
-    @ConfigPath("storage-type")
+    @ConfigPath(value = "storage-type")
     @Comment({
             "The type of storage the plugin will use to store the value",
             "Available: YAML, SQLITE, MYSQL"
