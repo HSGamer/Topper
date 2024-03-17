@@ -1,10 +1,10 @@
 package me.hsgamer.topper.spigot.number;
 
-import me.hsgamer.hscore.bukkit.simpleplugin.SimplePlugin;
 import me.hsgamer.hscore.database.client.sql.StatementBuilder;
 import me.hsgamer.topper.extra.storage.converter.FlatEntryConverter;
 import me.hsgamer.topper.extra.storage.converter.SqlEntryConverter;
 import me.hsgamer.topper.spigot.builder.DataStorageBuilder;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.sql.Connection;
@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public class NumberStorageBuilder extends DataStorageBuilder<Double> {
-    public NumberStorageBuilder(SimplePlugin plugin, File baseFolder) {
+    public NumberStorageBuilder(JavaPlugin plugin, File baseFolder) {
         super(plugin, baseFolder, new FlatNumberEntryConverter(), new SqlNumberEntryConverter());
     }
 

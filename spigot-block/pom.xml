@@ -30,6 +30,17 @@
         </dependency>
 
         <dependency>
+            <groupId>io.github.projectunified</groupId>
+            <artifactId>minelib-plugin-base</artifactId>
+            <version>${minelib.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.github.projectunified</groupId>
+            <artifactId>minelib-scheduler-location</artifactId>
+            <version>${minelib.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
             <version>1.12.2-R0.1-SNAPSHOT</version>

@@ -1,7 +1,7 @@
 package me.hsgamer.topper.spigot.config;
 
-import me.hsgamer.hscore.bukkit.scheduler.Scheduler;
-import me.hsgamer.hscore.bukkit.scheduler.Task;
+import io.github.projectunified.minelib.scheduler.common.task.Task;
+import io.github.projectunified.minelib.scheduler.global.GlobalScheduler;
 import me.hsgamer.hscore.config.Config;
 import me.hsgamer.hscore.config.DecorativeConfig;
 import me.hsgamer.hscore.config.PathString;
@@ -26,7 +26,7 @@ public class AutoSaveConfig extends DecorativeConfig {
         super.set(path, value);
         if (!isSaving.get()) {
             isSaving.set(true);
-            Task task = Scheduler.plugin(plugin).sync().runTaskLater(() -> {
+            Task task = GlobalScheduler.get(plugin).runLater(() -> {
                 save();
                 isSaving.set(false);
             }, 40L);

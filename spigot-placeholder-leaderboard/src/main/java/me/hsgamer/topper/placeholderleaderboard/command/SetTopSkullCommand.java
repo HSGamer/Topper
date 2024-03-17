@@ -2,6 +2,7 @@ package me.hsgamer.topper.placeholderleaderboard.command;
 
 import me.hsgamer.topper.placeholderleaderboard.Permissions;
 import me.hsgamer.topper.placeholderleaderboard.TopperPlaceholderLeaderboard;
+import me.hsgamer.topper.placeholderleaderboard.config.MessageConfig;
 import me.hsgamer.topper.placeholderleaderboard.manager.SkullManager;
 import org.bukkit.block.Block;
 import org.bukkit.block.Skull;
@@ -14,7 +15,7 @@ public class SetTopSkullCommand extends SetTopBlockCommand {
 
     @Override
     protected SkullManager getBlockManager() {
-        return instance.getSkullManager();
+        return instance.get(SkullManager.class);
     }
 
     @Override
@@ -29,6 +30,6 @@ public class SetTopSkullCommand extends SetTopBlockCommand {
 
     @Override
     protected String getBlockRequiredMessage() {
-        return instance.getMessageConfig().getSkullRequired();
+        return instance.get(MessageConfig.class).getSkullRequired();
     }
 }

@@ -51,6 +51,10 @@
                                     <shadedPattern>me.hsgamer.topper.placeholderleaderboard.lib.core</shadedPattern>
                                 </relocation>
                                 <relocation>
+                                    <pattern>io.github.projectunified.minelib</pattern>
+                                    <shadedPattern>me.hsgamer.topper.placeholderleaderboard.lib.minelib</shadedPattern>
+                                </relocation>
+                                <relocation>
                                     <pattern>org.bstats</pattern>
                                     <shadedPattern>me.hsgamer.topper.placeholderleaderboard.lib.bstats</shadedPattern>
                                 </relocation>
@@ -129,11 +133,6 @@
 
         <dependency>
             <groupId>me.hsgamer</groupId>
-            <artifactId>hscore-bukkit-baseplugin</artifactId>
-            <version>${core.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>me.hsgamer</groupId>
             <artifactId>hscore-bukkit-utils</artifactId>
             <version>${core.version}</version>
         </dependency>
@@ -147,6 +146,22 @@
                     <artifactId>gson</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.projectunified</groupId>
+            <artifactId>minelib-plugin-permission</artifactId>
+            <version>${minelib.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.github.projectunified</groupId>
+            <artifactId>minelib-plugin-command</artifactId>
+            <version>${minelib.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.github.projectunified</groupId>
+            <artifactId>minelib-plugin-listener</artifactId>
+            <version>${minelib.version}</version>
         </dependency>
 
         <dependency>

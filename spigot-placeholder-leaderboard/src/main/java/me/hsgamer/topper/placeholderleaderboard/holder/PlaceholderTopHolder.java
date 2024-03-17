@@ -1,7 +1,8 @@
 package me.hsgamer.topper.placeholderleaderboard.holder;
 
+import io.github.projectunified.minelib.scheduler.async.AsyncScheduler;
+import io.github.projectunified.minelib.scheduler.global.GlobalScheduler;
 import me.clip.placeholderapi.PlaceholderAPI;
-import me.hsgamer.hscore.bukkit.scheduler.Scheduler;
 import me.hsgamer.topper.placeholderleaderboard.TopperPlaceholderLeaderboard;
 import org.bukkit.OfflinePlayer;
 
@@ -41,7 +42,7 @@ public class PlaceholderTopHolder extends NumberTopHolder {
         CompletableFuture<Optional<Double>> future = new CompletableFuture<>();
         OfflinePlayer player = instance.getServer().getOfflinePlayer(uuid);
         if (player.isOnline() || !isOnlineOnly) {
-            Scheduler.plugin(instance).runner(isAsync).runTask(() -> {
+            (isAsync ? AsyncScheduler.get(instance) : GlobalScheduler.get(instance)).run(() -> {
                 try {
                     String parsed = PlaceholderAPI.setPlaceholders(player, placeholder);
                     if (parsed.trim().isEmpty()) {

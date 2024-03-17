@@ -6,6 +6,7 @@ import me.hsgamer.hscore.config.proxy.ConfigGenerator;
 import me.hsgamer.topper.core.entry.DataEntry;
 import me.hsgamer.topper.placeholderleaderboard.Permissions;
 import me.hsgamer.topper.placeholderleaderboard.TopperPlaceholderLeaderboard;
+import me.hsgamer.topper.placeholderleaderboard.config.MessageConfig;
 import me.hsgamer.topper.placeholderleaderboard.holder.NumberTopHolder;
 import me.hsgamer.topper.spigot.block.BlockEntry;
 import me.hsgamer.topper.spigot.block.BlockEntryConfig;
@@ -60,7 +61,7 @@ public class SkullManager extends BlockManager<TopperPlaceholderLeaderboard, Dou
 
     @Override
     protected void onBreak(Player player, Location location) {
-        MessageUtils.sendMessage(player, plugin.getMessageConfig().getSkullRemoved());
+        MessageUtils.sendMessage(player, plugin.get(MessageConfig.class).getSkullRemoved());
     }
 
     @Override
@@ -86,7 +87,7 @@ public class SkullManager extends BlockManager<TopperPlaceholderLeaderboard, Dou
 
     @Override
     protected Optional<DataEntry<Double>> getEntry(BlockEntry blockEntry) {
-        return plugin.getTopManager().getTopHolder(blockEntry.holderName)
+        return plugin.get(TopManager.class).getTopHolder(blockEntry.holderName)
                 .map(NumberTopHolder::getSnapshotAgent)
                 .flatMap(snapshotAgent -> snapshotAgent.getEntryByIndex(blockEntry.index));
     }

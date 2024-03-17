@@ -1,11 +1,12 @@
 package me.hsgamer.topper.placeholderleaderboard.listener;
 
+import io.github.projectunified.minelib.plugin.listener.ListenerComponent;
 import me.hsgamer.topper.placeholderleaderboard.TopperPlaceholderLeaderboard;
+import me.hsgamer.topper.placeholderleaderboard.manager.TopManager;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
-public class JoinListener implements Listener {
+public class JoinListener implements ListenerComponent {
     private final TopperPlaceholderLeaderboard instance;
 
     public JoinListener(TopperPlaceholderLeaderboard instance) {
@@ -14,6 +15,6 @@ public class JoinListener implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
-        instance.getTopManager().create(event.getPlayer().getUniqueId());
+        instance.get(TopManager.class).create(event.getPlayer().getUniqueId());
     }
 }

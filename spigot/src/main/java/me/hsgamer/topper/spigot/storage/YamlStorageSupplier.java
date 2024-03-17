@@ -1,10 +1,11 @@
 package me.hsgamer.topper.spigot.storage;
 
+import io.github.projectunified.minelib.scheduler.global.GlobalScheduler;
 import me.hsgamer.hscore.bukkit.config.BukkitConfig;
-import me.hsgamer.hscore.bukkit.scheduler.Scheduler;
 import me.hsgamer.hscore.config.PathString;
 import me.hsgamer.topper.core.holder.DataHolder;
 import me.hsgamer.topper.core.storage.DataStorage;
+import me.hsgamer.topper.core.storage.DataStorageSupplier;
 import me.hsgamer.topper.extra.storage.converter.FlatEntryConverter;
 import me.hsgamer.topper.spigot.config.AutoSaveConfig;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -15,9 +16,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Function;
 
-public class YamlStorageSupplier<T> implements Function<DataHolder<T>, DataStorage<T>> {
+public class YamlStorageSupplier<T> implements DataStorageSupplier<T> {
     private final JavaPlugin plugin;
     private final File baseFolder;
     private final FlatEntryConverter<T> converter;
@@ -29,7 +29,7 @@ public class YamlStorageSupplier<T> implements Function<DataHolder<T>, DataStora
     }
 
     @Override
-    public DataStorage<T> apply(DataHolder<T> holder) {
+    public DataStorage<T> getStorage(DataHolder<T> holder) {
         return new DataStorage<T>(holder) {
             private final AutoSaveConfig config = new AutoSaveConfig(plugin, new BukkitConfig(new File(baseFolder, holder.getName() + ".yml")));
 
@@ -58,7 +58,7 @@ public class YamlStorageSupplier<T> implements Function<DataHolder<T>, DataStora
                 if (urgent) {
                     runnable.run();
                 } else {
-                    Scheduler.plugin(plugin).sync().runTask(runnable);
+                    GlobalScheduler.get(plugin).run(runnable);
                 }
                 return future;
             }
@@ -73,7 +73,7 @@ public class YamlStorageSupplier<T> implements Function<DataHolder<T>, DataStora
                 if (urgent) {
                     runnable.run();
                 } else {
-                    Scheduler.plugin(plugin).sync().runTask(runnable);
+                    GlobalScheduler.get(plugin).run(runnable);
                 }
                 return future;
             }

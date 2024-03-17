@@ -1,7 +1,9 @@
 package me.hsgamer.topper.spigot.block;
 
-import me.hsgamer.hscore.bukkit.scheduler.Scheduler;
-import me.hsgamer.hscore.bukkit.scheduler.Task;
+import io.github.projectunified.minelib.plugin.base.Loadable;
+import io.github.projectunified.minelib.scheduler.async.AsyncScheduler;
+import io.github.projectunified.minelib.scheduler.common.task.Task;
+import io.github.projectunified.minelib.scheduler.location.LocationScheduler;
 import me.hsgamer.topper.core.entry.DataEntry;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -19,7 +21,7 @@ import org.bukkit.plugin.Plugin;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public abstract class BlockManager<P extends Plugin, T> implements Listener {
+public abstract class BlockManager<P extends Plugin, T> implements Listener, Loadable {
     protected final P plugin;
     private final BlockEntryConfig blockEntryConfig;
     private final Map<Location, BlockEntry> entries = new HashMap<>();
@@ -42,13 +44,14 @@ public abstract class BlockManager<P extends Plugin, T> implements Listener {
 
     protected abstract Optional<DataEntry<T>> getEntry(BlockEntry blockEntry);
 
-    public void register() {
+    @Override
+    public void enable() {
         this.registerEvents();
         blockEntryConfig.getEntries().forEach(this::add);
 
         final Queue<BlockEntry> entryQueue = new LinkedList<>();
         final AtomicBoolean isBlockUpdating = new AtomicBoolean(false);
-        task = Scheduler.plugin(plugin).async().runTaskTimer(() -> {
+        task = AsyncScheduler.get(plugin).runTimer(() -> {
             if (isBlockUpdating.get()) return;
 
             if (entryQueue.isEmpty()) {
@@ -63,7 +66,7 @@ public abstract class BlockManager<P extends Plugin, T> implements Listener {
             T value = optionalEntry.map(DataEntry::getValue).orElse(null);
 
             isBlockUpdating.set(true);
-            Scheduler.plugin(plugin).sync().runLocationTask(blockEntry.location, () -> {
+            LocationScheduler.get(plugin, blockEntry.location).run(() -> {
                 Block block = blockEntry.location.getBlock();
                 if (block.getChunk().isLoaded()) {
                     updateBlock(blockEntry.holderName, block, uuid, value, blockEntry.index);
@@ -73,7 +76,8 @@ public abstract class BlockManager<P extends Plugin, T> implements Listener {
         }, 20L, 20L);
     }
 
-    public void unregister() {
+    @Override
+    public void disable() {
         task.cancel();
         HandlerList.unregisterAll(this);
         blockEntryConfig.setEntries(new ArrayList<>(entries.values()));

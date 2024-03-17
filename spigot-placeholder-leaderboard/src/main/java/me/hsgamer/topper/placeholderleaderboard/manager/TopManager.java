@@ -1,36 +1,41 @@
 package me.hsgamer.topper.placeholderleaderboard.manager;
 
-import me.hsgamer.topper.core.holder.DataHolder;
-import me.hsgamer.topper.core.storage.DataStorage;
+import io.github.projectunified.minelib.plugin.base.Loadable;
+import me.hsgamer.topper.core.storage.DataStorageSupplier;
 import me.hsgamer.topper.placeholderleaderboard.TopperPlaceholderLeaderboard;
+import me.hsgamer.topper.placeholderleaderboard.config.MainConfig;
 import me.hsgamer.topper.placeholderleaderboard.holder.NumberTopHolder;
 import me.hsgamer.topper.placeholderleaderboard.holder.PlaceholderTopHolder;
 import me.hsgamer.topper.spigot.number.NumberFormatter;
+import me.hsgamer.topper.spigot.number.NumberStorageBuilder;
 
 import java.util.*;
-import java.util.function.Function;
 
-public class TopManager {
+public class TopManager implements Loadable {
     private final Map<String, NumberTopHolder> topHolders = new HashMap<>();
     private final Map<String, NumberFormatter> topFormatters = new HashMap<>();
     private final NumberFormatter defaultFormatter = new NumberFormatter();
     private final TopperPlaceholderLeaderboard instance;
-    private Function<DataHolder<Double>, DataStorage<Double>> storageSupplier;
+    private DataStorageSupplier<Double> storageSupplier;
 
     public TopManager(TopperPlaceholderLeaderboard instance) {
         this.instance = instance;
     }
 
-    public void register() {
-        storageSupplier = instance.getNumberStorageBuilder().buildSupplier(instance.getMainConfig().getStorageType());
-        instance.getMainConfig().getPlaceholders().forEach((key, value) -> addTopHolder(key, new PlaceholderTopHolder(instance, key, value)));
-        topFormatters.putAll(instance.getMainConfig().getFormatters());
+    @Override
+    public void enable() {
+        storageSupplier = instance.get(NumberStorageBuilder.class).buildSupplier(instance.get(MainConfig.class).getStorageType());
+        storageSupplier.enable();
+        instance.get(MainConfig.class).getPlaceholders().forEach((key, value) -> addTopHolder(key, new PlaceholderTopHolder(instance, key, value)));
+        topFormatters.putAll(instance.get(MainConfig.class).getFormatters());
     }
 
-    public void unregister() {
+    @Override
+    public void disable() {
         topHolders.values().forEach(NumberTopHolder::unregister);
         topHolders.clear();
         topFormatters.clear();
+        storageSupplier.disable();
     }
 
     public void addTopHolder(String key, NumberTopHolder topHolder) {
@@ -39,7 +44,7 @@ public class TopManager {
         if (oldHolder != null) oldHolder.unregister();
     }
 
-    public Function<DataHolder<Double>, DataStorage<Double>> getStorageSupplier() {
+    public DataStorageSupplier<Double> getStorageSupplier() {
         return storageSupplier;
     }
 

@@ -2,6 +2,7 @@ package me.hsgamer.topper.spigot.storage;
 
 import me.hsgamer.topper.core.holder.DataHolder;
 import me.hsgamer.topper.core.storage.DataStorage;
+import me.hsgamer.topper.core.storage.DataStorageSupplier;
 import me.hsgamer.topper.extra.storage.converter.SqlEntryConverter;
 
 import java.sql.Connection;
@@ -12,11 +13,10 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public abstract class SqlStorageSupplier<T> implements Function<DataHolder<T>, DataStorage<T>> {
+public abstract class SqlStorageSupplier<T> implements DataStorageSupplier<T> {
     private final Logger logger;
     private final SqlEntryConverter<T> converter;
 
@@ -36,7 +36,7 @@ public abstract class SqlStorageSupplier<T> implements Function<DataHolder<T>, D
     }
 
     @Override
-    public DataStorage<T> apply(DataHolder<T> holder) {
+    public DataStorage<T> getStorage(DataHolder<T> holder) {
         return new DataStorage<T>(holder) {
             @Override
             public CompletableFuture<Map<UUID, T>> load() {

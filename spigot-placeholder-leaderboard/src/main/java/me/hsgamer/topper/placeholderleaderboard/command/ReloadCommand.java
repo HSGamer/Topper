@@ -3,6 +3,11 @@ package me.hsgamer.topper.placeholderleaderboard.command;
 import me.hsgamer.hscore.bukkit.utils.MessageUtils;
 import me.hsgamer.topper.placeholderleaderboard.Permissions;
 import me.hsgamer.topper.placeholderleaderboard.TopperPlaceholderLeaderboard;
+import me.hsgamer.topper.placeholderleaderboard.config.MainConfig;
+import me.hsgamer.topper.placeholderleaderboard.config.MessageConfig;
+import me.hsgamer.topper.placeholderleaderboard.manager.SignManager;
+import me.hsgamer.topper.placeholderleaderboard.manager.SkullManager;
+import me.hsgamer.topper.placeholderleaderboard.manager.TopManager;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
@@ -22,15 +27,15 @@ public class ReloadCommand extends Command {
         if (!testPermission(sender)) {
             return false;
         }
-        instance.getSignManager().unregister();
-        instance.getSkullManager().unregister();
-        instance.getTopManager().unregister();
-        instance.getMainConfig().reloadConfig();
-        instance.getMessageConfig().reloadConfig();
-        instance.getTopManager().register();
-        instance.getSignManager().register();
-        instance.getSkullManager().register();
-        MessageUtils.sendMessage(sender, instance.getMessageConfig().getSuccess());
+        instance.get(SignManager.class).disable();
+        instance.get(SkullManager.class).disable();
+        instance.get(TopManager.class).disable();
+        instance.get(MainConfig.class).reloadConfig();
+        instance.get(MessageConfig.class).reloadConfig();
+        instance.get(TopManager.class).enable();
+        instance.get(SignManager.class).enable();
+        instance.get(SkullManager.class).enable();
+        MessageUtils.sendMessage(sender, instance.get(MessageConfig.class).getSuccess());
         return true;
     }
 }

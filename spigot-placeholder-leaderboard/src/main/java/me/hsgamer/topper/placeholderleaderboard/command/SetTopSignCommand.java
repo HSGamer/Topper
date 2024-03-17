@@ -2,6 +2,7 @@ package me.hsgamer.topper.placeholderleaderboard.command;
 
 import me.hsgamer.topper.placeholderleaderboard.Permissions;
 import me.hsgamer.topper.placeholderleaderboard.TopperPlaceholderLeaderboard;
+import me.hsgamer.topper.placeholderleaderboard.config.MessageConfig;
 import me.hsgamer.topper.placeholderleaderboard.manager.SignManager;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
@@ -14,7 +15,7 @@ public class SetTopSignCommand extends SetTopBlockCommand {
 
     @Override
     protected SignManager getBlockManager() {
-        return instance.getSignManager();
+        return instance.get(SignManager.class);
     }
 
     @Override
@@ -29,6 +30,6 @@ public class SetTopSignCommand extends SetTopBlockCommand {
 
     @Override
     protected String getBlockRequiredMessage() {
-        return instance.getMessageConfig().getSignRequired();
+        return instance.get(MessageConfig.class).getSignRequired();
     }
 }

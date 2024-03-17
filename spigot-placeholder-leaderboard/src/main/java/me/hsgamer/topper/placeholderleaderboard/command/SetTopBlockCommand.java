@@ -2,6 +2,8 @@ package me.hsgamer.topper.placeholderleaderboard.command;
 
 import me.hsgamer.hscore.bukkit.utils.MessageUtils;
 import me.hsgamer.topper.placeholderleaderboard.TopperPlaceholderLeaderboard;
+import me.hsgamer.topper.placeholderleaderboard.config.MessageConfig;
+import me.hsgamer.topper.placeholderleaderboard.manager.TopManager;
 import me.hsgamer.topper.spigot.block.BlockEntry;
 import me.hsgamer.topper.spigot.block.BlockManager;
 import org.bukkit.block.Block;
@@ -40,22 +42,22 @@ public abstract class SetTopBlockCommand extends Command {
             return false;
         }
         if (!(sender instanceof Player)) {
-            MessageUtils.sendMessage(sender, instance.getMessageConfig().getPlayerOnly());
+            MessageUtils.sendMessage(sender, instance.get(MessageConfig.class).getPlayerOnly());
             return false;
         }
         if (args.length < 2) {
             sendMessage(sender, "&c" + getUsage());
             return false;
         }
-        if (!instance.getTopManager().getTopHolder(args[0]).isPresent()) {
-            sendMessage(sender, instance.getMessageConfig().getTopHolderNotFound());
+        if (!instance.get(TopManager.class).getTopHolder(args[0]).isPresent()) {
+            sendMessage(sender, instance.get(MessageConfig.class).getTopHolderNotFound());
             return false;
         }
         int index;
         try {
             index = Integer.parseInt(args[1]);
         } catch (NumberFormatException e) {
-            sendMessage(sender, instance.getMessageConfig().getNumberRequired());
+            sendMessage(sender, instance.get(MessageConfig.class).getNumberRequired());
             return false;
         }
         Block block = ((Player) sender).getTargetBlock(null, 5);
@@ -64,14 +66,14 @@ public abstract class SetTopBlockCommand extends Command {
             return false;
         }
         getBlockManager().add(new BlockEntry(block.getLocation(), args[0], index - 1));
-        sendMessage(sender, instance.getMessageConfig().getSuccess());
+        sendMessage(sender, instance.get(MessageConfig.class).getSuccess());
         return true;
     }
 
     @Override
     public List<String> tabComplete(CommandSender sender, String alias, String[] args) throws IllegalArgumentException {
         if (args.length == 1) {
-            return instance.getTopManager().getTopHolderNames().stream()
+            return instance.get(TopManager.class).getTopHolderNames().stream()
                     .filter(name -> args[0].isEmpty() || name.toLowerCase().startsWith(args[0].toLowerCase()))
                     .collect(Collectors.toList());
         } else if (args.length == 2) {

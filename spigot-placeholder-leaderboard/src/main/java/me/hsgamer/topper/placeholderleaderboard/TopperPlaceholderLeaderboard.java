@@ -1,6 +1,7 @@
 package me.hsgamer.topper.placeholderleaderboard;
 
-import me.hsgamer.hscore.bukkit.baseplugin.BasePlugin;
+import io.github.projectunified.minelib.plugin.base.BasePlugin;
+import io.github.projectunified.minelib.plugin.command.CommandComponent;
 import me.hsgamer.hscore.bukkit.config.BukkitConfig;
 import me.hsgamer.hscore.bukkit.utils.MessageUtils;
 import me.hsgamer.hscore.checker.spigotmc.SpigotVersionChecker;
@@ -23,7 +24,7 @@ import me.hsgamer.topper.spigot.number.NumberStorageBuilder;
 import org.bstats.bukkit.Metrics;
 
 import java.io.File;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -34,16 +35,37 @@ public class TopperPlaceholderLeaderboard extends BasePlugin {
         BlockEntryConverterRegistry.register();
     }
 
-    private final NumberStorageBuilder numberStorageBuilder = new NumberStorageBuilder(this, new File(getDataFolder(), "top"));
-    private final MainConfig mainConfig = ConfigGenerator.newInstance(MainConfig.class, new BukkitConfig(this));
-    private final MessageConfig messageConfig = ConfigGenerator.newInstance(MessageConfig.class, new BukkitConfig(this, "messages.yml"));
-    private final TopManager topManager = new TopManager(this);
-    private final SignManager signManager = new SignManager(this);
-    private final SkullManager skullManager = new SkullManager(this);
-    private final TopPlaceholderExpansion topPlaceholderExpansion = new TopPlaceholderExpansion(this);
+    @Override
+    protected List<Object> getComponents() {
+        return Arrays.asList(
+                new NumberStorageBuilder(this, new File(getDataFolder(), "top")),
+                ConfigGenerator.newInstance(MainConfig.class, new BukkitConfig(this)),
+                ConfigGenerator.newInstance(MessageConfig.class, new BukkitConfig(this, "messages.yml")),
+
+                new TopManager(this),
+                new SignManager(this),
+                new SkullManager(this),
+                new TopPlaceholderExpansion(this),
+
+                new Permissions(this),
+                new CommandComponent(this, Arrays.asList(
+                        new SetTopSignCommand(this),
+                        new SetTopSkullCommand(this),
+                        new GetTopListCommand(this),
+                        new ReloadCommand(this)
+                )),
+                new JoinListener(this)
+        );
+    }
 
     @Override
-    public void preLoad() {
+    public void load() {
+        MessageUtils.setPrefix(get(MessageConfig.class)::getPrefix);
+    }
+
+    @Override
+    public void enable() {
+        new Metrics(this, 14938);
         if (getDescription().getVersion().contains("SNAPSHOT")) {
             getLogger().warning("You are using the development version");
             getLogger().warning("This is not ready for production");
@@ -62,66 +84,5 @@ public class TopperPlaceholderLeaderboard extends BasePlugin {
                 }
             });
         }
-    }
-
-    @Override
-    public void load() {
-        MessageUtils.setPrefix(messageConfig::getPrefix);
-    }
-
-    @Override
-    public void enable() {
-        topManager.register();
-        registerListener(new JoinListener(this));
-        topPlaceholderExpansion.register();
-
-        new Metrics(this, 14938);
-    }
-
-    @Override
-    public void postEnable() {
-        signManager.register();
-        skullManager.register();
-        registerCommand(new SetTopSignCommand(this));
-        registerCommand(new SetTopSkullCommand(this));
-        registerCommand(new GetTopListCommand(this));
-        registerCommand(new ReloadCommand(this));
-    }
-
-    @Override
-    public void disable() {
-        signManager.unregister();
-        skullManager.unregister();
-        topPlaceholderExpansion.unregister();
-        topManager.unregister();
-    }
-
-    @Override
-    protected List<Class<?>> getPermissionClasses() {
-        return Collections.singletonList(Permissions.class);
-    }
-
-    public NumberStorageBuilder getNumberStorageBuilder() {
-        return numberStorageBuilder;
-    }
-
-    public TopManager getTopManager() {
-        return topManager;
-    }
-
-    public SignManager getSignManager() {
-        return signManager;
-    }
-
-    public SkullManager getSkullManager() {
-        return skullManager;
-    }
-
-    public MainConfig getMainConfig() {
-        return mainConfig;
-    }
-
-    public MessageConfig getMessageConfig() {
-        return messageConfig;
     }
 }
