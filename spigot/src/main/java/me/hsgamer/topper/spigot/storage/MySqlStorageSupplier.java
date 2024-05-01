@@ -26,7 +26,9 @@ public class MySqlStorageSupplier<T> extends SqlStorageSupplier<T> {
                 .setHost(databaseConfig.getHost())
                 .setPort(databaseConfig.getPort())
                 .setUsername(databaseConfig.getUsername())
-                .setPassword(databaseConfig.getPassword());
+                .setPassword(databaseConfig.getPassword())
+                .setClientProperties(databaseConfig.getClientProperties())
+                .setDriverProperties(databaseConfig.getDriverProperties());
         if (databaseConfig.isUseSSL()) {
             setting.setDriverProperty("useSSL", "true");
         }

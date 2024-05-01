@@ -3,6 +3,9 @@ package me.hsgamer.topper.spigot.config;
 import me.hsgamer.hscore.config.annotation.Comment;
 import me.hsgamer.hscore.config.annotation.ConfigPath;
 
+import java.util.Collections;
+import java.util.Map;
+
 public interface DatabaseConfig {
     @ConfigPath("host")
     @Comment("The host of the database")
@@ -38,5 +41,17 @@ public interface DatabaseConfig {
     @Comment("Whether to use SSL or not")
     default boolean isUseSSL() {
         return false;
+    }
+
+    @ConfigPath("driver-properties")
+    @Comment("The driver properties")
+    default Map<String, Object> getDriverProperties() {
+        return Collections.emptyMap();
+    }
+
+    @ConfigPath("client-properties")
+    @Comment("The client properties")
+    default Map<String, Object> getClientProperties() {
+        return Collections.emptyMap();
     }
 }
