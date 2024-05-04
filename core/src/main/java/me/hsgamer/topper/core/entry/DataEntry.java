@@ -36,7 +36,7 @@ public final class DataEntry<T> {
     public void setValue(T value, boolean notify) {
         if (Objects.equals(this.value.get(), value)) return;
         this.value.set(value);
-        if (notify) holder.notifyUpdateEntry(this);
+        if (notify) holder.getUpdateListenerManager().notifyListeners(this);
     }
 
     public DataHolder<T> getHolder() {

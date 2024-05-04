@@ -1,19 +1,23 @@
 package me.hsgamer.topper.core.holder;
 
 import me.hsgamer.topper.core.entry.DataEntry;
+import me.hsgamer.topper.core.listener.EntryListenerManager;
+import me.hsgamer.topper.core.listener.ListenerManager;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Consumer;
 
 public class DataHolder<T> {
     private final Map<UUID, DataEntry<T>> entryMap = new ConcurrentHashMap<>();
-    private final List<Consumer<DataEntry<T>>> removeListeners = new ArrayList<>();
-    private final List<Consumer<DataEntry<T>>> createListeners = new ArrayList<>();
-    private final List<Consumer<DataEntry<T>>> updateListeners = new ArrayList<>();
-    private final List<Runnable> registerListeners = new ArrayList<>();
-    private final List<Runnable> beforeUnregisterListeners = new ArrayList<>();
-    private final List<Runnable> unregisterListeners = new ArrayList<>();
+    private final EntryListenerManager<T> removeListenerManager = new EntryListenerManager<>();
+    private final EntryListenerManager<T> createListenerManager = new EntryListenerManager<>();
+    private final EntryListenerManager<T> updateListenerManager = new EntryListenerManager<>();
+    private final ListenerManager registerListenerManager = new ListenerManager();
+    private final ListenerManager beforeUnregisterListenerManager = new ListenerManager();
+    private final ListenerManager unregisterListenerManager = new ListenerManager();
     private final String name;
 
     protected DataHolder(String name) {
@@ -24,60 +28,48 @@ public class DataHolder<T> {
         return null;
     }
 
-    public final void notifyCreateEntry(DataEntry<T> entry) {
-        createListeners.forEach(listener -> listener.accept(entry));
+    public final EntryListenerManager<T> getRemoveListenerManager() {
+        return removeListenerManager;
     }
 
-    public final void notifyRemoveEntry(DataEntry<T> entry) {
-        removeListeners.forEach(listener -> listener.accept(entry));
+    public final EntryListenerManager<T> getCreateListenerManager() {
+        return createListenerManager;
     }
 
-    public final void notifyUpdateEntry(DataEntry<T> entry) {
-        updateListeners.forEach(listener -> listener.accept(entry));
+    public final EntryListenerManager<T> getUpdateListenerManager() {
+        return updateListenerManager;
     }
 
-    public final void addCreateListener(Consumer<DataEntry<T>> listener) {
-        createListeners.add(listener);
+    public final ListenerManager getRegisterListenerManager() {
+        return registerListenerManager;
     }
 
-    public final void addRemoveListener(Consumer<DataEntry<T>> listener) {
-        removeListeners.add(listener);
+    public final ListenerManager getBeforeUnregisterListenerManager() {
+        return beforeUnregisterListenerManager;
     }
 
-    public final void addUpdateListener(Consumer<DataEntry<T>> listener) {
-        updateListeners.add(listener);
-    }
-
-    public final void addRegisterListener(Runnable listener) {
-        registerListeners.add(listener);
-    }
-
-    public final void addBeforeUnregisterListener(Runnable listener) {
-        beforeUnregisterListeners.add(listener);
-    }
-
-    public final void addUnregisterListener(Runnable listener) {
-        unregisterListeners.add(listener);
+    public final ListenerManager getUnregisterListenerManager() {
+        return unregisterListenerManager;
     }
 
     public final void register() {
-        registerListeners.forEach(Runnable::run);
+        registerListenerManager.notifyListeners();
     }
 
     public final void unregister() {
-        beforeUnregisterListeners.forEach(Runnable::run);
+        beforeUnregisterListenerManager.notifyListeners();
 
-        entryMap.values().forEach(this::notifyRemoveEntry);
+        entryMap.values().forEach(removeListenerManager::notifyListeners);
         entryMap.clear();
 
-        unregisterListeners.forEach(Runnable::run);
+        unregisterListenerManager.notifyListeners();
 
-        createListeners.clear();
-        removeListeners.clear();
-        updateListeners.clear();
-        registerListeners.clear();
-        beforeUnregisterListeners.clear();
-        unregisterListeners.clear();
+        createListenerManager.clear();
+        removeListenerManager.clear();
+        updateListenerManager.clear();
+        registerListenerManager.clear();
+        beforeUnregisterListenerManager.clear();
+        unregisterListenerManager.clear();
     }
 
     public final String getName() {
@@ -95,12 +87,12 @@ public class DataHolder<T> {
     public final DataEntry<T> getOrCreateEntry(UUID uuid) {
         return entryMap.computeIfAbsent(uuid, u -> {
             DataEntry<T> entry = new DataEntry<>(u, this);
-            notifyCreateEntry(entry);
+            createListenerManager.notifyListeners(entry);
             return entry;
         });
     }
 
     public final void removeEntry(UUID uuid) {
-        Optional.ofNullable(entryMap.remove(uuid)).ifPresent(this::notifyRemoveEntry);
+        Optional.ofNullable(entryMap.remove(uuid)).ifPresent(removeListenerManager::notifyListeners);
     }
 }

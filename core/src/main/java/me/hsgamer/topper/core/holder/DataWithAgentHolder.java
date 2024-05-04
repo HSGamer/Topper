@@ -10,9 +10,9 @@ public class DataWithAgentHolder<T> extends DataHolder<T> {
 
     protected DataWithAgentHolder(String name) {
         super(name);
-        addRegisterListener(() -> agentList.forEach(Agent::start));
-        addBeforeUnregisterListener(() -> agentList.forEach(Agent::beforeStop));
-        addUnregisterListener(() -> {
+        getRegisterListenerManager().add(() -> agentList.forEach(Agent::start));
+        getBeforeUnregisterListenerManager().add(() -> agentList.forEach(Agent::beforeStop));
+        getUnregisterListenerManager().add(() -> {
             agentList.forEach(Agent::stop);
             agentList.clear();
         });

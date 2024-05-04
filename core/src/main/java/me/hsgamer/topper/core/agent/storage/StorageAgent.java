@@ -57,17 +57,17 @@ public class StorageAgent<T> extends TaskAgent {
 
     @Override
     public void start() {
-        holder.addCreateListener(entry -> {
+        holder.getCreateListenerManager().add(entry -> {
             saveQueue.add(entry.getUuid());
             if (loadOnCreate) {
                 load(entry);
             }
         });
-        holder.addRemoveListener(entry -> {
+        holder.getRemoveListenerManager().add(entry -> {
             save(entry);
             saveQueue.remove(entry.getUuid());
         });
-        holder.addUpdateListener(entry -> entry.addFlag(NEED_SAVING));
+        holder.getUpdateListenerManager().add(entry -> entry.addFlag(NEED_SAVING));
         storage.onRegister();
         storage.load()
                 .whenComplete((entries, throwable) -> {

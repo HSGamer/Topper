@@ -54,8 +54,8 @@ public class UpdateAgent<T> extends TaskAgent {
         if (updateFunction == null) {
             throw new IllegalStateException("Update function is not set");
         }
-        holder.addCreateListener(entry -> updateQueue.add(entry.getUuid()));
-        holder.addRemoveListener(entry -> updateQueue.remove(entry.getUuid()));
+        holder.getCreateListenerManager().add(entry -> updateQueue.add(entry.getUuid()));
+        holder.getRemoveListenerManager().add(entry -> updateQueue.remove(entry.getUuid()));
         super.start();
     }
 
