@@ -25,14 +25,8 @@ public class SnapshotAgent<T> extends TaskAgent {
     @Override
     protected Runnable getRunnable() {
         return () -> {
-            Stream<DataSnapshot<T>> stream = holder.getEntryMap().entrySet().stream()
-                    .map(entry -> new DataSnapshot<>(entry.getKey(), entry.getValue().getValue()))
-                    .filter(snapshot -> filters.stream().allMatch(filter -> filter.test(snapshot)));
-            if (comparator != null) {
-                stream = stream.sorted(Comparator.<DataSnapshot<T>, T>comparing(snapshot -> snapshot.value, comparator).reversed());
-            }
-            List<DataSnapshot<T>> list = stream.collect(Collectors.toList());
-            topSnapshot.set(list);
+            List<DataSnapshot<T>> list = getUrgentSnapshot();
+            topSnapshot.set(getUrgentSnapshot());
 
             Map<UUID, Integer> map = IntStream.range(0, list.size())
                     .boxed()
@@ -46,6 +40,16 @@ public class SnapshotAgent<T> extends TaskAgent {
         super.stop();
         topSnapshot.set(Collections.emptyList());
         indexMap.set(Collections.emptyMap());
+    }
+
+    public List<DataSnapshot<T>> getUrgentSnapshot() {
+        Stream<DataSnapshot<T>> stream = holder.getEntryMap().entrySet().stream()
+                .map(entry -> new DataSnapshot<>(entry.getKey(), entry.getValue().getValue()))
+                .filter(snapshot -> filters.stream().allMatch(filter -> filter.test(snapshot)));
+        if (comparator != null) {
+            stream = stream.sorted(Comparator.<DataSnapshot<T>, T>comparing(snapshot -> snapshot.value, comparator).reversed());
+        }
+        return stream.collect(Collectors.toList());
     }
 
     public List<DataSnapshot<T>> getSnapshot() {
