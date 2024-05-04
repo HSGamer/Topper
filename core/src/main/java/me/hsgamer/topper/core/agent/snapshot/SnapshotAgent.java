@@ -15,7 +15,7 @@ public class SnapshotAgent<T> extends TaskAgent {
     private final AtomicReference<List<DataSnapshot<T>>> topSnapshot = new AtomicReference<>(Collections.emptyList());
     private final AtomicReference<Map<UUID, Integer>> indexMap = new AtomicReference<>(Collections.emptyMap());
     private final DataHolder<T> holder;
-    private final List<Predicate<UUID>> filters = new ArrayList<>();
+    private final List<Predicate<DataSnapshot<T>>> filters = new ArrayList<>();
     private Comparator<T> comparator;
 
     public SnapshotAgent(DataHolder<T> holder) {
@@ -26,8 +26,8 @@ public class SnapshotAgent<T> extends TaskAgent {
     protected Runnable getRunnable() {
         return () -> {
             Stream<DataSnapshot<T>> stream = holder.getEntryMap().entrySet().stream()
-                    .filter(entry -> filters.parallelStream().allMatch(filter -> filter.test(entry.getKey())))
-                    .map(entry -> new DataSnapshot<>(entry.getKey(), entry.getValue().getValue()));
+                    .map(entry -> new DataSnapshot<>(entry.getKey(), entry.getValue().getValue()))
+                    .filter(snapshot -> filters.stream().allMatch(filter -> filter.test(snapshot)));
             if (comparator != null) {
                 stream = stream.sorted(Comparator.<DataSnapshot<T>, T>comparing(snapshot -> snapshot.value, comparator).reversed());
             }
@@ -67,7 +67,7 @@ public class SnapshotAgent<T> extends TaskAgent {
         this.comparator = comparator;
     }
 
-    public void addFilter(Predicate<UUID> filter) {
+    public void addFilter(Predicate<DataSnapshot<T>> filter) {
         filters.add(filter);
     }
 }
