@@ -11,12 +11,8 @@ import me.hsgamer.topper.placeholderleaderboard.config.MessageConfig;
 import me.hsgamer.topper.placeholderleaderboard.holder.NumberTopHolder;
 import me.hsgamer.topper.spigot.block.BlockEntry;
 import me.hsgamer.topper.spigot.block.BlockEntryConfig;
-import me.hsgamer.topper.spigot.block.BlockManager;
 import me.hsgamer.topper.spigot.number.NumberFormatter;
 import org.bukkit.Location;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
-import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -24,7 +20,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public class SignManager extends BlockManager<TopperPlaceholderLeaderboard, Double> {
+public class SignManager extends me.hsgamer.topper.spigot.block.impl.SignManager<TopperPlaceholderLeaderboard, Double> {
     public SignManager(TopperPlaceholderLeaderboard plugin) {
         super(plugin);
     }
@@ -32,22 +28,6 @@ public class SignManager extends BlockManager<TopperPlaceholderLeaderboard, Doub
     @Override
     protected BlockEntryConfig getConfig() {
         return ConfigGenerator.newInstance(BlockEntryConfig.class, new BukkitConfig(plugin, "sign.yml"));
-    }
-
-    @Override
-    protected void updateBlock(String holderName, Block block, UUID uuid, Double value, int index) {
-        BlockState blockState = block.getState();
-        if (blockState instanceof Sign) {
-            Sign sign = (Sign) blockState;
-            NumberFormatter formatter = plugin.get(TopManager.class).getTopFormatter(holderName);
-            String[] lines = getSignLines(uuid, value, index, formatter);
-            for (int i = 0; i < 4; i++) {
-                sign.setLine(i, lines[i]);
-            }
-            sign.update(false, false);
-        } else {
-            remove(block.getLocation());
-        }
     }
 
     @Override
@@ -67,7 +47,9 @@ public class SignManager extends BlockManager<TopperPlaceholderLeaderboard, Doub
                 .flatMap(snapshotAgent -> snapshotAgent.getEntryByIndex(blockEntry.index));
     }
 
-    private String[] getSignLines(UUID uuid, Double value, int index, NumberFormatter formatter) {
+    @Override
+    protected String[] getSignLines(UUID uuid, Double value, int index, String holderName) {
+        NumberFormatter formatter = plugin.get(TopManager.class).getTopFormatter(holderName);
         List<String> list = new ArrayList<>(plugin.get(MessageConfig.class).getSignLines());
         list.replaceAll(s -> formatter.replace(s, uuid, value).replace("{index}", String.valueOf(index + 1)));
         String[] lines = new String[4];
