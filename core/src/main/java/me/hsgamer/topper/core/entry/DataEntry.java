@@ -8,6 +8,7 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.UnaryOperator;
 
 public final class DataEntry<T> {
     private final UUID uuid;
@@ -33,10 +34,18 @@ public final class DataEntry<T> {
         setValue(value, true);
     }
 
+    public void setValue(UnaryOperator<T> operator) {
+        setValue(operator, true);
+    }
+
     public void setValue(T value, boolean notify) {
         if (Objects.equals(this.value.get(), value)) return;
         this.value.set(value);
         if (notify) holder.getUpdateListenerManager().notifyListeners(this);
+    }
+
+    public void setValue(UnaryOperator<T> operator, boolean notify) {
+        setValue(operator.apply(value.get()), notify);
     }
 
     public DataHolder<T> getHolder() {
