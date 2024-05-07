@@ -60,11 +60,14 @@ public class SnapshotAgent<T> extends TaskAgent {
         return indexMap.get().getOrDefault(uuid, -1);
     }
 
-    public Optional<DataEntry<T>> getEntryByIndex(int index) {
+    public Optional<DataSnapshot<T>> getSnapshotByIndex(int index) {
         List<DataSnapshot<T>> list = getSnapshot();
         if (index < 0 || index >= list.size()) return Optional.empty();
-        UUID uuid = list.get(index).uuid;
-        return holder.getEntry(uuid);
+        return Optional.of(list.get(index));
+    }
+
+    public Optional<DataEntry<T>> getEntryByIndex(int index) {
+        return getSnapshotByIndex(index).flatMap(snapshot -> holder.getEntry(snapshot.uuid));
     }
 
     public void setComparator(Comparator<T> comparator) {
