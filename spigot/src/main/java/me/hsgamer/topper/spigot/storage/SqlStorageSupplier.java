@@ -16,11 +16,11 @@ import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public abstract class SqlStorageSupplier<T> implements DataStorageSupplier<T> {
+public abstract class SqlStorageSupplier<T> implements DataStorageSupplier<UUID, T> {
     private final Logger logger;
-    private final SqlEntryConverter<T> converter;
+    private final SqlEntryConverter<UUID, T> converter;
 
-    protected SqlStorageSupplier(Logger logger, SqlEntryConverter<T> converter) {
+    protected SqlStorageSupplier(Logger logger, SqlEntryConverter<UUID, T> converter) {
         this.logger = logger;
         this.converter = converter;
     }
@@ -36,8 +36,8 @@ public abstract class SqlStorageSupplier<T> implements DataStorageSupplier<T> {
     }
 
     @Override
-    public DataStorage<T> getStorage(DataHolder<T> holder) {
-        return new DataStorage<T>(holder) {
+    public DataStorage<UUID, T> getStorage(DataHolder<UUID, T> holder) {
+        return new DataStorage<UUID, T>(holder) {
             @Override
             public CompletableFuture<Map<UUID, T>> load() {
                 String name = holder.getName();

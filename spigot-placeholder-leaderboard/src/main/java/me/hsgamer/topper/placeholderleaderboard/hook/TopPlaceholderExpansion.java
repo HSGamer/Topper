@@ -70,7 +70,7 @@ public class TopPlaceholderExpansion extends PlaceholderExpansion implements Loa
                     }
                 }
                 return holder.getSnapshotAgent().getEntryByIndex(i - 1)
-                        .map(DataEntry::getUuid)
+                        .map(DataEntry::getKey)
                         .map(Bukkit::getOfflinePlayer)
                         .map(OfflinePlayer::getName)
                         .orElseGet(formatter::getNullDisplayName);

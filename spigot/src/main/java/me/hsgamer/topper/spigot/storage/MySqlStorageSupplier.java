@@ -11,13 +11,14 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.UUID;
 import java.util.logging.Level;
 
 public class MySqlStorageSupplier<T> extends SqlStorageSupplier<T> {
     private final JavaPlugin plugin;
     private final JavaSqlClient client;
 
-    public MySqlStorageSupplier(JavaPlugin plugin, SqlEntryConverter<T> converter) {
+    public MySqlStorageSupplier(JavaPlugin plugin, SqlEntryConverter<UUID, T> converter) {
         super(plugin.getLogger(), converter);
         this.plugin = plugin;
         DatabaseConfig databaseConfig = ConfigGenerator.newInstance(DatabaseConfig.class, new BukkitConfig(plugin, "database.yml"));

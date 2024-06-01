@@ -9,65 +9,64 @@ import me.hsgamer.topper.core.storage.DataStorage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class StorageAgent<T> extends TaskAgent {
+public class StorageAgent<K, V> extends TaskAgent {
     public static final EntryTempFlag NEED_SAVING = new EntryTempFlag("needSaving");
     public static final EntryTempFlag IS_SAVING = new EntryTempFlag("isSaving");
-    private final Queue<UUID> saveQueue = new ConcurrentLinkedQueue<>();
+    private final Queue<K> saveQueue = new ConcurrentLinkedQueue<>();
     private final List<Runnable> onLoadListeners = new ArrayList<>();
     private final Logger logger;
-    private final DataHolder<T> holder;
-    private final DataStorage<T> storage;
+    private final DataHolder<K, V> holder;
+    private final DataStorage<K, V> storage;
     private int maxEntryPerCall = 10;
     private boolean urgentSave = false;
     private boolean loadOnCreate = false;
     private boolean urgentLoad = true;
 
-    public StorageAgent(Logger logger, DataStorage<T> storage) {
+    public StorageAgent(Logger logger, DataStorage<K, V> storage) {
         this.logger = logger;
         this.holder = storage.getHolder();
         this.storage = storage;
     }
 
-    private void save(DataEntry<T> entry) {
+    private void save(DataEntry<K, V> entry) {
         if (entry.hasFlag(IS_SAVING)) return;
         if (!entry.hasFlag(NEED_SAVING)) return;
         entry.removeFlag(NEED_SAVING);
         entry.addFlag(IS_SAVING);
-        storage.save(entry.getUuid(), entry.getValue(), urgentSave).whenComplete((result, throwable) -> entry.removeFlag(IS_SAVING));
+        storage.save(entry.getKey(), entry.getValue(), urgentSave).whenComplete((result, throwable) -> entry.removeFlag(IS_SAVING));
     }
 
-    private void load(DataEntry<T> entry) {
-        storage.load(entry.getUuid(), urgentLoad).whenComplete((result, throwable) -> {
+    private void load(DataEntry<K, V> entry) {
+        storage.load(entry.getKey(), urgentLoad).whenComplete((result, throwable) -> {
             if (throwable != null) {
-                logger.log(Level.WARNING, throwable, () -> "Failed to load " + entry.getUuid());
+                logger.log(Level.WARNING, throwable, () -> "Failed to load " + entry.getKey());
             } else {
                 result.ifPresent(entry::setValue);
             }
         });
     }
 
-    public void loadIfExist(UUID uuid) {
-        holder.getEntry(uuid).ifPresent(this::load);
+    public void loadIfExist(K key) {
+        holder.getEntry(key).ifPresent(this::load);
     }
 
     @Override
     public void start() {
-        holder.getCreateListenerManager().add(entry -> {
-            saveQueue.add(entry.getUuid());
+        holder.getListenerManager().add(DataHolder.EventStates.CREATE, entry -> {
+            saveQueue.add(entry.getKey());
             if (loadOnCreate) {
                 load(entry);
             }
         });
-        holder.getRemoveListenerManager().add(entry -> {
+        holder.getListenerManager().add(DataHolder.EventStates.REMOVE, entry -> {
             save(entry);
-            saveQueue.remove(entry.getUuid());
+            saveQueue.remove(entry.getKey());
         });
-        holder.getUpdateListenerManager().add(entry -> entry.addFlag(NEED_SAVING));
+        holder.getListenerManager().add(DataHolder.EventStates.UPDATE, entry -> entry.addFlag(NEED_SAVING));
         storage.onRegister();
         storage.load()
                 .whenComplete((entries, throwable) -> {
@@ -96,13 +95,13 @@ public class StorageAgent<T> extends TaskAgent {
     @Override
     protected Runnable getRunnable() {
         return () -> {
-            List<UUID> list = new ArrayList<>();
+            List<K> list = new ArrayList<>();
             for (int i = 0; i < maxEntryPerCall; i++) {
-                UUID uuid = saveQueue.poll();
-                if (uuid == null) break;
-                DataEntry<T> entry = holder.getOrCreateEntry(uuid);
+                K k = saveQueue.poll();
+                if (k == null) break;
+                DataEntry<K, V> entry = holder.getOrCreateEntry(k);
                 save(entry);
-                list.add(uuid);
+                list.add(k);
             }
             if (!list.isEmpty()) {
                 saveQueue.addAll(list);

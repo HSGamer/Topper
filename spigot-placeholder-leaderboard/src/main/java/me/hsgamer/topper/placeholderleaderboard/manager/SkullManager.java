@@ -14,6 +14,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.Optional;
+import java.util.UUID;
 
 public class SkullManager extends me.hsgamer.topper.spigot.block.impl.SkullManager<TopperPlaceholderLeaderboard, Double> {
     public SkullManager(TopperPlaceholderLeaderboard plugin) {
@@ -36,7 +37,7 @@ public class SkullManager extends me.hsgamer.topper.spigot.block.impl.SkullManag
     }
 
     @Override
-    protected Optional<DataEntry<Double>> getEntry(BlockEntry blockEntry) {
+    protected Optional<DataEntry<UUID, Double>> getEntry(BlockEntry blockEntry) {
         return plugin.get(TopManager.class).getTopHolder(blockEntry.holderName)
                 .map(NumberTopHolder::getSnapshotAgent)
                 .flatMap(snapshotAgent -> snapshotAgent.getEntryByIndex(blockEntry.index));

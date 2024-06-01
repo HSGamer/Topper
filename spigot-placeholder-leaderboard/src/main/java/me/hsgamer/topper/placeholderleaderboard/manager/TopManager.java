@@ -16,7 +16,7 @@ public class TopManager implements Loadable {
     private final Map<String, NumberFormatter> topFormatters = new HashMap<>();
     private final NumberFormatter defaultFormatter = new NumberFormatter();
     private final TopperPlaceholderLeaderboard instance;
-    private DataStorageSupplier<Double> storageSupplier;
+    private DataStorageSupplier<UUID, Double> storageSupplier;
 
     public TopManager(TopperPlaceholderLeaderboard instance) {
         this.instance = instance;
@@ -44,7 +44,7 @@ public class TopManager implements Loadable {
         if (oldHolder != null) oldHolder.unregister();
     }
 
-    public DataStorageSupplier<Double> getStorageSupplier() {
+    public DataStorageSupplier<UUID, Double> getStorageSupplier() {
         return storageSupplier;
     }
 

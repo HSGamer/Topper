@@ -5,50 +5,49 @@ import me.hsgamer.topper.core.holder.DataHolder;
 
 import java.util.Map;
 import java.util.Objects;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.UnaryOperator;
 
-public final class DataEntry<T> {
-    private final UUID uuid;
-    private final DataHolder<T> holder;
-    private final AtomicReference<T> value;
+public final class DataEntry<K, V> {
+    private final K key;
+    private final DataHolder<K, V> holder;
+    private final AtomicReference<V> value;
     private final Map<EntryTempFlag, Boolean> tempFlags = new ConcurrentHashMap<>();
 
-    public DataEntry(UUID uuid, DataHolder<T> holder) {
-        this.uuid = uuid;
+    public DataEntry(K key, DataHolder<K, V> holder) {
+        this.key = key;
         this.holder = holder;
         this.value = new AtomicReference<>(holder.getDefaultValue());
     }
 
-    public UUID getUuid() {
-        return uuid;
+    public K getKey() {
+        return key;
     }
 
-    public T getValue() {
+    public V getValue() {
         return value.get();
     }
 
-    public void setValue(T value) {
+    public void setValue(V value) {
         setValue(value, true);
     }
 
-    public void setValue(UnaryOperator<T> operator) {
+    public void setValue(UnaryOperator<V> operator) {
         setValue(operator, true);
     }
 
-    public void setValue(T value, boolean notify) {
+    public void setValue(V value, boolean notify) {
         if (Objects.equals(this.value.get(), value)) return;
         this.value.set(value);
-        if (notify) holder.getUpdateListenerManager().notifyListeners(this);
+        if (notify) holder.getListenerManager().call(DataHolder.EventStates.UPDATE, this);
     }
 
-    public void setValue(UnaryOperator<T> operator, boolean notify) {
+    public void setValue(UnaryOperator<V> operator, boolean notify) {
         setValue(operator.apply(value.get()), notify);
     }
 
-    public DataHolder<T> getHolder() {
+    public DataHolder<K, V> getHolder() {
         return holder;
     }
 
@@ -67,13 +66,13 @@ public final class DataEntry<T> {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof DataEntry)) return false;
-        DataEntry<?> dataEntry = (DataEntry<?>) o;
-        return getUuid().equals(dataEntry.getUuid()) && getHolder().equals(dataEntry.getHolder()) && getValue().equals(dataEntry.getValue());
+        if (o == null || getClass() != o.getClass()) return false;
+        DataEntry<?, ?> dataEntry = (DataEntry<?, ?>) o;
+        return Objects.equals(getKey(), dataEntry.getKey()) && Objects.equals(getHolder(), dataEntry.getHolder()) && Objects.equals(getValue(), dataEntry.getValue());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getUuid(), getHolder(), getValue());
+        return Objects.hash(getKey(), getHolder(), getValue());
     }
 }

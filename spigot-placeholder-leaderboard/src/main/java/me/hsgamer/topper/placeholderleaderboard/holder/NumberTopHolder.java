@@ -15,11 +15,11 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-public abstract class NumberTopHolder extends DataWithAgentHolder<Double> {
+public abstract class NumberTopHolder extends DataWithAgentHolder<UUID, Double> {
     protected final TopperPlaceholderLeaderboard instance;
-    private final UpdateAgent<Double> updateAgent;
-    private final StorageAgent<Double> storageAgent;
-    private final SnapshotAgent<Double> snapshotAgent;
+    private final UpdateAgent<UUID, Double> updateAgent;
+    private final StorageAgent<UUID, Double> storageAgent;
+    private final SnapshotAgent<UUID, Double> snapshotAgent;
 
     protected NumberTopHolder(TopperPlaceholderLeaderboard instance, String name) {
         super(name);
@@ -64,15 +64,15 @@ public abstract class NumberTopHolder extends DataWithAgentHolder<Double> {
 
     protected abstract CompletableFuture<Optional<Double>> updateNewValue(UUID uuid);
 
-    public UpdateAgent<Double> getUpdateAgent() {
+    public UpdateAgent<UUID, Double> getUpdateAgent() {
         return updateAgent;
     }
 
-    public StorageAgent<Double> getStorageAgent() {
+    public StorageAgent<UUID, Double> getStorageAgent() {
         return storageAgent;
     }
 
-    public SnapshotAgent<Double> getSnapshotAgent() {
+    public SnapshotAgent<UUID, Double> getSnapshotAgent() {
         return snapshotAgent;
     }
 }

@@ -4,23 +4,22 @@ import me.hsgamer.topper.core.holder.DataHolder;
 
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-public abstract class DataStorage<T> {
-    protected final DataHolder<T> holder;
+public abstract class DataStorage<K, V> {
+    protected final DataHolder<K, V> holder;
 
-    protected DataStorage(DataHolder<T> holder) {
+    protected DataStorage(DataHolder<K, V> holder) {
         this.holder = holder;
     }
 
-    public abstract CompletableFuture<Map<UUID, T>> load();
+    public abstract CompletableFuture<Map<K, V>> load();
 
-    public abstract CompletableFuture<Void> save(UUID uuid, T value, boolean urgent);
+    public abstract CompletableFuture<Void> save(K key, V value, boolean urgent);
 
-    public abstract CompletableFuture<Optional<T>> load(UUID uuid, boolean urgent);
+    public abstract CompletableFuture<Optional<V>> load(K key, boolean urgent);
 
-    public DataHolder<T> getHolder() {
+    public DataHolder<K, V> getHolder() {
         return holder;
     }
 
