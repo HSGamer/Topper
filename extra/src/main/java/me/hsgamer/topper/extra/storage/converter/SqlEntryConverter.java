@@ -21,6 +21,4 @@ public interface SqlEntryConverter<K, V> {
     V getValue(K key, ResultSet resultSet) throws SQLException;
 
     Map<K, V> getMap(ResultSet resultSet) throws SQLException;
-
-    V getDefaultValue(K key);
 }

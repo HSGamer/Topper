@@ -92,10 +92,5 @@ public class NumberStorageBuilder extends DataStorageBuilder<Double> {
             }
             return map;
         }
-
-        @Override
-        public Double getDefaultValue(UUID uuid) {
-            return 0D;
-        }
     }
 }
