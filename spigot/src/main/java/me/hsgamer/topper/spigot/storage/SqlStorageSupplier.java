@@ -93,7 +93,8 @@ public abstract class SqlStorageSupplier<T> implements DataStorageSupplier<UUID,
                     Connection connection = null;
                     try {
                         connection = getAndCreateTable(name);
-                        return converter.select(connection, name, uuid).querySafe(resultSet -> resultSet.next() ? converter.getValue(uuid, resultSet) : holder.getDefaultValue());
+                        T value = converter.select(connection, name, uuid).query(resultSet -> resultSet.next() ? converter.getValue(uuid, resultSet) : null);
+                        return Optional.ofNullable(value);
                     } catch (SQLException e) {
                         logger.log(Level.SEVERE, "Failed to load top entry", e);
                         return Optional.empty();
