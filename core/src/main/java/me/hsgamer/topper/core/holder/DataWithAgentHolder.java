@@ -5,14 +5,14 @@ import me.hsgamer.topper.core.agent.Agent;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DataWithAgentHolder<T> extends DataHolder<T> {
+public class DataWithAgentHolder<K, V> extends DataHolder<K, V> {
     private final List<Agent> agentList = new ArrayList<>();
 
     protected DataWithAgentHolder(String name) {
         super(name);
-        getRegisterListenerManager().add(() -> agentList.forEach(Agent::start));
-        getBeforeUnregisterListenerManager().add(() -> agentList.forEach(Agent::beforeStop));
-        getUnregisterListenerManager().add(() -> {
+        getListenerManager().add(EventStates.REGISTER, () -> agentList.forEach(Agent::start));
+        getListenerManager().add(EventStates.BEFORE_UNREGISTER, () -> agentList.forEach(Agent::beforeStop));
+        getListenerManager().add(EventStates.UNREGISTER, () -> {
             agentList.forEach(Agent::stop);
             agentList.clear();
         });

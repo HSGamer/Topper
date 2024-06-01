@@ -1,98 +1,76 @@
 package me.hsgamer.topper.core.holder;
 
 import me.hsgamer.topper.core.entry.DataEntry;
-import me.hsgamer.topper.core.listener.EntryListenerManager;
+import me.hsgamer.topper.core.listener.EventState;
 import me.hsgamer.topper.core.listener.ListenerManager;
 
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class DataHolder<T> {
-    private final Map<UUID, DataEntry<T>> entryMap = new ConcurrentHashMap<>();
-    private final EntryListenerManager<T> removeListenerManager = new EntryListenerManager<>();
-    private final EntryListenerManager<T> createListenerManager = new EntryListenerManager<>();
-    private final EntryListenerManager<T> updateListenerManager = new EntryListenerManager<>();
-    private final ListenerManager registerListenerManager = new ListenerManager();
-    private final ListenerManager beforeUnregisterListenerManager = new ListenerManager();
-    private final ListenerManager unregisterListenerManager = new ListenerManager();
+public class DataHolder<K, V> {
+    private final Map<K, DataEntry<K, V>> entryMap = new ConcurrentHashMap<>();
+    private final ListenerManager<K, V> listenerManager = new ListenerManager<>();
     private final String name;
 
     protected DataHolder(String name) {
         this.name = name;
     }
 
-    public T getDefaultValue() {
+    public V getDefaultValue() {
         return null;
     }
 
-    public final EntryListenerManager<T> getRemoveListenerManager() {
-        return removeListenerManager;
-    }
-
-    public final EntryListenerManager<T> getCreateListenerManager() {
-        return createListenerManager;
-    }
-
-    public final EntryListenerManager<T> getUpdateListenerManager() {
-        return updateListenerManager;
-    }
-
-    public final ListenerManager getRegisterListenerManager() {
-        return registerListenerManager;
-    }
-
-    public final ListenerManager getBeforeUnregisterListenerManager() {
-        return beforeUnregisterListenerManager;
-    }
-
-    public final ListenerManager getUnregisterListenerManager() {
-        return unregisterListenerManager;
+    public ListenerManager<K, V> getListenerManager() {
+        return listenerManager;
     }
 
     public final void register() {
-        registerListenerManager.notifyListeners();
+        listenerManager.call(EventStates.REGISTER);
     }
 
     public final void unregister() {
-        beforeUnregisterListenerManager.notifyListeners();
+        listenerManager.call(EventStates.BEFORE_UNREGISTER);
 
-        entryMap.values().forEach(removeListenerManager::notifyListeners);
+        entryMap.values().forEach(entry -> getListenerManager().call(EventStates.UNREGISTER, entry));
         entryMap.clear();
 
-        unregisterListenerManager.notifyListeners();
+        listenerManager.call(EventStates.UNREGISTER);
 
-        createListenerManager.clear();
-        removeListenerManager.clear();
-        updateListenerManager.clear();
-        registerListenerManager.clear();
-        beforeUnregisterListenerManager.clear();
-        unregisterListenerManager.clear();
+        listenerManager.clear();
     }
 
     public final String getName() {
         return name;
     }
 
-    public final Map<UUID, DataEntry<T>> getEntryMap() {
+    public final Map<K, DataEntry<K, V>> getEntryMap() {
         return Collections.unmodifiableMap(entryMap);
     }
 
-    public final Optional<DataEntry<T>> getEntry(UUID uuid) {
-        return Optional.ofNullable(entryMap.get(uuid));
+    public final Optional<DataEntry<K, V>> getEntry(K key) {
+        return Optional.ofNullable(entryMap.get(key));
     }
 
-    public final DataEntry<T> getOrCreateEntry(UUID uuid) {
-        return entryMap.computeIfAbsent(uuid, u -> {
-            DataEntry<T> entry = new DataEntry<>(u, this);
-            createListenerManager.notifyListeners(entry);
+    public final DataEntry<K, V> getOrCreateEntry(K key) {
+        return entryMap.computeIfAbsent(key, u -> {
+            DataEntry<K, V> entry = new DataEntry<>(u, this);
+            listenerManager.call(EventStates.CREATE, entry);
             return entry;
         });
     }
 
-    public final void removeEntry(UUID uuid) {
-        Optional.ofNullable(entryMap.remove(uuid)).ifPresent(removeListenerManager::notifyListeners);
+    public final void removeEntry(K key) {
+        Optional.ofNullable(entryMap.remove(key)).ifPresent(entry -> listenerManager.call(EventStates.REMOVE, entry));
+    }
+
+    public enum EventStates implements EventState {
+        CREATE,
+        REMOVE,
+        UPDATE,
+        REGISTER,
+        BEFORE_UNREGISTER,
+        UNREGISTER
     }
 }

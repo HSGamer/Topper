@@ -62,7 +62,7 @@ public abstract class BlockManager<P extends Plugin, T> implements Listener, Loa
             if (blockEntry == null) return;
 
             Optional<DataEntry<T>> optionalEntry = getEntry(blockEntry);
-            UUID uuid = optionalEntry.map(DataEntry::getUuid).orElse(null);
+            UUID uuid = optionalEntry.map(DataEntry::getKey).orElse(null);
             T value = optionalEntry.map(DataEntry::getValue).orElse(null);
 
             isBlockUpdating.set(true);

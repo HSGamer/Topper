@@ -68,7 +68,7 @@ public class GetTopListCommand extends Command {
         List<String> topList = new ArrayList<>();
         for (int i = fromIndex; i <= toIndex; i++) {
             Optional<DataEntry<Double>> optionalTopEntry = topHolder.getSnapshotAgent().getEntryByIndex(i - 1);
-            UUID uuid = optionalTopEntry.map(DataEntry::getUuid).orElse(null);
+            UUID uuid = optionalTopEntry.map(DataEntry::getKey).orElse(null);
             Double value = optionalTopEntry.map(DataEntry::getValue).orElse(null);
             topList.add(
                     numberFormatter.replace(instance.get(MessageConfig.class).getTopEntryLine(), uuid, value)

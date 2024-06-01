@@ -1,13 +1,11 @@
 package me.hsgamer.topper.core.agent.snapshot;
 
-import java.util.UUID;
+public class DataSnapshot<K, V> {
+    public final K key;
+    public final V value;
 
-public class DataSnapshot<T> {
-    public final UUID uuid;
-    public final T value;
-
-    DataSnapshot(UUID uuid, T value) {
-        this.uuid = uuid;
+    DataSnapshot(K key, V value) {
+        this.key = key;
         this.value = value;
     }
 }
