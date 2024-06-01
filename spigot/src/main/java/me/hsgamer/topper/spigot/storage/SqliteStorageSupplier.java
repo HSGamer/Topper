@@ -12,6 +12,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 
@@ -20,7 +21,7 @@ public class SqliteStorageSupplier<T> extends SqlStorageSupplier<T> {
     private final AtomicReference<Connection> connectionReference = new AtomicReference<>();
     private final JavaPlugin plugin;
 
-    public SqliteStorageSupplier(JavaPlugin plugin, File baseFolder, SqlEntryConverter<T> converter) {
+    public SqliteStorageSupplier(JavaPlugin plugin, File baseFolder, SqlEntryConverter<UUID, T> converter) {
         super(plugin.getLogger(), converter);
         this.plugin = plugin;
         DatabaseConfig databaseConfig = ConfigGenerator.newInstance(DatabaseConfig.class, new BukkitConfig(plugin, "database.yml"));

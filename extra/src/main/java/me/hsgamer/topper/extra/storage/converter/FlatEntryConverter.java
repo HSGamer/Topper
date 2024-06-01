@@ -1,7 +1,11 @@
 package me.hsgamer.topper.extra.storage.converter;
 
-public interface FlatEntryConverter<T> {
-    T toValue(Object object);
+public interface FlatEntryConverter<K, V> {
+    K toKey(String key);
 
-    Object toRaw(T object);
+    String toRawKey(K key);
+
+    V toValue(Object object);
+
+    Object toRawValue(V object);
 }

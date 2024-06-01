@@ -41,7 +41,7 @@ public class SignManager extends me.hsgamer.topper.spigot.block.impl.SignManager
     }
 
     @Override
-    protected Optional<DataEntry<Double>> getEntry(BlockEntry blockEntry) {
+    protected Optional<DataEntry<UUID, Double>> getEntry(BlockEntry blockEntry) {
         return plugin.get(TopManager.class).getTopHolder(blockEntry.holderName)
                 .map(NumberTopHolder::getSnapshotAgent)
                 .flatMap(snapshotAgent -> snapshotAgent.getEntryByIndex(blockEntry.index));

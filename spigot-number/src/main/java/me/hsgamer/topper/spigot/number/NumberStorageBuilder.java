@@ -19,7 +19,17 @@ public class NumberStorageBuilder extends DataStorageBuilder<Double> {
         super(plugin, baseFolder, new FlatNumberEntryConverter(), new SqlNumberEntryConverter());
     }
 
-    private static class FlatNumberEntryConverter implements FlatEntryConverter<Double> {
+    private static class FlatNumberEntryConverter implements FlatEntryConverter<UUID, Double> {
+        @Override
+        public UUID toKey(String key) {
+            return UUID.fromString(key);
+        }
+
+        @Override
+        public String toRawKey(UUID uuid) {
+            return uuid.toString();
+        }
+
         @Override
         public Double toValue(Object object) {
             try {
@@ -30,12 +40,12 @@ public class NumberStorageBuilder extends DataStorageBuilder<Double> {
         }
 
         @Override
-        public Object toRaw(Double object) {
+        public Object toRawValue(Double object) {
             return object;
         }
     }
 
-    private static class SqlNumberEntryConverter implements SqlEntryConverter<Double> {
+    private static class SqlNumberEntryConverter implements SqlEntryConverter<UUID, Double> {
         @Override
         public StatementBuilder createTable(Connection connection, String name) {
             return StatementBuilder.create(connection).setStatement("CREATE TABLE IF NOT EXISTS `" + name + "` (`uuid` varchar(36) NOT NULL UNIQUE, `value` double DEFAULT 0);");

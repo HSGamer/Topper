@@ -42,7 +42,7 @@ public abstract class BlockManager<P extends Plugin, T> implements Listener, Loa
         // EMPTY
     }
 
-    protected abstract Optional<DataEntry<T>> getEntry(BlockEntry blockEntry);
+    protected abstract Optional<DataEntry<UUID, T>> getEntry(BlockEntry blockEntry);
 
     @Override
     public void enable() {
@@ -61,7 +61,7 @@ public abstract class BlockManager<P extends Plugin, T> implements Listener, Loa
             BlockEntry blockEntry = entryQueue.poll();
             if (blockEntry == null) return;
 
-            Optional<DataEntry<T>> optionalEntry = getEntry(blockEntry);
+            Optional<DataEntry<UUID, T>> optionalEntry = getEntry(blockEntry);
             UUID uuid = optionalEntry.map(DataEntry::getKey).orElse(null);
             T value = optionalEntry.map(DataEntry::getValue).orElse(null);
 
