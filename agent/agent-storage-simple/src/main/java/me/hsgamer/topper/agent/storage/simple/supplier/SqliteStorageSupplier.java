@@ -10,14 +10,13 @@ import me.hsgamer.topper.agent.storage.simple.converter.SqlEntryConverter;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class SqliteStorageSupplier<T> extends SqlStorageSupplier<T> {
+public class SqliteStorageSupplier<K, V> extends SqlStorageSupplier<K, V> {
     private final JavaSqlClient client;
     private final AtomicReference<Connection> connectionReference = new AtomicReference<>();
 
-    public SqliteStorageSupplier(DatabaseConfig databaseConfig, File baseFolder, SqlEntryConverter<UUID, T> converter) {
+    public SqliteStorageSupplier(DatabaseConfig databaseConfig, File baseFolder, SqlEntryConverter<K, V> converter) {
         super(converter);
         client = new JavaSqlClient(Setting.create(new SqliteFileDriver(baseFolder)).setDatabaseName(databaseConfig.getDatabase()));
     }

@@ -14,14 +14,13 @@ import java.sql.SQLException;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-public abstract class SqlStorageSupplier<T> implements DataStorageSupplier<UUID, T> {
+public abstract class SqlStorageSupplier<K, V> implements DataStorageSupplier<K, V> {
     protected final Logger logger = LoggerProvider.getLogger(getClass());
-    private final SqlEntryConverter<UUID, T> converter;
+    private final SqlEntryConverter<K, V> converter;
 
-    protected SqlStorageSupplier(SqlEntryConverter<UUID, T> converter) {
+    protected SqlStorageSupplier(SqlEntryConverter<K, V> converter) {
         this.converter = converter;
     }
 
@@ -36,10 +35,10 @@ public abstract class SqlStorageSupplier<T> implements DataStorageSupplier<UUID,
     }
 
     @Override
-    public DataStorage<UUID, T> getStorage(DataHolder<UUID, T> holder) {
-        return new DataStorage<UUID, T>(holder) {
+    public DataStorage<K, V> getStorage(DataHolder<K, V> holder) {
+        return new DataStorage<K, V>(holder) {
             @Override
-            public CompletableFuture<Map<UUID, T>> load() {
+            public CompletableFuture<Map<K, V>> load() {
                 String name = holder.getName();
                 return CompletableFuture.supplyAsync(() -> {
                     Connection connection = null;
@@ -58,17 +57,17 @@ public abstract class SqlStorageSupplier<T> implements DataStorageSupplier<UUID,
             }
 
             @Override
-            public CompletableFuture<Void> save(UUID uuid, T value, boolean urgent) {
+            public CompletableFuture<Void> save(K key, V value, boolean urgent) {
                 String name = holder.getName();
                 Runnable runnable = () -> {
                     Connection connection = null;
                     try {
                         connection = getAndCreateTable(name);
-                        boolean exists = converter.select(connection, name, uuid).query(ResultSet::next);
+                        boolean exists = converter.select(connection, name, key).query(ResultSet::next);
                         if (exists) {
-                            converter.update(connection, name, uuid, value).update();
+                            converter.update(connection, name, key, value).update();
                         } else {
-                            converter.insert(connection, name, uuid, value).update();
+                            converter.insert(connection, name, key, value).update();
                         }
                     } catch (SQLException e) {
                         logger.log(LogLevel.ERROR, "Failed to save entry", e);
@@ -87,13 +86,13 @@ public abstract class SqlStorageSupplier<T> implements DataStorageSupplier<UUID,
             }
 
             @Override
-            public CompletableFuture<Optional<T>> load(UUID uuid, boolean urgent) {
+            public CompletableFuture<Optional<V>> load(K key, boolean urgent) {
                 String name = holder.getName();
                 return CompletableFuture.supplyAsync(() -> {
                     Connection connection = null;
                     try {
                         connection = getAndCreateTable(name);
-                        T value = converter.select(connection, name, uuid).query(resultSet -> resultSet.next() ? converter.getValue(uuid, resultSet) : null);
+                        V value = converter.select(connection, name, key).query(resultSet -> resultSet.next() ? converter.getValue(key, resultSet) : null);
                         return Optional.ofNullable(value);
                     } catch (SQLException e) {
                         logger.log(LogLevel.ERROR, "Failed to load top entry", e);

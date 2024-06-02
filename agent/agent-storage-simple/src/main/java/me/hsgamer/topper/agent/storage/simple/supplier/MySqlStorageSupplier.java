@@ -9,12 +9,11 @@ import me.hsgamer.topper.agent.storage.simple.converter.SqlEntryConverter;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.UUID;
 
-public class MySqlStorageSupplier<T> extends SqlStorageSupplier<T> {
+public class MySqlStorageSupplier<K, V> extends SqlStorageSupplier<K, V> {
     private final JavaSqlClient client;
 
-    public MySqlStorageSupplier(DatabaseConfig databaseConfig, SqlEntryConverter<UUID, T> converter) {
+    public MySqlStorageSupplier(DatabaseConfig databaseConfig, SqlEntryConverter<K, V> converter) {
         super(converter);
         Setting setting = Setting.create(new MySqlDriver())
                 .setDatabaseName(databaseConfig.getDatabase())

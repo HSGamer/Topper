@@ -12,25 +12,24 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
-public class YamlStorageSupplier<T> implements DataStorageSupplier<UUID, T> {
+public class YamlStorageSupplier<K, V> implements DataStorageSupplier<K, V> {
     private final UnaryOperator<Runnable> runTaskFunction;
     private final Executor mainThreadExecutor;
     private final Function<File, Config> yamlConfigProvider;
     private final File baseFolder;
-    private final FlatEntryConverter<UUID, T> converter;
+    private final FlatEntryConverter<K, V> converter;
 
     public YamlStorageSupplier(
             UnaryOperator<Runnable> runTaskFunction,
             Executor mainThreadExecutor,
             Function<File, Config> yamlConfigProvider,
             File baseFolder,
-            FlatEntryConverter<UUID, T> converter
+            FlatEntryConverter<K, V> converter
     ) {
         this.runTaskFunction = runTaskFunction;
         this.mainThreadExecutor = mainThreadExecutor;
@@ -40,19 +39,20 @@ public class YamlStorageSupplier<T> implements DataStorageSupplier<UUID, T> {
     }
 
     @Override
-    public DataStorage<UUID, T> getStorage(DataHolder<UUID, T> holder) {
-        return new DataStorage<UUID, T>(holder) {
+    public DataStorage<K, V> getStorage(DataHolder<K, V> holder) {
+        return new DataStorage<K, V>(holder) {
             private final AutoSaveConfig config = new AutoSaveConfig(yamlConfigProvider.apply(new File(baseFolder, holder.getName() + ".yml")), runTaskFunction);
 
             @Override
-            public CompletableFuture<Map<UUID, T>> load() {
+            public CompletableFuture<Map<K, V>> load() {
                 Map<PathString, Object> values = config.getValues(false);
                 return CompletableFuture.supplyAsync(() -> {
-                    Map<UUID, T> map = new HashMap<>();
+                    Map<K, V> map = new HashMap<>();
                     values.forEach((path, value) -> {
-                        T finalValue = converter.toValue(value);
+                        V finalValue = converter.toValue(value);
                         if (finalValue != null) {
-                            map.put(converter.toKey(path.getLastPath()), finalValue);
+                            K finalKey = converter.toKey(path.getLastPath());
+                            map.put(finalKey, finalValue);
                         }
                     });
                     return map;
@@ -60,10 +60,10 @@ public class YamlStorageSupplier<T> implements DataStorageSupplier<UUID, T> {
             }
 
             @Override
-            public CompletableFuture<Void> save(UUID uuid, T value, boolean urgent) {
+            public CompletableFuture<Void> save(K key, V value, boolean urgent) {
                 CompletableFuture<Void> future = new CompletableFuture<>();
                 Runnable runnable = () -> {
-                    config.set(new PathString(converter.toRawKey(uuid)), converter.toRawValue(value));
+                    config.set(new PathString(converter.toRawKey(key)), converter.toRawValue(value));
                     future.complete(null);
                 };
                 if (urgent) {
@@ -75,10 +75,10 @@ public class YamlStorageSupplier<T> implements DataStorageSupplier<UUID, T> {
             }
 
             @Override
-            public CompletableFuture<Optional<T>> load(UUID uuid, boolean urgent) {
-                CompletableFuture<Optional<T>> future = new CompletableFuture<>();
+            public CompletableFuture<Optional<V>> load(K key, boolean urgent) {
+                CompletableFuture<Optional<V>> future = new CompletableFuture<>();
                 Runnable runnable = () -> {
-                    Optional<T> optional = Optional.ofNullable(config.get(new PathString(converter.toRawKey(uuid)))).map(converter::toValue);
+                    Optional<V> optional = Optional.ofNullable(config.get(new PathString(converter.toRawKey(key)))).map(converter::toValue);
                     future.complete(optional);
                 };
                 if (urgent) {

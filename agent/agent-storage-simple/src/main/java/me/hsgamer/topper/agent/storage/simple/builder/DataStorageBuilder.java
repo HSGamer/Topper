@@ -11,14 +11,13 @@ import me.hsgamer.topper.agent.storage.simple.supplier.YamlStorageSupplier;
 import me.hsgamer.topper.agent.storage.supplier.DataStorageSupplier;
 
 import java.io.File;
-import java.util.UUID;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
-public class DataStorageBuilder<T> extends Builder<Void, DataStorageSupplier<UUID, T>> {
-    private final Supplier<DataStorageSupplier<UUID, T>> defaultSupplier;
+public class DataStorageBuilder<K, V> extends Builder<Void, DataStorageSupplier<K, V>> {
+    private final Supplier<DataStorageSupplier<K, V>> defaultSupplier;
 
     public DataStorageBuilder(
             UnaryOperator<Runnable> runTaskFunction,
@@ -26,10 +25,10 @@ public class DataStorageBuilder<T> extends Builder<Void, DataStorageSupplier<UUI
             Function<File, Config> yamlConfigProvider,
             Supplier<DatabaseConfig> databaseConfigSupplier,
             File baseFolder,
-            FlatEntryConverter<UUID, T> flatEntryConverter,
-            SqlEntryConverter<UUID, T> sqlEntryConverter
+            FlatEntryConverter<K, V> flatEntryConverter,
+            SqlEntryConverter<K, V> sqlEntryConverter
     ) {
-        Supplier<YamlStorageSupplier<T>> yamlSupplier = () -> new YamlStorageSupplier<>(runTaskFunction, mainThreadExecutor, yamlConfigProvider, baseFolder, flatEntryConverter);
+        Supplier<YamlStorageSupplier<K, V>> yamlSupplier = () -> new YamlStorageSupplier<>(runTaskFunction, mainThreadExecutor, yamlConfigProvider, baseFolder, flatEntryConverter);
         this.defaultSupplier = yamlSupplier::get;
         register(v -> defaultSupplier.get(), "default", "");
         register(v -> yamlSupplier.get(), "yaml", "yml");
@@ -37,7 +36,7 @@ public class DataStorageBuilder<T> extends Builder<Void, DataStorageSupplier<UUI
         register(v -> new MySqlStorageSupplier<>(databaseConfigSupplier.get(), sqlEntryConverter), "mysql", "mysql-connector-java", "mysql-connector");
     }
 
-    public DataStorageSupplier<UUID, T> buildSupplier(String type) {
+    public DataStorageSupplier<K, V> buildSupplier(String type) {
         return build(type, null).orElseGet(defaultSupplier);
     }
 }
