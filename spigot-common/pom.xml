@@ -9,17 +9,12 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>topper-spigot</artifactId>
+    <artifactId>topper-spigot-common</artifactId>
 
     <dependencies>
         <dependency>
             <groupId>me.hsgamer</groupId>
             <artifactId>topper-core</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>me.hsgamer</groupId>
-            <artifactId>topper-extra</artifactId>
             <version>${project.version}</version>
         </dependency>
 

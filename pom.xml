@@ -11,7 +11,7 @@
     <modules>
         <module>core</module>
         <module>agent</module>
-        <module>spigot</module>
+        <module>spigot-common</module>
         <module>spigot-number</module>
         <module>spigot-block</module>
         <module>spigot-block-impl</module>

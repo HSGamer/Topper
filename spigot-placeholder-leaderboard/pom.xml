@@ -105,7 +105,7 @@
 
         <dependency>
             <groupId>me.hsgamer</groupId>
-            <artifactId>topper-spigot</artifactId>
+            <artifactId>topper-spigot-common</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
