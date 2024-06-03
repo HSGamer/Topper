@@ -36,7 +36,9 @@ public abstract class SkullManager<P extends Plugin, K, V> extends BlockManager<
 
     @Override
     protected void updateBlock(String holderName, Block block, K key, V value, int index) {
-        UUID uuid = getOwner(key, value, index).orElse(skullUUID);
+        UUID uuid = Optional.ofNullable(key)
+                .flatMap(k -> getOwner(key, value, index))
+                .orElse(skullUUID);
         OfflinePlayer topPlayer = Bukkit.getOfflinePlayer(uuid);
         BlockState blockState = block.getState();
         if (blockState instanceof Skull) {
