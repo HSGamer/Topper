@@ -15,6 +15,7 @@ import org.bukkit.permissions.Permission;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static me.hsgamer.hscore.bukkit.utils.MessageUtils.sendMessage;
@@ -28,7 +29,7 @@ public abstract class SetTopBlockCommand extends Command {
         setPermission(getRequiredPermission().getName());
     }
 
-    protected abstract BlockManager<TopperPlaceholderLeaderboard, Double> getBlockManager();
+    protected abstract BlockManager<TopperPlaceholderLeaderboard, UUID, Double> getBlockManager();
 
     protected abstract Permission getRequiredPermission();
 

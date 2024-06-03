@@ -16,7 +16,7 @@ import org.bukkit.entity.Player;
 import java.util.Optional;
 import java.util.UUID;
 
-public class SkullManager extends me.hsgamer.topper.spigot.block.impl.SkullManager<TopperPlaceholderLeaderboard, Double> {
+public class SkullManager extends me.hsgamer.topper.spigot.block.impl.SkullManager<TopperPlaceholderLeaderboard, UUID, Double> {
     public SkullManager(TopperPlaceholderLeaderboard plugin) {
         super(plugin);
     }
@@ -34,6 +34,11 @@ public class SkullManager extends me.hsgamer.topper.spigot.block.impl.SkullManag
     @Override
     protected boolean canBreak(Player player, Location location) {
         return player.hasPermission(Permissions.SKULL_BREAK);
+    }
+
+    @Override
+    protected Optional<UUID> getOwner(UUID uuid, Double value, int index) {
+        return Optional.of(uuid);
     }
 
     @Override

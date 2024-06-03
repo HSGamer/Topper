@@ -1,7 +1,7 @@
 package me.hsgamer.topper.placeholderleaderboard.manager;
 
 import io.github.projectunified.minelib.plugin.base.Loadable;
-import me.hsgamer.topper.core.storage.DataStorageSupplier;
+import me.hsgamer.topper.agent.storage.supplier.DataStorageSupplier;
 import me.hsgamer.topper.placeholderleaderboard.TopperPlaceholderLeaderboard;
 import me.hsgamer.topper.placeholderleaderboard.config.MainConfig;
 import me.hsgamer.topper.placeholderleaderboard.holder.NumberTopHolder;

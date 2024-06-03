@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public class SignManager extends me.hsgamer.topper.spigot.block.impl.SignManager<TopperPlaceholderLeaderboard, Double> {
+public class SignManager extends me.hsgamer.topper.spigot.block.impl.SignManager<TopperPlaceholderLeaderboard, UUID, Double> {
     public SignManager(TopperPlaceholderLeaderboard plugin) {
         super(plugin);
     }

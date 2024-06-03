@@ -2,9 +2,9 @@ package me.hsgamer.topper.placeholderleaderboard.holder;
 
 import io.github.projectunified.minelib.scheduler.async.AsyncScheduler;
 import io.github.projectunified.minelib.scheduler.global.GlobalScheduler;
-import me.hsgamer.topper.core.agent.snapshot.SnapshotAgent;
-import me.hsgamer.topper.core.agent.storage.StorageAgent;
-import me.hsgamer.topper.core.agent.update.UpdateAgent;
+import me.hsgamer.topper.agent.agent.update.UpdateAgent;
+import me.hsgamer.topper.agent.snapshot.SnapshotAgent;
+import me.hsgamer.topper.agent.storage.StorageAgent;
 import me.hsgamer.topper.core.holder.DataWithAgentHolder;
 import me.hsgamer.topper.placeholderleaderboard.TopperPlaceholderLeaderboard;
 import me.hsgamer.topper.placeholderleaderboard.config.MainConfig;
