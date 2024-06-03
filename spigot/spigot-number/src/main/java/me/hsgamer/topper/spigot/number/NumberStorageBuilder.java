@@ -1,9 +1,14 @@
 package me.hsgamer.topper.spigot.number;
 
+import io.github.projectunified.minelib.scheduler.common.task.Task;
+import io.github.projectunified.minelib.scheduler.global.GlobalScheduler;
+import me.hsgamer.hscore.bukkit.config.BukkitConfig;
+import me.hsgamer.hscore.config.proxy.ConfigGenerator;
 import me.hsgamer.hscore.database.client.sql.StatementBuilder;
-import me.hsgamer.topper.extra.storage.converter.FlatEntryConverter;
-import me.hsgamer.topper.extra.storage.converter.SqlEntryConverter;
-import me.hsgamer.topper.spigot.builder.DataStorageBuilder;
+import me.hsgamer.topper.agent.storage.simple.builder.DataStorageBuilder;
+import me.hsgamer.topper.agent.storage.simple.config.DatabaseConfig;
+import me.hsgamer.topper.agent.storage.simple.converter.FlatEntryConverter;
+import me.hsgamer.topper.agent.storage.simple.converter.SqlEntryConverter;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -14,9 +19,20 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class NumberStorageBuilder extends DataStorageBuilder<Double> {
+public class NumberStorageBuilder extends DataStorageBuilder<UUID, Double> {
     public NumberStorageBuilder(JavaPlugin plugin, File baseFolder) {
-        super(plugin, baseFolder, new FlatNumberEntryConverter(), new SqlNumberEntryConverter());
+        super(
+                runnable -> {
+                    Task task = GlobalScheduler.get(plugin).runLater(runnable, 40L);
+                    return task::cancel;
+                },
+                runnable -> GlobalScheduler.get(plugin).run(runnable),
+                BukkitConfig::new,
+                () -> ConfigGenerator.newInstance(DatabaseConfig.class, new BukkitConfig(new File(baseFolder, "database.yml"))),
+                baseFolder,
+                new FlatNumberEntryConverter(),
+                new SqlNumberEntryConverter()
+        );
     }
 
     private static class FlatNumberEntryConverter implements FlatEntryConverter<UUID, Double> {

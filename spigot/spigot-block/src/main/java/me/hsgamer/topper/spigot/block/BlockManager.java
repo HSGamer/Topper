@@ -21,7 +21,7 @@ import org.bukkit.plugin.Plugin;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public abstract class BlockManager<P extends Plugin, T> implements Listener, Loadable {
+public abstract class BlockManager<P extends Plugin, K, V> implements Listener, Loadable {
     protected final P plugin;
     private final BlockEntryConfig blockEntryConfig;
     private final Map<Location, BlockEntry> entries = new HashMap<>();
@@ -34,7 +34,7 @@ public abstract class BlockManager<P extends Plugin, T> implements Listener, Loa
 
     protected abstract BlockEntryConfig getConfig();
 
-    protected abstract void updateBlock(String holderName, Block block, UUID uuid, T value, int index);
+    protected abstract void updateBlock(String holderName, Block block, K key, V value, int index);
 
     protected abstract boolean canBreak(Player player, Location location);
 
@@ -42,7 +42,7 @@ public abstract class BlockManager<P extends Plugin, T> implements Listener, Loa
         // EMPTY
     }
 
-    protected abstract Optional<DataEntry<UUID, T>> getEntry(BlockEntry blockEntry);
+    protected abstract Optional<DataEntry<K, V>> getEntry(BlockEntry blockEntry);
 
     @Override
     public void enable() {
@@ -61,15 +61,15 @@ public abstract class BlockManager<P extends Plugin, T> implements Listener, Loa
             BlockEntry blockEntry = entryQueue.poll();
             if (blockEntry == null) return;
 
-            Optional<DataEntry<UUID, T>> optionalEntry = getEntry(blockEntry);
-            UUID uuid = optionalEntry.map(DataEntry::getKey).orElse(null);
-            T value = optionalEntry.map(DataEntry::getValue).orElse(null);
+            Optional<DataEntry<K, V>> optionalEntry = getEntry(blockEntry);
+            K key = optionalEntry.map(DataEntry::getKey).orElse(null);
+            V value = optionalEntry.map(DataEntry::getValue).orElse(null);
 
             isBlockUpdating.set(true);
             LocationScheduler.get(plugin, blockEntry.location).run(() -> {
                 Block block = blockEntry.location.getBlock();
                 if (block.getChunk().isLoaded()) {
-                    updateBlock(blockEntry.holderName, block, uuid, value, blockEntry.index);
+                    updateBlock(blockEntry.holderName, block, key, value, blockEntry.index);
                 }
                 isBlockUpdating.set(false);
             });

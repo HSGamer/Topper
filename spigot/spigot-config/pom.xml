@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>topper-spigot-common</artifactId>
+    <artifactId>topper-spigot-config</artifactId>
 
     <dependencies>
         <dependency>
@@ -43,13 +43,6 @@
             <groupId>io.github.projectunified</groupId>
             <artifactId>minelib-scheduler-async</artifactId>
             <version>${minelib.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-api</artifactId>
-            <version>1.12.2-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>

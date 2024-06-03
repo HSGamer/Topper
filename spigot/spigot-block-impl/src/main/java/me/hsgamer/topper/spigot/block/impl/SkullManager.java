@@ -10,10 +10,11 @@ import org.bukkit.plugin.Plugin;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Level;
 
-public abstract class SkullManager<P extends Plugin, T> extends BlockManager<P, T> {
+public abstract class SkullManager<P extends Plugin, K, V> extends BlockManager<P, K, V> {
     private static final UUID skullUUID = UUID.fromString("832b9c2d-f6c2-4c5f-8e0d-e7e7c4e9f9c8");
     private static Method setOwningPlayerMethod;
     private static Method setOwnerMethod;
@@ -31,9 +32,12 @@ public abstract class SkullManager<P extends Plugin, T> extends BlockManager<P, 
         super(plugin);
     }
 
+    protected abstract Optional<UUID> getOwner(K key, V value, int index);
+
     @Override
-    protected void updateBlock(String holderName, Block block, UUID uuid, T value, int index) {
-        OfflinePlayer topPlayer = Bukkit.getOfflinePlayer(uuid == null ? skullUUID : uuid);
+    protected void updateBlock(String holderName, Block block, K key, V value, int index) {
+        UUID uuid = getOwner(key, value, index).orElse(skullUUID);
+        OfflinePlayer topPlayer = Bukkit.getOfflinePlayer(uuid);
         BlockState blockState = block.getState();
         if (blockState instanceof Skull) {
             Skull skull = (Skull) blockState;

@@ -6,19 +6,17 @@ import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.plugin.Plugin;
 
-import java.util.UUID;
-
-public abstract class SignManager<P extends Plugin, T> extends BlockManager<P, T> {
+public abstract class SignManager<P extends Plugin, K, V> extends BlockManager<P, K, V> {
     public SignManager(P plugin) {
         super(plugin);
     }
 
     @Override
-    protected void updateBlock(String holderName, Block block, UUID uuid, T value, int index) {
+    protected void updateBlock(String holderName, Block block, K key, V value, int index) {
         BlockState blockState = block.getState();
         if (blockState instanceof Sign) {
             Sign sign = (Sign) blockState;
-            String[] lines = getSignLines(uuid, value, index, holderName);
+            String[] lines = getSignLines(key, value, index, holderName);
             for (int i = 0; i < 4; i++) {
                 sign.setLine(i, lines[i]);
             }
@@ -28,5 +26,5 @@ public abstract class SignManager<P extends Plugin, T> extends BlockManager<P, T
         }
     }
 
-    protected abstract String[] getSignLines(UUID uuid, T value, int index, String holderName);
+    protected abstract String[] getSignLines(K key, V value, int index, String holderName);
 }
