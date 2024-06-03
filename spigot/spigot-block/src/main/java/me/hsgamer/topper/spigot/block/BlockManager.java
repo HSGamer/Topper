@@ -47,7 +47,7 @@ public abstract class BlockManager<P extends Plugin, K, V> implements Listener, 
     @Override
     public void enable() {
         this.registerEvents();
-        blockEntryConfig.getEntries().forEach(this::add);
+        for (BlockEntry blockEntry : blockEntryConfig.getEntries()) this.add(blockEntry);
 
         final Queue<BlockEntry> entryQueue = new LinkedList<>();
         final AtomicBoolean isBlockUpdating = new AtomicBoolean(false);
@@ -80,7 +80,7 @@ public abstract class BlockManager<P extends Plugin, K, V> implements Listener, 
     public void disable() {
         task.cancel();
         HandlerList.unregisterAll(this);
-        blockEntryConfig.setEntries(new ArrayList<>(entries.values()));
+        blockEntryConfig.setEntries(entries.values().toArray(new BlockEntry[0]));
     }
 
     private void registerEvents() {

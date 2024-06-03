@@ -3,16 +3,13 @@ package me.hsgamer.topper.spigot.block;
 import me.hsgamer.hscore.config.Config;
 import me.hsgamer.hscore.config.annotation.ConfigPath;
 
-import java.util.Collections;
-import java.util.List;
-
 public interface BlockEntryConfig {
     @ConfigPath("entries")
-    default List<BlockEntry> getEntries() {
-        return Collections.emptyList();
+    default BlockEntry[] getEntries() {
+        return new BlockEntry[0];
     }
 
-    void setEntries(List<BlockEntry> entries);
+    void setEntries(BlockEntry[] entries);
 
     void reloadConfig();
 
