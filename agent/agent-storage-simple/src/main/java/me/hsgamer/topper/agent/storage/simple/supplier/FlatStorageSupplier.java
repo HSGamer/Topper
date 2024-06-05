@@ -17,23 +17,26 @@ import java.util.concurrent.Executor;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
-public class YamlStorageSupplier<K, V> implements DataStorageSupplier<K, V> {
+public class FlatStorageSupplier<K, V> implements DataStorageSupplier<K, V> {
     private final UnaryOperator<Runnable> runTaskFunction;
     private final Executor mainThreadExecutor;
-    private final Function<File, Config> yamlConfigProvider;
+    private final UnaryOperator<String> configNameProvider;
+    private final Function<File, Config> configProvider;
     private final File holderBaseFolder;
     private final FlatEntryConverter<K, V> converter;
 
-    public YamlStorageSupplier(
+    public FlatStorageSupplier(
             UnaryOperator<Runnable> runTaskFunction,
             Executor mainThreadExecutor,
-            Function<File, Config> yamlConfigProvider,
+            UnaryOperator<String> configNameProvider,
+            Function<File, Config> configProvider,
             File holderBaseFolder,
             FlatEntryConverter<K, V> converter
     ) {
         this.runTaskFunction = runTaskFunction;
         this.mainThreadExecutor = mainThreadExecutor;
-        this.yamlConfigProvider = yamlConfigProvider;
+        this.configNameProvider = configNameProvider;
+        this.configProvider = configProvider;
         this.holderBaseFolder = holderBaseFolder;
         this.converter = converter;
     }
@@ -41,7 +44,7 @@ public class YamlStorageSupplier<K, V> implements DataStorageSupplier<K, V> {
     @Override
     public DataStorage<K, V> getStorage(DataHolder<K, V> holder) {
         return new DataStorage<K, V>(holder) {
-            private final AutoSaveConfig config = new AutoSaveConfig(yamlConfigProvider.apply(new File(holderBaseFolder, holder.getName() + ".yml")), runTaskFunction);
+            private final AutoSaveConfig config = new AutoSaveConfig(configProvider.apply(new File(holderBaseFolder, configNameProvider.apply(holder.getName()))), runTaskFunction);
 
             @Override
             public CompletableFuture<Map<K, V>> load() {

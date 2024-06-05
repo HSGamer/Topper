@@ -5,9 +5,9 @@ import me.hsgamer.hscore.config.Config;
 import me.hsgamer.topper.agent.storage.simple.config.DatabaseConfig;
 import me.hsgamer.topper.agent.storage.simple.converter.FlatEntryConverter;
 import me.hsgamer.topper.agent.storage.simple.converter.SqlEntryConverter;
+import me.hsgamer.topper.agent.storage.simple.supplier.FlatStorageSupplier;
 import me.hsgamer.topper.agent.storage.simple.supplier.MySqlStorageSupplier;
 import me.hsgamer.topper.agent.storage.simple.supplier.SqliteStorageSupplier;
-import me.hsgamer.topper.agent.storage.simple.supplier.YamlStorageSupplier;
 import me.hsgamer.topper.agent.storage.supplier.DataStorageSupplier;
 
 import java.io.File;
@@ -28,8 +28,8 @@ public class DataStorageBuilder<K, V> extends Builder<Void, DataStorageSupplier<
             FlatEntryConverter<K, V> flatEntryConverter,
             SqlEntryConverter<K, V> sqlEntryConverter
     ) {
-        Supplier<YamlStorageSupplier<K, V>> yamlSupplier = () -> new YamlStorageSupplier<>(runTaskFunction, mainThreadExecutor, yamlConfigProvider, holderBaseFolder, flatEntryConverter);
-        this.defaultSupplier = yamlSupplier::get;
+        Supplier<DataStorageSupplier<K, V>> yamlSupplier = () -> new FlatStorageSupplier<>(runTaskFunction, mainThreadExecutor, name -> name + ".yml", yamlConfigProvider, holderBaseFolder, flatEntryConverter);
+        this.defaultSupplier = yamlSupplier;
         register(v -> defaultSupplier.get(), "default", "");
         register(v -> yamlSupplier.get(), "yaml", "yml");
         register(v -> new SqliteStorageSupplier<>(databaseConfigSupplier.get(), holderBaseFolder, sqlEntryConverter), "sqlite", "sqlite3");
