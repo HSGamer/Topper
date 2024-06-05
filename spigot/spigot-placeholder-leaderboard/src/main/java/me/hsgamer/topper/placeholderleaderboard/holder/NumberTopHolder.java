@@ -40,7 +40,7 @@ public abstract class NumberTopHolder extends DataWithAgentHolder<UUID, Double> 
             int saveDelay = instance.get(MainConfig.class).getTaskSaveDelay();
             return AsyncScheduler.get(instance).runTimer(runnable, saveDelay, saveDelay)::cancel;
         });
-        storageAgent.addOnLoadListener(() -> {
+        getListenerManager().add(StorageAgent.LOAD_EVENT, () -> {
             if (instance.get(MainConfig.class).isLoadAllOfflinePlayers()) {
                 GlobalScheduler.get(instance).run(() -> {
                     for (OfflinePlayer player : instance.getServer().getOfflinePlayers()) {
