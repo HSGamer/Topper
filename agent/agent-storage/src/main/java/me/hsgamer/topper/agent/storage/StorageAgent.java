@@ -5,6 +5,7 @@ import me.hsgamer.topper.agent.storage.supplier.DataStorage;
 import me.hsgamer.topper.core.entry.DataEntry;
 import me.hsgamer.topper.core.flag.EntryTempFlag;
 import me.hsgamer.topper.core.holder.DataHolder;
+import me.hsgamer.topper.core.listener.EventState;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,10 +15,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class StorageAgent<K, V> extends RunnableAgent {
+    public static final EventState LOAD_EVENT = EventState.newState();
     public static final EntryTempFlag NEED_SAVING = new EntryTempFlag("needSaving");
     public static final EntryTempFlag IS_SAVING = new EntryTempFlag("isSaving");
     private final Queue<K> saveQueue = new ConcurrentLinkedQueue<>();
-    private final List<Runnable> onLoadListeners = new ArrayList<>();
     private final Logger logger;
     private final DataHolder<K, V> holder;
     private final DataStorage<K, V> storage;
@@ -76,7 +77,7 @@ public class StorageAgent<K, V> extends RunnableAgent {
                     if (entries != null) {
                         entries.forEach((uuid, value) -> holder.getOrCreateEntry(uuid).setValue(value, false));
                     }
-                    onLoadListeners.forEach(Runnable::run);
+                    holder.getListenerManager().call(LOAD_EVENT);
                 });
         super.start();
     }
@@ -111,10 +112,6 @@ public class StorageAgent<K, V> extends RunnableAgent {
 
     public void setMaxEntryPerCall(int maxEntryPerCall) {
         this.maxEntryPerCall = maxEntryPerCall;
-    }
-
-    public void addOnLoadListener(Runnable runnable) {
-        onLoadListeners.add(runnable);
     }
 
     public void setUrgentLoad(boolean urgentLoad) {
