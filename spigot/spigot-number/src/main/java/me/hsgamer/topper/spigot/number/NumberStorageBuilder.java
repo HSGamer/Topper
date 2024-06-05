@@ -28,7 +28,7 @@ public class NumberStorageBuilder extends DataStorageBuilder<UUID, Double> {
                 },
                 runnable -> GlobalScheduler.get(plugin).run(runnable),
                 BukkitConfig::new,
-                () -> ConfigGenerator.newInstance(DatabaseConfig.class, new BukkitConfig(new File(baseFolder, "database.yml"))),
+                () -> ConfigGenerator.newInstance(DatabaseConfig.class, new BukkitConfig(plugin, "database.yml")),
                 baseFolder,
                 new FlatNumberEntryConverter(),
                 new SqlNumberEntryConverter()
