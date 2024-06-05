@@ -50,8 +50,14 @@ public class ListenerManager<K, V> {
         getListeners(state, false).forEach(Runnable::run);
     }
 
-    public void call(EventState state, DataEntry<K, V> entry) {
-        call(state);
+    public void call(EventState state, DataEntry<K, V> entry, boolean callRunnable) {
+        if (callRunnable) {
+            call(state);
+        }
         getEntryListeners(state, false).forEach(listener -> listener.accept(entry));
+    }
+
+    public void call(EventState state, DataEntry<K, V> entry) {
+        call(state, entry, false);
     }
 }
