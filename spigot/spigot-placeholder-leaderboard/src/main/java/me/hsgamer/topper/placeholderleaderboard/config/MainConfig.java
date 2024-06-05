@@ -90,7 +90,7 @@ public interface MainConfig {
     @ConfigPath(value = "storage-type")
     @Comment({
             "The type of storage the plugin will use to store the value",
-            "Available: YAML, SQLITE, MYSQL"
+            "Available: YAML, JSON, SQLITE, MYSQL"
     })
     default String getStorageType() {
         return "yaml";

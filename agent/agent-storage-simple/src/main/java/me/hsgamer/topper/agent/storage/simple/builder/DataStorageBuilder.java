@@ -23,6 +23,7 @@ public class DataStorageBuilder<K, V> extends Builder<Void, DataStorageSupplier<
             UnaryOperator<Runnable> runTaskFunction,
             Executor mainThreadExecutor,
             Function<File, Config> yamlConfigProvider,
+            Function<File, Config> jsonConfigProvider,
             Supplier<DatabaseConfig> databaseConfigSupplier,
             File holderBaseFolder,
             FlatEntryConverter<K, V> flatEntryConverter,
@@ -32,6 +33,7 @@ public class DataStorageBuilder<K, V> extends Builder<Void, DataStorageSupplier<
         this.defaultSupplier = yamlSupplier;
         register(v -> defaultSupplier.get(), "default", "");
         register(v -> yamlSupplier.get(), "yaml", "yml");
+        register(v -> new FlatStorageSupplier<>(runTaskFunction, mainThreadExecutor, name -> name + ".json", jsonConfigProvider, holderBaseFolder, flatEntryConverter), "json");
         register(v -> new SqliteStorageSupplier<>(databaseConfigSupplier.get(), holderBaseFolder, sqlEntryConverter), "sqlite", "sqlite3");
         register(v -> new MySqlStorageSupplier<>(databaseConfigSupplier.get(), sqlEntryConverter), "mysql", "mysql-connector-java", "mysql-connector");
     }

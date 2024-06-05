@@ -3,6 +3,7 @@ package me.hsgamer.topper.spigot.agent.storage.simple;
 import io.github.projectunified.minelib.scheduler.common.task.Task;
 import io.github.projectunified.minelib.scheduler.global.GlobalScheduler;
 import me.hsgamer.hscore.bukkit.config.BukkitConfig;
+import me.hsgamer.hscore.config.gson.GsonConfig;
 import me.hsgamer.hscore.config.proxy.ConfigGenerator;
 import me.hsgamer.topper.agent.storage.simple.builder.DataStorageBuilder;
 import me.hsgamer.topper.agent.storage.simple.config.DatabaseConfig;
@@ -21,6 +22,7 @@ public class SpigotDataStorageBuilder<K, V> extends DataStorageBuilder<K, V> {
                 },
                 runnable -> GlobalScheduler.get(plugin).run(runnable),
                 BukkitConfig::new,
+                GsonConfig::new,
                 () -> ConfigGenerator.newInstance(DatabaseConfig.class, new BukkitConfig(plugin, "database.yml")),
                 holderBaseFolder,
                 flatEntryConverter,
