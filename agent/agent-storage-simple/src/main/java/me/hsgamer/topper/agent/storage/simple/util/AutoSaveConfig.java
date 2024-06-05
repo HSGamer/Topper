@@ -12,7 +12,7 @@ import java.util.function.UnaryOperator;
 public class AutoSaveConfig extends DecorativeConfig {
     private final UnaryOperator<Runnable> runTaskFunction;
     private final AtomicBoolean isSaving = new AtomicBoolean(false);
-    private final AtomicReference<Runnable> currentSaveTask = new AtomicReference<>();
+    private final AtomicReference<Runnable> currentSaveCancelTask = new AtomicReference<>();
 
     public AutoSaveConfig(Config config, UnaryOperator<Runnable> runTaskFunction) {
         super(config);
@@ -28,12 +28,12 @@ public class AutoSaveConfig extends DecorativeConfig {
                 save();
                 isSaving.set(false);
             });
-            currentSaveTask.set(cancelRunnable);
+            currentSaveCancelTask.set(cancelRunnable);
         }
     }
 
     public void finalSave() {
-        Optional.ofNullable(currentSaveTask.getAndSet(null)).ifPresent(task -> {
+        Optional.ofNullable(currentSaveCancelTask.getAndSet(null)).ifPresent(task -> {
             try {
                 task.run();
             } catch (Exception ignored) {

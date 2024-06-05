@@ -21,27 +21,27 @@ public class YamlStorageSupplier<K, V> implements DataStorageSupplier<K, V> {
     private final UnaryOperator<Runnable> runTaskFunction;
     private final Executor mainThreadExecutor;
     private final Function<File, Config> yamlConfigProvider;
-    private final File baseFolder;
+    private final File holderBaseFolder;
     private final FlatEntryConverter<K, V> converter;
 
     public YamlStorageSupplier(
             UnaryOperator<Runnable> runTaskFunction,
             Executor mainThreadExecutor,
             Function<File, Config> yamlConfigProvider,
-            File baseFolder,
+            File holderBaseFolder,
             FlatEntryConverter<K, V> converter
     ) {
         this.runTaskFunction = runTaskFunction;
         this.mainThreadExecutor = mainThreadExecutor;
         this.yamlConfigProvider = yamlConfigProvider;
-        this.baseFolder = baseFolder;
+        this.holderBaseFolder = holderBaseFolder;
         this.converter = converter;
     }
 
     @Override
     public DataStorage<K, V> getStorage(DataHolder<K, V> holder) {
         return new DataStorage<K, V>(holder) {
-            private final AutoSaveConfig config = new AutoSaveConfig(yamlConfigProvider.apply(new File(baseFolder, holder.getName() + ".yml")), runTaskFunction);
+            private final AutoSaveConfig config = new AutoSaveConfig(yamlConfigProvider.apply(new File(holderBaseFolder, holder.getName() + ".yml")), runTaskFunction);
 
             @Override
             public CompletableFuture<Map<K, V>> load() {

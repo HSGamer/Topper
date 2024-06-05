@@ -24,15 +24,15 @@ public class DataStorageBuilder<K, V> extends Builder<Void, DataStorageSupplier<
             Executor mainThreadExecutor,
             Function<File, Config> yamlConfigProvider,
             Supplier<DatabaseConfig> databaseConfigSupplier,
-            File baseFolder,
+            File holderBaseFolder,
             FlatEntryConverter<K, V> flatEntryConverter,
             SqlEntryConverter<K, V> sqlEntryConverter
     ) {
-        Supplier<YamlStorageSupplier<K, V>> yamlSupplier = () -> new YamlStorageSupplier<>(runTaskFunction, mainThreadExecutor, yamlConfigProvider, baseFolder, flatEntryConverter);
+        Supplier<YamlStorageSupplier<K, V>> yamlSupplier = () -> new YamlStorageSupplier<>(runTaskFunction, mainThreadExecutor, yamlConfigProvider, holderBaseFolder, flatEntryConverter);
         this.defaultSupplier = yamlSupplier::get;
         register(v -> defaultSupplier.get(), "default", "");
         register(v -> yamlSupplier.get(), "yaml", "yml");
-        register(v -> new SqliteStorageSupplier<>(databaseConfigSupplier.get(), baseFolder, sqlEntryConverter), "sqlite", "sqlite3");
+        register(v -> new SqliteStorageSupplier<>(databaseConfigSupplier.get(), holderBaseFolder, sqlEntryConverter), "sqlite", "sqlite3");
         register(v -> new MySqlStorageSupplier<>(databaseConfigSupplier.get(), sqlEntryConverter), "mysql", "mysql-connector-java", "mysql-connector");
     }
 
