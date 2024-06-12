@@ -47,7 +47,7 @@ public class SnapshotAgent<K, V> extends RunnableAgent {
                 .map(entry -> new DataSnapshot<>(entry.getKey(), entry.getValue().getValue()))
                 .filter(snapshot -> filters.stream().allMatch(filter -> filter.test(snapshot)));
         if (comparator != null) {
-            stream = stream.sorted(Comparator.<DataSnapshot<K, V>, V>comparing(snapshot -> snapshot.value, comparator).reversed());
+            stream = stream.sorted(Comparator.<DataSnapshot<K, V>, V>comparing(snapshot -> snapshot.value, comparator));
         }
         return stream.collect(Collectors.toList());
     }

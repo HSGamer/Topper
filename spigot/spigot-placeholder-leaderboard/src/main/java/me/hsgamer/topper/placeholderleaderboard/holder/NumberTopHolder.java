@@ -11,6 +11,7 @@ import me.hsgamer.topper.placeholderleaderboard.config.MainConfig;
 import me.hsgamer.topper.placeholderleaderboard.manager.TopManager;
 import org.bukkit.OfflinePlayer;
 
+import java.util.Comparator;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -53,7 +54,7 @@ public abstract class NumberTopHolder extends DataWithAgentHolder<UUID, Double> 
 
         this.snapshotAgent = new SnapshotAgent<>(this);
         snapshotAgent.setRunTaskFunction(runnable -> AsyncScheduler.get(instance).runTimer(runnable, 20L, 20L)::cancel);
-        snapshotAgent.setComparator(Double::compare);
+        snapshotAgent.setComparator(Comparator.reverseOrder());
         addAgent(snapshotAgent);
     }
 
