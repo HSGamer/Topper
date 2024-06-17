@@ -19,6 +19,11 @@
         </dependency>
         <dependency>
             <groupId>me.hsgamer</groupId>
+            <artifactId>hscore-config-proxy</artifactId>
+            <version>${core.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>me.hsgamer</groupId>
             <artifactId>hscore-config-gson</artifactId>
             <version>${core.version}</version>
             <exclusions>
@@ -42,6 +47,11 @@
                     <artifactId>mysql-connector-j</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>io.github.projectunified</groupId>
+            <artifactId>minelib-scheduler-global</artifactId>
+            <version>${minelib.version}</version>
         </dependency>
     </dependencies>
 </project>
