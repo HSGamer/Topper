@@ -1,7 +1,7 @@
 package me.hsgamer.topper.agent.storage;
 
-import me.hsgamer.topper.agent.runnable.RunnableAgent;
 import me.hsgamer.topper.agent.storage.supplier.DataStorage;
+import me.hsgamer.topper.core.agent.Agent;
 import me.hsgamer.topper.core.entry.DataEntry;
 import me.hsgamer.topper.core.flag.EntryTempFlag;
 import me.hsgamer.topper.core.holder.DataHolder;
@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class StorageAgent<K, V> extends RunnableAgent {
+public class StorageAgent<K, V> implements Agent, Runnable {
     public static final EventState LOAD_EVENT = EventState.newState();
     public static final EntryTempFlag NEED_SAVING = new EntryTempFlag("needSaving");
     public static final EntryTempFlag IS_SAVING = new EntryTempFlag("isSaving");
@@ -28,6 +28,7 @@ public class StorageAgent<K, V> extends RunnableAgent {
     private boolean urgentLoad = true;
 
     public StorageAgent(Logger logger, DataStorage<K, V> storage) {
+        super();
         this.logger = logger;
         this.holder = storage.getHolder();
         this.storage = storage;
@@ -79,12 +80,10 @@ public class StorageAgent<K, V> extends RunnableAgent {
                     }
                     holder.getListenerManager().call(LOAD_EVENT);
                 });
-        super.start();
     }
 
     @Override
     public void stop() {
-        super.stop();
         storage.onUnregister();
     }
 
@@ -94,20 +93,18 @@ public class StorageAgent<K, V> extends RunnableAgent {
     }
 
     @Override
-    protected Runnable getRunnable() {
-        return () -> {
-            List<K> list = new ArrayList<>();
-            for (int i = 0; i < maxEntryPerCall; i++) {
-                K k = saveQueue.poll();
-                if (k == null) break;
-                DataEntry<K, V> entry = holder.getOrCreateEntry(k);
-                save(entry);
-                list.add(k);
-            }
-            if (!list.isEmpty()) {
-                saveQueue.addAll(list);
-            }
-        };
+    public void run() {
+        List<K> list = new ArrayList<>();
+        for (int i = 0; i < maxEntryPerCall; i++) {
+            K k = saveQueue.poll();
+            if (k == null) break;
+            DataEntry<K, V> entry = holder.getOrCreateEntry(k);
+            save(entry);
+            list.add(k);
+        }
+        if (!list.isEmpty()) {
+            saveQueue.addAll(list);
+        }
     }
 
     public void setMaxEntryPerCall(int maxEntryPerCall) {

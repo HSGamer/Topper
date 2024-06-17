@@ -10,12 +10,4 @@
     </parent>
 
     <artifactId>topper-agent-update</artifactId>
-
-    <dependencies>
-        <dependency>
-            <groupId>me.hsgamer</groupId>
-            <artifactId>topper-agent-runnable</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-    </dependencies>
 </project>

@@ -81,7 +81,7 @@ public interface MainConfig {
         return 10;
     }
 
-    @ConfigPath(value = {"task", "update", "delay"},  priority = 5)
+    @ConfigPath(value = {"task", "update", "delay"}, priority = 5)
     @Comment("How many ticks should the plugin wait before updating the leaderboard")
     default int getTaskUpdateDelay() {
         return 0;

@@ -9,6 +9,7 @@ import me.hsgamer.topper.core.holder.DataWithAgentHolder;
 import me.hsgamer.topper.placeholderleaderboard.TopperPlaceholderLeaderboard;
 import me.hsgamer.topper.placeholderleaderboard.config.MainConfig;
 import me.hsgamer.topper.placeholderleaderboard.manager.TopManager;
+import me.hsgamer.topper.spigot.agent.runnable.SpigotRunnableAgent;
 import org.bukkit.OfflinePlayer;
 
 import java.util.Comparator;
@@ -29,18 +30,10 @@ public abstract class NumberTopHolder extends DataWithAgentHolder<UUID, Double> 
         this.updateAgent = new UpdateAgent<>(this);
         updateAgent.setMaxEntryPerCall(instance.get(MainConfig.class).getTaskUpdateEntryPerTick());
         updateAgent.setUpdateFunction(this::updateNewValue);
-        updateAgent.setRunTaskFunction(runnable -> {
-            int updateDelay = instance.get(MainConfig.class).getTaskUpdateDelay();
-            return AsyncScheduler.get(instance).runTimer(runnable, updateDelay, updateDelay)::cancel;
-        });
-        addAgent(updateAgent);
+        addAgent(new SpigotRunnableAgent<>(updateAgent, AsyncScheduler.get(instance), instance.get(MainConfig.class).getTaskUpdateDelay()));
 
         this.storageAgent = new StorageAgent<>(instance.getLogger(), instance.get(TopManager.class).getStorageSupplier().getStorage(this));
         storageAgent.setMaxEntryPerCall(instance.get(MainConfig.class).getTaskSaveEntryPerTick());
-        storageAgent.setRunTaskFunction(runnable -> {
-            int saveDelay = instance.get(MainConfig.class).getTaskSaveDelay();
-            return AsyncScheduler.get(instance).runTimer(runnable, saveDelay, saveDelay)::cancel;
-        });
         getListenerManager().add(StorageAgent.LOAD_EVENT, () -> {
             if (instance.get(MainConfig.class).isLoadAllOfflinePlayers()) {
                 GlobalScheduler.get(instance).run(() -> {
@@ -50,12 +43,11 @@ public abstract class NumberTopHolder extends DataWithAgentHolder<UUID, Double> 
                 });
             }
         });
-        addAgent(storageAgent);
+        addAgent(new SpigotRunnableAgent<>(storageAgent, AsyncScheduler.get(instance), instance.get(MainConfig.class).getTaskSaveDelay()));
 
         this.snapshotAgent = new SnapshotAgent<>(this);
-        snapshotAgent.setRunTaskFunction(runnable -> AsyncScheduler.get(instance).runTimer(runnable, 20L, 20L)::cancel);
         snapshotAgent.setComparator(Comparator.reverseOrder());
-        addAgent(snapshotAgent);
+        addAgent(new SpigotRunnableAgent<>(snapshotAgent, AsyncScheduler.get(instance), 20L));
     }
 
     @Override

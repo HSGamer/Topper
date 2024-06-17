@@ -1,6 +1,6 @@
 package me.hsgamer.topper.agent.agent.update;
 
-import me.hsgamer.topper.agent.runnable.RunnableAgent;
+import me.hsgamer.topper.core.agent.Agent;
 import me.hsgamer.topper.core.entry.DataEntry;
 import me.hsgamer.topper.core.flag.EntryTempFlag;
 import me.hsgamer.topper.core.holder.DataHolder;
@@ -13,7 +13,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Function;
 
-public class UpdateAgent<K, V> extends RunnableAgent {
+public class UpdateAgent<K, V> implements Agent, Runnable {
     public static final EntryTempFlag IS_UPDATING = new EntryTempFlag("isUpdating");
     public static final EntryTempFlag IGNORE_UPDATE = new EntryTempFlag("ignoreUpdate");
     private final Queue<K> updateQueue = new ConcurrentLinkedQueue<>();
@@ -22,6 +22,7 @@ public class UpdateAgent<K, V> extends RunnableAgent {
     private Function<K, CompletableFuture<Optional<V>>> updateFunction;
 
     public UpdateAgent(DataHolder<K, V> holder) {
+        super();
         this.holder = holder;
     }
 
@@ -34,22 +35,20 @@ public class UpdateAgent<K, V> extends RunnableAgent {
     }
 
     @Override
-    protected Runnable getRunnable() {
-        return () -> {
-            List<K> list = new ArrayList<>();
-            for (int i = 0; i < maxEntryPerCall; i++) {
-                K k = updateQueue.poll();
-                if (k == null) {
-                    break;
-                }
-                DataEntry<K, V> entry = holder.getOrCreateEntry(k);
-                updateEntry(entry);
-                list.add(k);
+    public void run() {
+        List<K> list = new ArrayList<>();
+        for (int i = 0; i < maxEntryPerCall; i++) {
+            K k = updateQueue.poll();
+            if (k == null) {
+                break;
             }
-            if (!list.isEmpty()) {
-                updateQueue.addAll(list);
-            }
-        };
+            DataEntry<K, V> entry = holder.getOrCreateEntry(k);
+            updateEntry(entry);
+            list.add(k);
+        }
+        if (!list.isEmpty()) {
+            updateQueue.addAll(list);
+        }
     }
 
     @Override
@@ -59,7 +58,6 @@ public class UpdateAgent<K, V> extends RunnableAgent {
         }
         holder.getListenerManager().add(DataHolder.EventStates.CREATE, entry -> updateQueue.add(entry.getKey()));
         holder.getListenerManager().add(DataHolder.EventStates.REMOVE, entry -> updateQueue.remove(entry.getKey()));
-        super.start();
     }
 
     private void updateEntry(DataEntry<K, V> entry) {

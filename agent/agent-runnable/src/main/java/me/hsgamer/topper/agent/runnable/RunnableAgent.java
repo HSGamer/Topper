@@ -2,35 +2,37 @@ package me.hsgamer.topper.agent.runnable;
 
 import me.hsgamer.topper.core.agent.Agent;
 
-import java.util.function.UnaryOperator;
-
-public abstract class RunnableAgent implements Agent {
-    private UnaryOperator<Runnable> runTaskFunction;
+public abstract class RunnableAgent<A extends Agent & Runnable> implements Agent {
+    private final A agent;
     private Runnable cancelTaskRunnable;
 
-    protected abstract Runnable getRunnable();
+    public RunnableAgent(A agent) {
+        this.agent = agent;
+    }
 
     /**
-     * Set the function to run the task.
-     * The function provides a {@link Runnable} and should return a {@link Runnable} that cancels the task.
+     * This method is used to run the task and return a {@link Runnable} to cancel it
      *
-     * @param runTaskFunction the function to run the task
+     * @param runnable the task to run
+     * @return the {@link Runnable} to cancel the task
      */
-    public void setRunTaskFunction(UnaryOperator<Runnable> runTaskFunction) {
-        this.runTaskFunction = runTaskFunction;
-    }
+    protected abstract Runnable run(Runnable runnable);
 
     @Override
     public void start() {
-        if (runTaskFunction == null) {
-            throw new IllegalStateException("runTaskFunction is null");
-        }
-        cancelTaskRunnable = runTaskFunction.apply(getRunnable());
+        agent.start();
+        cancelTaskRunnable = run(agent);
     }
 
     @Override
     public void stop() {
-        if (cancelTaskRunnable == null) return;
-        cancelTaskRunnable.run();
+        if (cancelTaskRunnable != null) {
+            cancelTaskRunnable.run();
+        }
+        agent.stop();
+    }
+
+    public A getAgent() {
+        return agent;
     }
 }

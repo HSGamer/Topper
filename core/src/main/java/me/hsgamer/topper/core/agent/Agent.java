@@ -1,9 +1,13 @@
 package me.hsgamer.topper.core.agent;
 
 public interface Agent {
-    void start();
+    default void start() {
+        // EMPTY
+    }
 
-    void stop();
+    default void stop() {
+        // EMPTY
+    }
 
     default void beforeStop() {
         // EMPTY

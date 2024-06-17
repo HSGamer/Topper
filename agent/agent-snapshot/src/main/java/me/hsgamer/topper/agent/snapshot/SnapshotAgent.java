@@ -1,6 +1,6 @@
 package me.hsgamer.topper.agent.snapshot;
 
-import me.hsgamer.topper.agent.runnable.RunnableAgent;
+import me.hsgamer.topper.core.agent.Agent;
 import me.hsgamer.topper.core.entry.DataEntry;
 import me.hsgamer.topper.core.holder.DataHolder;
 
@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-public class SnapshotAgent<K, V> extends RunnableAgent {
+public class SnapshotAgent<K, V> implements Agent, Runnable {
     private final AtomicReference<List<DataSnapshot<K, V>>> topSnapshot = new AtomicReference<>(Collections.emptyList());
     private final AtomicReference<Map<K, Integer>> indexMap = new AtomicReference<>(Collections.emptyMap());
     private final DataHolder<K, V> holder;
@@ -19,25 +19,23 @@ public class SnapshotAgent<K, V> extends RunnableAgent {
     private Comparator<V> comparator;
 
     public SnapshotAgent(DataHolder<K, V> holder) {
+        super();
         this.holder = holder;
     }
 
     @Override
-    protected Runnable getRunnable() {
-        return () -> {
-            List<DataSnapshot<K, V>> list = getUrgentSnapshot();
-            topSnapshot.set(getUrgentSnapshot());
+    public void run() {
+        List<DataSnapshot<K, V>> list = getUrgentSnapshot();
+        topSnapshot.set(getUrgentSnapshot());
 
-            Map<K, Integer> map = IntStream.range(0, list.size())
-                    .boxed()
-                    .collect(Collectors.toMap(i -> list.get(i).key, i -> i));
-            indexMap.set(map);
-        };
+        Map<K, Integer> map = IntStream.range(0, list.size())
+                .boxed()
+                .collect(Collectors.toMap(i -> list.get(i).key, i -> i));
+        indexMap.set(map);
     }
 
     @Override
     public void stop() {
-        super.stop();
         topSnapshot.set(Collections.emptyList());
         indexMap.set(Collections.emptyMap());
     }
@@ -47,7 +45,7 @@ public class SnapshotAgent<K, V> extends RunnableAgent {
                 .map(entry -> new DataSnapshot<>(entry.getKey(), entry.getValue().getValue()))
                 .filter(snapshot -> filters.stream().allMatch(filter -> filter.test(snapshot)));
         if (comparator != null) {
-            stream = stream.sorted(Comparator.<DataSnapshot<K, V>, V>comparing(snapshot -> snapshot.value, comparator));
+            stream = stream.sorted(Comparator.comparing(snapshot -> snapshot.value, comparator));
         }
         return stream.collect(Collectors.toList());
     }
