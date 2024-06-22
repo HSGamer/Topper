@@ -6,33 +6,25 @@ import me.hsgamer.hscore.bukkit.config.BukkitConfig;
 import me.hsgamer.hscore.bukkit.utils.MessageUtils;
 import me.hsgamer.hscore.checker.spigotmc.SpigotVersionChecker;
 import me.hsgamer.hscore.config.proxy.ConfigGenerator;
-import me.hsgamer.topper.placeholderleaderboard.command.GetTopListCommand;
 import me.hsgamer.topper.placeholderleaderboard.command.ReloadCommand;
-import me.hsgamer.topper.placeholderleaderboard.command.SetTopSignCommand;
-import me.hsgamer.topper.placeholderleaderboard.command.SetTopSkullCommand;
 import me.hsgamer.topper.placeholderleaderboard.config.MainConfig;
 import me.hsgamer.topper.placeholderleaderboard.config.MessageConfig;
 import me.hsgamer.topper.placeholderleaderboard.hook.TopPlaceholderExpansion;
 import me.hsgamer.topper.placeholderleaderboard.listener.JoinListener;
-import me.hsgamer.topper.placeholderleaderboard.manager.SignManager;
-import me.hsgamer.topper.placeholderleaderboard.manager.SkullManager;
 import me.hsgamer.topper.placeholderleaderboard.manager.TopManager;
-import me.hsgamer.topper.spigot.block.BlockEntryConverterRegistry;
 import me.hsgamer.topper.spigot.config.DefaultConverterRegistry;
-import me.hsgamer.topper.spigot.number.NumberConverterRegistry;
 import me.hsgamer.topper.spigot.number.NumberStorageBuilder;
 import org.bstats.bukkit.Metrics;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 
 public class TopperPlaceholderLeaderboard extends BasePlugin {
     static {
         DefaultConverterRegistry.register();
-        NumberConverterRegistry.register();
-        BlockEntryConverterRegistry.register();
     }
 
     @Override
@@ -43,15 +35,10 @@ public class TopperPlaceholderLeaderboard extends BasePlugin {
                 ConfigGenerator.newInstance(MessageConfig.class, new BukkitConfig(this, "messages.yml")),
 
                 new TopManager(this),
-                new SignManager(this),
-                new SkullManager(this),
                 new TopPlaceholderExpansion(this),
 
                 new Permissions(this),
-                new CommandComponent(this, Arrays.asList(
-                        new SetTopSignCommand(this),
-                        new SetTopSkullCommand(this),
-                        new GetTopListCommand(this),
+                new CommandComponent(this, Collections.singletonList(
                         new ReloadCommand(this)
                 )),
                 new JoinListener(this)

@@ -6,15 +6,12 @@ import me.hsgamer.topper.placeholderleaderboard.TopperPlaceholderLeaderboard;
 import me.hsgamer.topper.placeholderleaderboard.config.MainConfig;
 import me.hsgamer.topper.placeholderleaderboard.holder.NumberTopHolder;
 import me.hsgamer.topper.placeholderleaderboard.holder.PlaceholderTopHolder;
-import me.hsgamer.topper.spigot.number.NumberFormatter;
 import me.hsgamer.topper.spigot.number.NumberStorageBuilder;
 
 import java.util.*;
 
 public class TopManager implements Loadable {
     private final Map<String, NumberTopHolder> topHolders = new HashMap<>();
-    private final Map<String, NumberFormatter> topFormatters = new HashMap<>();
-    private final NumberFormatter defaultFormatter = new NumberFormatter();
     private final TopperPlaceholderLeaderboard instance;
     private DataStorageSupplier<UUID, Double> storageSupplier;
 
@@ -27,14 +24,12 @@ public class TopManager implements Loadable {
         storageSupplier = instance.get(NumberStorageBuilder.class).buildSupplier(instance.get(MainConfig.class).getStorageType());
         storageSupplier.enable();
         instance.get(MainConfig.class).getPlaceholders().forEach((key, value) -> addTopHolder(key, new PlaceholderTopHolder(instance, key, value)));
-        topFormatters.putAll(instance.get(MainConfig.class).getFormatters());
     }
 
     @Override
     public void disable() {
         topHolders.values().forEach(NumberTopHolder::unregister);
         topHolders.clear();
-        topFormatters.clear();
         storageSupplier.disable();
     }
 
@@ -54,10 +49,6 @@ public class TopManager implements Loadable {
 
     public List<String> getTopHolderNames() {
         return Collections.unmodifiableList(new ArrayList<>(topHolders.keySet()));
-    }
-
-    public NumberFormatter getTopFormatter(String name) {
-        return topFormatters.getOrDefault(name, defaultFormatter);
     }
 
     public void create(UUID uuid) {

@@ -6,11 +6,11 @@ import me.hsgamer.topper.core.entry.DataEntry;
 import me.hsgamer.topper.placeholderleaderboard.TopperPlaceholderLeaderboard;
 import me.hsgamer.topper.placeholderleaderboard.holder.NumberTopHolder;
 import me.hsgamer.topper.placeholderleaderboard.manager.TopManager;
-import me.hsgamer.topper.spigot.number.NumberFormatter;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
 import java.util.Optional;
 
 public class TopPlaceholderExpansion extends PlaceholderExpansion implements Loadable {
@@ -57,7 +57,6 @@ public class TopPlaceholderExpansion extends PlaceholderExpansion implements Loa
         Optional<NumberTopHolder> optionalHolder = instance.get(TopManager.class).getTopHolder(args[0]);
         if (!optionalHolder.isPresent()) return null;
         NumberTopHolder holder = optionalHolder.get();
-        NumberFormatter formatter = instance.get(TopManager.class).getTopFormatter(args[0]);
 
         switch (args[1]) {
             case "top_name": {
@@ -73,7 +72,7 @@ public class TopPlaceholderExpansion extends PlaceholderExpansion implements Loa
                         .map(DataEntry::getKey)
                         .map(Bukkit::getOfflinePlayer)
                         .map(OfflinePlayer::getName)
-                        .orElseGet(formatter::getNullDisplayName);
+                        .orElseGet(() -> "---"); // TODO: Get the default value from the config
             }
             case "top_value_raw":
             case "top_value": {
@@ -87,8 +86,8 @@ public class TopPlaceholderExpansion extends PlaceholderExpansion implements Loa
                 }
                 return holder.getSnapshotAgent().getEntryByIndex(i - 1)
                         .map(DataEntry::getValue)
-                        .map(value -> args[1].endsWith("raw") ? String.valueOf(value) : formatter.format(value))
-                        .orElseGet(formatter::getNullDisplayValue);
+                        .map(Objects::toString)
+                        .orElseGet(() -> "---"); // TODO: Get the default value from the config
             }
             case "top_rank":
                 return Integer.toString(holder.getSnapshotAgent().getSnapshotIndex(player.getUniqueId()) + 1);
@@ -96,8 +95,8 @@ public class TopPlaceholderExpansion extends PlaceholderExpansion implements Loa
             case "value_raw":
                 return holder.getEntry(player.getUniqueId())
                         .map(DataEntry::getValue)
-                        .map(value -> args[1].endsWith("raw") ? String.valueOf(value) : formatter.format(value))
-                        .orElseGet(formatter::getNullDisplayValue);
+                        .map(Objects::toString)
+                        .orElseGet(() -> "---"); // TODO: Get the default value from the config
             default:
                 break;
         }

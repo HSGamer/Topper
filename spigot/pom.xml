@@ -16,8 +16,6 @@
         <module>spigot-agent-runnable</module>
         <module>spigot-agent-storage-simple</module>
         <module>spigot-number</module>
-        <module>spigot-block</module>
-        <module>spigot-block-impl</module>
         <module>spigot-placeholder-leaderboard</module>
     </modules>
 

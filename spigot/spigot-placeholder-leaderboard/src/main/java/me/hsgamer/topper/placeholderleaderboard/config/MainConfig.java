@@ -2,7 +2,6 @@ package me.hsgamer.topper.placeholderleaderboard.config;
 
 import me.hsgamer.hscore.config.annotation.Comment;
 import me.hsgamer.hscore.config.annotation.ConfigPath;
-import me.hsgamer.topper.spigot.number.NumberFormatter;
 
 import java.util.Collections;
 import java.util.Map;
@@ -30,30 +29,6 @@ public interface MainConfig {
             "  player_z: '[ASYNC][ONLINE] %player_z%' add [ONLINE] before %player_z% to specify that this holder only gets the value from the placeholder when the player is online, and it should get values asynchronously"
     })
     default Map<String, String> getPlaceholders() {
-        return Collections.emptyMap();
-    }
-
-    @ConfigPath(value = "formatters", priority = 2)
-    @Comment({
-            "The formatters to display the value in the leaderboard",
-            "This modifies how the value is shown in the leaderboard provided by the Top Holder",
-            "You have to specify the Top Holder's name and formatting settings for it",
-            "But you don't need to set all options, just use some necessary ones",
-            "",
-            "formatters:",
-            "  player_x: # The Top Holder's name",
-            "    display-name: \"Player X\" # The display name of the leaderboard",
-            "    prefix: \"X \" # The prefix before the value",
-            "    suffix: \" pt\" # The suffix after the value",
-            "    fraction-digits: 2 # How many digits after the decimal separator will be shown",
-            "    decimal-separator: \".\" # The decimal separator between the integer part and the fractional part of the value",
-            "    group-separator: \",\" # The separator between each three digits of the integer part",
-            "    show-group-separator: false # Should the group separator be shown in the formatted value",
-            "    null-display-uuid: \"N\\A\" # The UUID to display when the player is not found",
-            "    null-display-name: \"N\\A\" # The name to display when the player is not found",
-            "    null-display-value: \"N\\A\" # The value to display when the player is not found",
-    })
-    default Map<String, NumberFormatter> getFormatters() {
         return Collections.emptyMap();
     }
 
