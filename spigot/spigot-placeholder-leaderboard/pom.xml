@@ -122,6 +122,11 @@
             <artifactId>topper-spigot-agent-runnable</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>io.github.projectunified</groupId>
+            <artifactId>minelib-scheduler-async</artifactId>
+            <version>${minelib.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.bstats</groupId>
