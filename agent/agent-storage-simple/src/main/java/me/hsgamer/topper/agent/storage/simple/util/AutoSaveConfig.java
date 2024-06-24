@@ -2,7 +2,6 @@ package me.hsgamer.topper.agent.storage.simple.util;
 
 import me.hsgamer.hscore.config.Config;
 import me.hsgamer.hscore.config.DecorativeConfig;
-import me.hsgamer.hscore.config.PathString;
 
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -20,8 +19,8 @@ public class AutoSaveConfig extends DecorativeConfig {
     }
 
     @Override
-    public void set(PathString path, Object value) {
-        super.set(path, value);
+    public void set(Object value, String... path) {
+        super.set(value, path);
         if (!isSaving.get()) {
             isSaving.set(true);
             Runnable cancelRunnable = runTaskFunction.apply(() -> {

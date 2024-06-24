@@ -1,7 +1,6 @@
 package me.hsgamer.topper.agent.storage.simple.supplier;
 
 import me.hsgamer.hscore.config.Config;
-import me.hsgamer.hscore.config.PathString;
 import me.hsgamer.topper.agent.storage.simple.converter.FlatEntryConverter;
 import me.hsgamer.topper.agent.storage.simple.util.AutoSaveConfig;
 import me.hsgamer.topper.agent.storage.supplier.DataStorage;
@@ -48,13 +47,13 @@ public class FlatStorageSupplier<K, V> implements DataStorageSupplier<K, V> {
 
             @Override
             public CompletableFuture<Map<K, V>> load() {
-                Map<PathString, Object> values = config.getValues(false);
+                Map<String[], Object> values = config.getValues(false);
                 return CompletableFuture.supplyAsync(() -> {
                     Map<K, V> map = new HashMap<>();
                     values.forEach((path, value) -> {
                         V finalValue = converter.toValue(value);
                         if (finalValue != null) {
-                            K finalKey = converter.toKey(path.getLastPath());
+                            K finalKey = converter.toKey(path[0]);
                             map.put(finalKey, finalValue);
                         }
                     });
@@ -66,7 +65,7 @@ public class FlatStorageSupplier<K, V> implements DataStorageSupplier<K, V> {
             public CompletableFuture<Void> save(K key, V value, boolean urgent) {
                 CompletableFuture<Void> future = new CompletableFuture<>();
                 Runnable runnable = () -> {
-                    config.set(new PathString(converter.toRawKey(key)), converter.toRawValue(value));
+                    config.set(converter.toRawValue(value), converter.toRawKey(key));
                     future.complete(null);
                 };
                 if (urgent) {
@@ -81,7 +80,7 @@ public class FlatStorageSupplier<K, V> implements DataStorageSupplier<K, V> {
             public CompletableFuture<Optional<V>> load(K key, boolean urgent) {
                 CompletableFuture<Optional<V>> future = new CompletableFuture<>();
                 Runnable runnable = () -> {
-                    Optional<V> optional = Optional.ofNullable(config.get(new PathString(converter.toRawKey(key)))).map(converter::toValue);
+                    Optional<V> optional = Optional.ofNullable(config.get(converter.toRawKey(key))).map(converter::toValue);
                     future.complete(optional);
                 };
                 if (urgent) {
