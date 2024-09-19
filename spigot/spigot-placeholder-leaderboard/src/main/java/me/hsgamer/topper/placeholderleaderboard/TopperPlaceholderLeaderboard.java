@@ -13,7 +13,7 @@ import me.hsgamer.topper.placeholderleaderboard.hook.TopPlaceholderExpansion;
 import me.hsgamer.topper.placeholderleaderboard.listener.JoinListener;
 import me.hsgamer.topper.placeholderleaderboard.manager.TopManager;
 import me.hsgamer.topper.spigot.config.DefaultConverterRegistry;
-import me.hsgamer.topper.spigot.number.NumberStorageBuilder;
+import me.hsgamer.topper.spigot.agent.storage.number.NumberStorageBuilder;
 import org.bstats.bukkit.Metrics;
 
 import java.io.File;

@@ -6,7 +6,7 @@ import me.hsgamer.topper.placeholderleaderboard.TopperPlaceholderLeaderboard;
 import me.hsgamer.topper.placeholderleaderboard.config.MainConfig;
 import me.hsgamer.topper.placeholderleaderboard.holder.NumberTopHolder;
 import me.hsgamer.topper.placeholderleaderboard.holder.PlaceholderTopHolder;
-import me.hsgamer.topper.spigot.number.NumberStorageBuilder;
+import me.hsgamer.topper.spigot.agent.storage.number.NumberStorageBuilder;
 
 import java.util.*;
 

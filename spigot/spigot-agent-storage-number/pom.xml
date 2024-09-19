@@ -9,7 +9,7 @@
         <version>3.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>topper-spigot-number</artifactId>
+    <artifactId>topper-spigot-agent-storage-number</artifactId>
 
     <dependencies>
         <dependency>

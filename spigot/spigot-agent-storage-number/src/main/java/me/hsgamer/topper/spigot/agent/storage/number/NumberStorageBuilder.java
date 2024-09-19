@@ -1,4 +1,4 @@
-package me.hsgamer.topper.spigot.number;
+package me.hsgamer.topper.spigot.agent.storage.number;
 
 import me.hsgamer.hscore.database.client.sql.StatementBuilder;
 import me.hsgamer.topper.agent.storage.simple.converter.FlatEntryConverter;

@@ -104,7 +104,7 @@
         </dependency>
         <dependency>
             <groupId>me.hsgamer</groupId>
-            <artifactId>topper-spigot-number</artifactId>
+            <artifactId>topper-spigot-agent-storage-number</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
