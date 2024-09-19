@@ -9,6 +9,7 @@ import me.hsgamer.topper.core.holder.DataWithAgentHolder;
 import me.hsgamer.topper.placeholderleaderboard.TopperPlaceholderLeaderboard;
 import me.hsgamer.topper.placeholderleaderboard.config.MainConfig;
 import me.hsgamer.topper.placeholderleaderboard.manager.TopManager;
+import me.hsgamer.topper.placeholderleaderboard.notification.UpdateNotificationManager;
 import me.hsgamer.topper.placeholderleaderboard.provider.ValueProvider;
 import me.hsgamer.topper.spigot.agent.runnable.SpigotRunnableAgent;
 import org.bukkit.OfflinePlayer;
@@ -47,6 +48,8 @@ public class NumberTopHolder extends DataWithAgentHolder<UUID, Double> {
         this.snapshotAgent = new SnapshotAgent<>(this);
         snapshotAgent.setComparator(Comparator.reverseOrder());
         addAgent(new SpigotRunnableAgent<>(snapshotAgent, AsyncScheduler.get(instance), 20L));
+
+        getListenerManager().add(EventStates.UPDATE, entry -> UpdateNotificationManager.notifyConsumers(name, entry.getKey(), entry.getValue()));
     }
 
     @Override
