@@ -5,7 +5,7 @@ import me.hsgamer.topper.agent.storage.supplier.DataStorageSupplier;
 import me.hsgamer.topper.placeholderleaderboard.TopperPlaceholderLeaderboard;
 import me.hsgamer.topper.placeholderleaderboard.config.MainConfig;
 import me.hsgamer.topper.placeholderleaderboard.holder.NumberTopHolder;
-import me.hsgamer.topper.placeholderleaderboard.holder.PlaceholderTopHolder;
+import me.hsgamer.topper.placeholderleaderboard.provider.PlaceholderValueProvider;
 import me.hsgamer.topper.spigot.agent.storage.number.NumberStorageBuilder;
 
 import java.util.*;
@@ -23,7 +23,7 @@ public class TopManager implements Loadable {
     public void enable() {
         storageSupplier = instance.get(NumberStorageBuilder.class).buildSupplier(instance.get(MainConfig.class).getStorageType());
         storageSupplier.enable();
-        instance.get(MainConfig.class).getPlaceholders().forEach((key, value) -> addTopHolder(key, new PlaceholderTopHolder(instance, key, value)));
+        instance.get(MainConfig.class).getPlaceholders().forEach((key, value) -> addTopHolder(key, new NumberTopHolder(instance, key, new PlaceholderValueProvider(instance, PlaceholderValueProvider.Input.fromString(value)))));
     }
 
     @Override

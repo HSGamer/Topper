@@ -9,27 +9,26 @@ import me.hsgamer.topper.core.holder.DataWithAgentHolder;
 import me.hsgamer.topper.placeholderleaderboard.TopperPlaceholderLeaderboard;
 import me.hsgamer.topper.placeholderleaderboard.config.MainConfig;
 import me.hsgamer.topper.placeholderleaderboard.manager.TopManager;
+import me.hsgamer.topper.placeholderleaderboard.provider.ValueProvider;
 import me.hsgamer.topper.spigot.agent.runnable.SpigotRunnableAgent;
 import org.bukkit.OfflinePlayer;
 
 import java.util.Comparator;
-import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 
-public abstract class NumberTopHolder extends DataWithAgentHolder<UUID, Double> {
-    protected final TopperPlaceholderLeaderboard instance;
+public class NumberTopHolder extends DataWithAgentHolder<UUID, Double> {
+    private final ValueProvider valueProvider;
     private final UpdateAgent<UUID, Double> updateAgent;
     private final StorageAgent<UUID, Double> storageAgent;
     private final SnapshotAgent<UUID, Double> snapshotAgent;
 
-    protected NumberTopHolder(TopperPlaceholderLeaderboard instance, String name) {
+    public NumberTopHolder(TopperPlaceholderLeaderboard instance, String name, ValueProvider valueProvider) {
         super(name);
-        this.instance = instance;
+        this.valueProvider = valueProvider;
 
         this.updateAgent = new UpdateAgent<>(this);
         updateAgent.setMaxEntryPerCall(instance.get(MainConfig.class).getTaskUpdateEntryPerTick());
-        updateAgent.setUpdateFunction(this::updateNewValue);
+        updateAgent.setUpdateFunction(valueProvider::getValue);
         addAgent(new SpigotRunnableAgent<>(updateAgent, AsyncScheduler.get(instance), instance.get(MainConfig.class).getTaskUpdateDelay()));
 
         this.storageAgent = new StorageAgent<>(instance.getLogger(), instance.get(TopManager.class).getStorageSupplier().getStorage(this));
@@ -52,10 +51,8 @@ public abstract class NumberTopHolder extends DataWithAgentHolder<UUID, Double> 
 
     @Override
     public Double getDefaultValue() {
-        return 0D;
+        return valueProvider.getDefaultValue();
     }
-
-    protected abstract CompletableFuture<Optional<Double>> updateNewValue(UUID uuid);
 
     public UpdateAgent<UUID, Double> getUpdateAgent() {
         return updateAgent;
