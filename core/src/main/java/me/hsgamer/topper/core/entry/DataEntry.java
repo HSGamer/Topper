@@ -1,6 +1,5 @@
 package me.hsgamer.topper.core.entry;
 
-import me.hsgamer.topper.core.flag.EntryTempFlag;
 import me.hsgamer.topper.core.holder.DataHolder;
 
 import java.util.Map;
@@ -13,7 +12,7 @@ public final class DataEntry<K, V> {
     private final K key;
     private final DataHolder<K, V> holder;
     private final AtomicReference<V> value;
-    private final Map<EntryTempFlag, Boolean> tempFlags = new ConcurrentHashMap<>();
+    private final Map<String, Boolean> tempFlags = new ConcurrentHashMap<>();
 
     public DataEntry(K key, DataHolder<K, V> holder) {
         this.key = key;
@@ -51,15 +50,15 @@ public final class DataEntry<K, V> {
         return holder;
     }
 
-    public boolean hasFlag(EntryTempFlag flag) {
+    public boolean hasFlag(String flag) {
         return tempFlags.getOrDefault(flag, false);
     }
 
-    public void addFlag(EntryTempFlag flag) {
+    public void addFlag(String flag) {
         tempFlags.put(flag, true);
     }
 
-    public void removeFlag(EntryTempFlag flag) {
+    public void removeFlag(String flag) {
         tempFlags.put(flag, false);
     }
 

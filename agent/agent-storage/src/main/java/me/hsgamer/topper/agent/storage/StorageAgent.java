@@ -3,7 +3,6 @@ package me.hsgamer.topper.agent.storage;
 import me.hsgamer.topper.agent.storage.supplier.DataStorage;
 import me.hsgamer.topper.core.agent.Agent;
 import me.hsgamer.topper.core.entry.DataEntry;
-import me.hsgamer.topper.core.flag.EntryTempFlag;
 import me.hsgamer.topper.core.holder.DataHolder;
 import me.hsgamer.topper.core.listener.EventState;
 
@@ -16,8 +15,8 @@ import java.util.logging.Logger;
 
 public class StorageAgent<K, V> implements Agent, Runnable {
     public static final EventState LOAD_EVENT = EventState.newState();
-    public static final EntryTempFlag NEED_SAVING = new EntryTempFlag("needSaving");
-    public static final EntryTempFlag IS_SAVING = new EntryTempFlag("isSaving");
+    public static final String NEED_SAVING = "needSaving";
+    public static final String IS_SAVING = "isSaving";
     private final Queue<K> saveQueue = new ConcurrentLinkedQueue<>();
     private final Logger logger;
     private final DataHolder<K, V> holder;

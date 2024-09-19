@@ -2,7 +2,6 @@ package me.hsgamer.topper.agent.agent.update;
 
 import me.hsgamer.topper.core.agent.Agent;
 import me.hsgamer.topper.core.entry.DataEntry;
-import me.hsgamer.topper.core.flag.EntryTempFlag;
 import me.hsgamer.topper.core.holder.DataHolder;
 
 import java.util.ArrayList;
@@ -14,8 +13,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Function;
 
 public class UpdateAgent<K, V> implements Agent, Runnable {
-    public static final EntryTempFlag IS_UPDATING = new EntryTempFlag("isUpdating");
-    public static final EntryTempFlag IGNORE_UPDATE = new EntryTempFlag("ignoreUpdate");
+    public static final String IS_UPDATING = "isUpdating";
+    public static final String IGNORE_UPDATE = "ignoreUpdate";
     private final Queue<K> updateQueue = new ConcurrentLinkedQueue<>();
     private final DataHolder<K, V> holder;
     private int maxEntryPerCall = 10;
