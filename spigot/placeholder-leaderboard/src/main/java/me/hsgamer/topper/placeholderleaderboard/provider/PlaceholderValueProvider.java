@@ -25,31 +25,28 @@ public class PlaceholderValueProvider implements ValueProvider {
 
     @Override
     public CompletableFuture<Optional<Double>> getValue(UUID uuid) {
-        CompletableFuture<Optional<Double>> future = new CompletableFuture<>();
         OfflinePlayer player = plugin.getServer().getOfflinePlayer(uuid);
-        if (player.isOnline() || !input.isOnlineOnly) {
-            (input.isAsync ? AsyncScheduler.get(plugin) : GlobalScheduler.get(plugin)).run(() -> {
-                try {
-                    String parsed = PlaceholderAPI.setPlaceholders(player, input.placeholder).trim();
-                    if (parsed.isEmpty()) {
-                        if (!input.isLenient) {
-                            plugin.getLogger().warning("The placeholder " + input.placeholder + " returns empty");
-                        }
-                        future.complete(Optional.empty());
-                        return;
-                    }
-                    future.complete(Optional.of(Double.parseDouble(parsed)));
-                } catch (Exception e) {
-                    if (!input.isLenient) {
-                        plugin.getLogger().log(Level.WARNING, "There is an error while parsing the placeholder: " + input.placeholder, e);
-                    }
-                    future.complete(Optional.empty());
-                }
-            });
-        } else {
-            future.complete(Optional.empty());
+        if (!player.isOnline() && input.isOnlineOnly) {
+            return CompletableFuture.completedFuture(Optional.empty());
         }
-        return future;
+
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                String parsed = PlaceholderAPI.setPlaceholders(player, input.placeholder).trim();
+                if (parsed.isEmpty()) {
+                    if (!input.isLenient) {
+                        plugin.getLogger().warning("The placeholder " + input.placeholder + " returns empty");
+                    }
+                    return Optional.empty();
+                }
+                return Optional.of(Double.parseDouble(parsed));
+            } catch (Exception e) {
+                if (!input.isLenient) {
+                    plugin.getLogger().log(Level.WARNING, "There is an error while parsing the placeholder: " + input.placeholder, e);
+                }
+                return Optional.empty();
+            }
+        }, (input.isAsync ? AsyncScheduler.get(plugin) : GlobalScheduler.get(plugin))::run);
     }
 
     public static final class Input {
