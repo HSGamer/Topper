@@ -23,25 +23,25 @@ public class AgentDataHolder<K, V> extends DataHolder<K, V> {
     }
 
     @Override
-    protected void onCreate(DataEntry<K, V> entry) {
+    protected final void onCreate(DataEntry<K, V> entry) {
         agentList.forEach(agent -> agent.onCreate(entry));
     }
 
     @Override
-    protected void onUpdate(DataEntry<K, V> entry) {
+    protected final void onUpdate(DataEntry<K, V> entry) {
         agentList.forEach(agent -> agent.onUpdate(entry));
     }
 
     @Override
-    protected void onRemove(DataEntry<K, V> entry) {
+    protected final void onRemove(DataEntry<K, V> entry) {
         agentList.forEach(agent -> agent.onRemove(entry));
     }
 
-    public void register() {
+    public final void register() {
         agentList.forEach(Agent::start);
     }
 
-    public void unregister() {
+    public final void unregister() {
         agentList.forEach(Agent::beforeStop);
 
         getEntryMap().values().forEach(entry -> agentList.forEach(agent -> agent.onUnregister(entry)));
