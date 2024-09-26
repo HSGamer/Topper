@@ -1,4 +1,4 @@
-package me.hsgamer.topper.agent.agent.update;
+package me.hsgamer.topper.agent.update;
 
 import me.hsgamer.topper.agent.core.Agent;
 import me.hsgamer.topper.core.DataEntry;
