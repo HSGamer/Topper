@@ -12,11 +12,11 @@
     <artifactId>topper-spigot</artifactId>
     <packaging>pom</packaging>
     <modules>
-        <module>spigot-config</module>
-        <module>spigot-agent-runnable</module>
-        <module>spigot-agent-storage-simple</module>
-        <module>spigot-agent-storage-number</module>
-        <module>spigot-placeholder-leaderboard</module>
+        <module>config</module>
+        <module>agent-runnable</module>
+        <module>agent-storage-simple</module>
+        <module>agent-storage-number</module>
+        <module>placeholder-leaderboard</module>
     </modules>
 
     <repositories>
