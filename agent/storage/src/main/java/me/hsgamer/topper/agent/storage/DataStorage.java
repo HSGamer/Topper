@@ -1,4 +1,4 @@
-package me.hsgamer.topper.agent.storage.supplier;
+package me.hsgamer.topper.agent.storage;
 
 import me.hsgamer.topper.core.DataHolder;
 
@@ -13,7 +13,7 @@ public abstract class DataStorage<K, V> {
         this.holder = holder;
     }
 
-    public abstract CompletableFuture<Map<K, V>> load();
+    public abstract Map<K, V> load();
 
     public abstract CompletableFuture<Void> save(K key, V value, boolean urgent);
 

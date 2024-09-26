@@ -1,10 +1,9 @@
 package me.hsgamer.topper.agent.storage.simple.supplier;
 
 import me.hsgamer.hscore.config.Config;
+import me.hsgamer.topper.agent.storage.DataStorage;
 import me.hsgamer.topper.agent.storage.simple.converter.FlatEntryConverter;
 import me.hsgamer.topper.agent.storage.simple.util.AutoSaveConfig;
-import me.hsgamer.topper.agent.storage.supplier.DataStorage;
-import me.hsgamer.topper.agent.storage.supplier.DataStorageSupplier;
 import me.hsgamer.topper.core.DataHolder;
 
 import java.io.File;
@@ -46,19 +45,17 @@ public class FlatStorageSupplier<K, V> implements DataStorageSupplier<K, V> {
             private final AutoSaveConfig config = new AutoSaveConfig(configProvider.apply(new File(holderBaseFolder, configNameProvider.apply(holder.getName()))), runTaskFunction);
 
             @Override
-            public CompletableFuture<Map<K, V>> load() {
+            public Map<K, V> load() {
                 Map<String[], Object> values = config.getValues(false);
-                return CompletableFuture.supplyAsync(() -> {
-                    Map<K, V> map = new HashMap<>();
-                    values.forEach((path, value) -> {
-                        V finalValue = converter.toValue(value);
-                        if (finalValue != null) {
-                            K finalKey = converter.toKey(path[0]);
-                            map.put(finalKey, finalValue);
-                        }
-                    });
-                    return map;
+                Map<K, V> map = new HashMap<>();
+                values.forEach((path, value) -> {
+                    V finalValue = converter.toValue(value);
+                    if (finalValue != null) {
+                        K finalKey = converter.toKey(path[0]);
+                        map.put(finalKey, finalValue);
+                    }
                 });
+                return map;
             }
 
             @Override

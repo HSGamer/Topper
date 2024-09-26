@@ -36,15 +36,6 @@ public class NumberTopHolder extends AgentDataHolder<UUID, Double> {
 
         this.storageAgent = new StorageAgent<>(instance.getLogger(), instance.get(TopManager.class).getStorageSupplier().getStorage(this));
         storageAgent.setMaxEntryPerCall(instance.get(MainConfig.class).getTaskSaveEntryPerTick());
-        storageAgent.addLoadListener(() -> {
-            if (instance.get(MainConfig.class).isLoadAllOfflinePlayers()) {
-                GlobalScheduler.get(instance).run(() -> {
-                    for (OfflinePlayer player : instance.getServer().getOfflinePlayers()) {
-                        getOrCreateEntry(player.getUniqueId());
-                    }
-                });
-            }
-        });
         addAgent(new SpigotRunnableAgent<>(storageAgent, AsyncScheduler.get(instance), instance.get(MainConfig.class).getTaskSaveDelay()));
 
         this.snapshotAgent = new SnapshotAgent<>(this);
@@ -52,6 +43,17 @@ public class NumberTopHolder extends AgentDataHolder<UUID, Double> {
         addAgent(new SpigotRunnableAgent<>(snapshotAgent, AsyncScheduler.get(instance), 20L));
 
         addAgent(new Agent<UUID, Double>() {
+            @Override
+            public void start() {
+                if (instance.get(MainConfig.class).isLoadAllOfflinePlayers()) {
+                    GlobalScheduler.get(instance).run(() -> {
+                        for (OfflinePlayer player : instance.getServer().getOfflinePlayers()) {
+                            getOrCreateEntry(player.getUniqueId());
+                        }
+                    });
+                }
+            }
+
             @Override
             public void onUpdate(DataEntry<UUID, Double> entry) {
                 UpdateNotificationManager.notifyConsumers(name, entry.getKey(), entry.getValue());

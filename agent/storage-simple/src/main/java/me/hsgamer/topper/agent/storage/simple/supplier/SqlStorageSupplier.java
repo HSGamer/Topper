@@ -3,9 +3,8 @@ package me.hsgamer.topper.agent.storage.simple.supplier;
 import me.hsgamer.hscore.logger.common.LogLevel;
 import me.hsgamer.hscore.logger.common.Logger;
 import me.hsgamer.hscore.logger.provider.LoggerProvider;
+import me.hsgamer.topper.agent.storage.DataStorage;
 import me.hsgamer.topper.agent.storage.simple.converter.SqlEntryConverter;
-import me.hsgamer.topper.agent.storage.supplier.DataStorage;
-import me.hsgamer.topper.agent.storage.supplier.DataStorageSupplier;
 import me.hsgamer.topper.core.DataHolder;
 
 import java.sql.Connection;
@@ -38,22 +37,20 @@ public abstract class SqlStorageSupplier<K, V> implements DataStorageSupplier<K,
     public DataStorage<K, V> getStorage(DataHolder<K, V> holder) {
         return new DataStorage<K, V>(holder) {
             @Override
-            public CompletableFuture<Map<K, V>> load() {
+            public Map<K, V> load() {
                 String name = holder.getName();
-                return CompletableFuture.supplyAsync(() -> {
-                    Connection connection = null;
-                    try {
-                        connection = getAndCreateTable(name);
-                        return converter.selectAll(connection, name).querySafe(converter::getMap).orElseGet(Collections::emptyMap);
-                    } catch (SQLException e) {
-                        logger.log(LogLevel.ERROR, "Failed to load top holder", e);
-                        return Collections.emptyMap();
-                    } finally {
-                        if (connection != null) {
-                            flushConnection(connection);
-                        }
+                Connection connection = null;
+                try {
+                    connection = getAndCreateTable(name);
+                    return converter.selectAll(connection, name).querySafe(converter::getMap).orElseGet(Collections::emptyMap);
+                } catch (SQLException e) {
+                    logger.log(LogLevel.ERROR, "Failed to load top holder", e);
+                    return Collections.emptyMap();
+                } finally {
+                    if (connection != null) {
+                        flushConnection(connection);
                     }
-                });
+                }
             }
 
             @Override

@@ -1,5 +1,6 @@
-package me.hsgamer.topper.agent.storage.supplier;
+package me.hsgamer.topper.agent.storage.simple.supplier;
 
+import me.hsgamer.topper.agent.storage.DataStorage;
 import me.hsgamer.topper.core.DataHolder;
 
 public interface DataStorageSupplier<K, V> {

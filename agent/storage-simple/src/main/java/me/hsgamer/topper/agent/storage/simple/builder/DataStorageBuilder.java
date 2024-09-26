@@ -5,10 +5,10 @@ import me.hsgamer.hscore.config.Config;
 import me.hsgamer.topper.agent.storage.simple.config.DatabaseConfig;
 import me.hsgamer.topper.agent.storage.simple.converter.FlatEntryConverter;
 import me.hsgamer.topper.agent.storage.simple.converter.SqlEntryConverter;
+import me.hsgamer.topper.agent.storage.simple.supplier.DataStorageSupplier;
 import me.hsgamer.topper.agent.storage.simple.supplier.FlatStorageSupplier;
 import me.hsgamer.topper.agent.storage.simple.supplier.MySqlStorageSupplier;
 import me.hsgamer.topper.agent.storage.simple.supplier.SqliteStorageSupplier;
-import me.hsgamer.topper.agent.storage.supplier.DataStorageSupplier;
 
 import java.io.File;
 import java.util.concurrent.Executor;

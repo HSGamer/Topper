@@ -1,7 +1,6 @@
 package me.hsgamer.topper.agent.storage;
 
 import me.hsgamer.topper.agent.core.Agent;
-import me.hsgamer.topper.agent.storage.supplier.DataStorage;
 import me.hsgamer.topper.core.DataEntry;
 import me.hsgamer.topper.core.DataHolder;
 
@@ -19,7 +18,6 @@ public class StorageAgent<K, V> implements Agent<K, V>, Runnable {
     private final Logger logger;
     private final DataHolder<K, V> holder;
     private final DataStorage<K, V> storage;
-    private final List<Runnable> loadListeners = new ArrayList<>();
     private int maxEntryPerCall = 10;
     private boolean urgentSave = false;
     private boolean loadOnCreate = false;
@@ -50,6 +48,15 @@ public class StorageAgent<K, V> implements Agent<K, V>, Runnable {
         });
     }
 
+    private void loadAll() {
+        try {
+            storage.load()
+                    .forEach((uuid, value) -> holder.getOrCreateEntry(uuid).setValue(value, false));
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "Failed to load top entries for " + holder.getName(), e);
+        }
+    }
+
     public void loadIfExist(K key) {
         holder.getEntry(key).ifPresent(this::load);
     }
@@ -57,16 +64,7 @@ public class StorageAgent<K, V> implements Agent<K, V>, Runnable {
     @Override
     public void start() {
         storage.onRegister();
-        storage.load()
-                .whenComplete((entries, throwable) -> {
-                    if (throwable != null) {
-                        logger.log(Level.SEVERE, "Failed to load top entries", throwable);
-                    }
-                    if (entries != null) {
-                        entries.forEach((uuid, value) -> holder.getOrCreateEntry(uuid).setValue(value, false));
-                    }
-                    loadListeners.forEach(Runnable::run);
-                });
+        loadAll();
     }
 
     @Override
@@ -123,9 +121,5 @@ public class StorageAgent<K, V> implements Agent<K, V>, Runnable {
 
     public void setLoadOnCreate(boolean loadOnCreate) {
         this.loadOnCreate = loadOnCreate;
-    }
-
-    public void addLoadListener(Runnable runnable) {
-        loadListeners.add(runnable);
     }
 }
