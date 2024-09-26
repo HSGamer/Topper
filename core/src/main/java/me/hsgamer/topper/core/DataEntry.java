@@ -3,19 +3,18 @@ package me.hsgamer.topper.core;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.UnaryOperator;
 
 public final class DataEntry<K, V> {
     private final K key;
     private final DataHolder<K, V> holder;
-    private final AtomicReference<V> value;
     private final Map<String, Boolean> tempFlags = new ConcurrentHashMap<>();
+    private volatile V value;
 
     public DataEntry(K key, DataHolder<K, V> holder) {
         this.key = key;
         this.holder = holder;
-        this.value = new AtomicReference<>(holder.getDefaultValue());
+        this.value = holder.getDefaultValue();
     }
 
     public K getKey() {
@@ -23,7 +22,7 @@ public final class DataEntry<K, V> {
     }
 
     public V getValue() {
-        return value.get();
+        return value;
     }
 
     public void setValue(V value) {
@@ -35,13 +34,13 @@ public final class DataEntry<K, V> {
     }
 
     public void setValue(V value, boolean notify) {
-        if (Objects.equals(this.value.get(), value)) return;
-        this.value.set(value);
+        if (Objects.equals(this.value, value)) return;
+        this.value = value;
         if (notify) holder.onUpdate(this);
     }
 
     public void setValue(UnaryOperator<V> operator, boolean notify) {
-        setValue(operator.apply(value.get()), notify);
+        setValue(operator.apply(value), notify);
     }
 
     public DataHolder<K, V> getHolder() {
