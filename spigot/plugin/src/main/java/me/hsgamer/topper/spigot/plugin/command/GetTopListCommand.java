@@ -7,11 +7,9 @@ import me.hsgamer.topper.spigot.plugin.TopperPlugin;
 import me.hsgamer.topper.spigot.plugin.config.MessageConfig;
 import me.hsgamer.topper.spigot.plugin.holder.NumberTopHolder;
 import me.hsgamer.topper.spigot.plugin.manager.TopManager;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
-import java.text.DecimalFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -66,20 +64,10 @@ public class GetTopListCommand extends Command {
         }
 
         List<String> topList = new ArrayList<>();
-        String line = instance.get(MessageConfig.class).getTopEntryLine();
-        DecimalFormat decimalFormat = new DecimalFormat("#.##");
         for (int i = fromIndex; i <= toIndex; i++) {
-            Optional<DataEntry<UUID, Double>> optionalTopEntry = topHolder.getSnapshotAgent().getEntryByIndex(i - 1);
-            UUID uuid = optionalTopEntry.map(DataEntry::getKey).orElse(null);
-            Double value = optionalTopEntry.map(DataEntry::getValue).orElse(null);
-            String name = Optional.ofNullable(uuid).map(instance.getServer()::getOfflinePlayer).map(OfflinePlayer::getName).orElse(null);
-            topList.add(
-                    line.replace("{index}", String.valueOf(i + 1))
-                            .replace("{name}", name == null ? instance.get(MessageConfig.class).getDisplayNullName() : name)
-                            .replace("{uuid}", uuid == null ? instance.get(MessageConfig.class).getDisplayNullUuid() : uuid.toString())
-                            .replace("{value}", value == null ? instance.get(MessageConfig.class).getDisplayNullValue() : decimalFormat.format(value))
-                            .replace("{raw_value}", value == null ? instance.get(MessageConfig.class).getDisplayNullValue() : String.valueOf(value))
-            );
+            DataEntry<UUID, Double> topEntry = topHolder.getSnapshotAgent().getEntryByIndex(i - 1).orElse(null);
+            String line = instance.get(MessageConfig.class).getTopEntryLine(topEntry);
+            topList.add(line);
         }
         if (topList.isEmpty()) {
             sendMessage(sender, instance.get(MessageConfig.class).getTopEmpty());

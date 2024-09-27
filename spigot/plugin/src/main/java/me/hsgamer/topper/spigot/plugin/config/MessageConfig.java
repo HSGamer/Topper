@@ -1,6 +1,14 @@
 package me.hsgamer.topper.spigot.plugin.config;
 
 import me.hsgamer.hscore.config.annotation.ConfigPath;
+import me.hsgamer.topper.core.DataEntry;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
+import org.jetbrains.annotations.Nullable;
+
+import java.text.DecimalFormat;
+import java.util.Optional;
+import java.util.UUID;
 
 public interface MessageConfig {
     @ConfigPath("prefix")
@@ -53,5 +61,43 @@ public interface MessageConfig {
         return "---";
     }
 
+    @ConfigPath({"display", "number-format"})
+    default String getNumberFormat() {
+        return "#.##";
+    }
+
     void reloadConfig();
+
+    default String getDisplayUuid(@Nullable UUID uuid) {
+        return Optional.ofNullable(uuid)
+                .map(UUID::toString)
+                .orElse(getDisplayNullUuid());
+    }
+
+    default String getDisplayName(@Nullable UUID uuid) {
+        return Optional.ofNullable(uuid)
+                .map(Bukkit::getOfflinePlayer)
+                .map(OfflinePlayer::getName)
+                .orElse(getDisplayNullName());
+    }
+
+    default String getDisplayValue(@Nullable Double value) {
+        return Optional.ofNullable(value)
+                .map(new DecimalFormat(getNumberFormat())::format)
+                .orElse(getDisplayNullValue());
+    }
+
+    default String getDisplayRawValue(@Nullable Double value) {
+        return Optional.ofNullable(value)
+                .map(String::valueOf)
+                .orElse(getDisplayNullValue());
+    }
+
+    default String getTopEntryLine(@Nullable DataEntry<UUID, Double> dataEntry) {
+        return getTopEntryLine()
+                .replace("{uuid}", getDisplayUuid(dataEntry == null ? null : dataEntry.getKey()))
+                .replace("{name}", getDisplayName(dataEntry == null ? null : dataEntry.getKey()))
+                .replace("{value}", getDisplayValue(dataEntry == null ? null : dataEntry.getValue()))
+                .replace("{raw_value}", getDisplayRawValue(dataEntry == null ? null : dataEntry.getValue()));
+    }
 }
