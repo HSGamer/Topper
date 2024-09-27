@@ -19,7 +19,6 @@ public class SnapshotAgent<K, V> implements Agent<K, V>, Runnable {
     private Comparator<V> comparator;
 
     public SnapshotAgent(DataHolder<K, V> holder) {
-        super();
         this.holder = holder;
     }
 

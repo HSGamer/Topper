@@ -24,7 +24,6 @@ public class StorageAgent<K, V> implements Agent<K, V>, Runnable {
     private boolean urgentLoad = true;
 
     public StorageAgent(Logger logger, DataStorage<K, V> storage) {
-        super();
         this.logger = logger;
         this.holder = storage.getHolder();
         this.storage = storage;
