@@ -17,20 +17,16 @@ public class UpdateAgent<K, V> implements Agent<K, V>, Runnable {
     public static final String IGNORE_UPDATE = "ignoreUpdate";
     private final Queue<K> updateQueue = new ConcurrentLinkedQueue<>();
     private final DataHolder<K, V> holder;
+    private final Function<K, CompletableFuture<Optional<V>>> updateFunction;
     private int maxEntryPerCall = 10;
-    private Function<K, CompletableFuture<Optional<V>>> updateFunction;
 
-    public UpdateAgent(DataHolder<K, V> holder) {
-        super();
+    public UpdateAgent(DataHolder<K, V> holder, Function<K, CompletableFuture<Optional<V>>> updateFunction) {
         this.holder = holder;
+        this.updateFunction = updateFunction;
     }
 
     public void setMaxEntryPerCall(int maxEntryPerCall) {
         this.maxEntryPerCall = maxEntryPerCall;
-    }
-
-    public void setUpdateFunction(Function<K, CompletableFuture<Optional<V>>> updateFunction) {
-        this.updateFunction = updateFunction;
     }
 
     @Override
@@ -47,13 +43,6 @@ public class UpdateAgent<K, V> implements Agent<K, V>, Runnable {
         }
         if (!list.isEmpty()) {
             updateQueue.addAll(list);
-        }
-    }
-
-    @Override
-    public void start() {
-        if (updateFunction == null) {
-            throw new IllegalStateException("Update function is not set");
         }
     }
 

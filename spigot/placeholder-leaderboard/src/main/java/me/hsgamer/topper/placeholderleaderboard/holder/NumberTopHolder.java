@@ -29,9 +29,8 @@ public class NumberTopHolder extends AgentDataHolder<UUID, Double> {
         super(name);
         this.valueProvider = valueProvider;
 
-        this.updateAgent = new UpdateAgent<>(this);
+        this.updateAgent = new UpdateAgent<>(this, valueProvider::getValue);
         updateAgent.setMaxEntryPerCall(instance.get(MainConfig.class).getTaskUpdateEntryPerTick());
-        updateAgent.setUpdateFunction(valueProvider::getValue);
         addAgent(new SpigotRunnableAgent<>(updateAgent, AsyncScheduler.get(instance), instance.get(MainConfig.class).getTaskUpdateDelay()));
 
         this.storageAgent = new StorageAgent<>(instance.getLogger(), instance.get(TopManager.class).getStorageSupplier().getStorage(this));
