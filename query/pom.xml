@@ -5,22 +5,17 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>me.hsgamer</groupId>
-        <artifactId>topper-spigot</artifactId>
+        <artifactId>topper</artifactId>
         <version>3.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>topper-spigot-agent-runnable</artifactId>
+    <artifactId>topper-query</artifactId>
 
     <dependencies>
         <dependency>
             <groupId>me.hsgamer</groupId>
-            <artifactId>topper-agent-runnable</artifactId>
+            <artifactId>topper-core</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.github.projectunified</groupId>
-            <artifactId>minelib-scheduler-common</artifactId>
-            <version>${minelib.version}</version>
         </dependency>
     </dependencies>
 </project>

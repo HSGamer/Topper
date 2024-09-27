@@ -64,7 +64,8 @@
                             </filters>
                             <!-- Disable PaperMC's PluginRemapper -->
                             <transformers>
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <manifestEntries>
                                         <paperweight-mappings-namespace>mojang</paperweight-mappings-namespace>
                                     </manifestEntries>
@@ -116,9 +117,9 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>io.github.projectunified</groupId>
-            <artifactId>minelib-scheduler-async</artifactId>
-            <version>${minelib.version}</version>
+            <groupId>me.hsgamer</groupId>
+            <artifactId>topper-spigot-query-number</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
@@ -145,6 +146,11 @@
             </exclusions>
         </dependency>
 
+        <dependency>
+            <groupId>io.github.projectunified</groupId>
+            <artifactId>minelib-scheduler-async</artifactId>
+            <version>${minelib.version}</version>
+        </dependency>
         <dependency>
             <groupId>io.github.projectunified</groupId>
             <artifactId>minelib-plugin-permission</artifactId>

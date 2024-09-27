@@ -9,18 +9,18 @@
         <version>3.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>topper-spigot-agent-runnable</artifactId>
+    <artifactId>topper-spigot-query-number</artifactId>
 
     <dependencies>
         <dependency>
             <groupId>me.hsgamer</groupId>
-            <artifactId>topper-agent-runnable</artifactId>
+            <artifactId>topper-query</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>io.github.projectunified</groupId>
-            <artifactId>minelib-scheduler-common</artifactId>
-            <version>${minelib.version}</version>
+            <groupId>me.hsgamer</groupId>
+            <artifactId>topper-agent-snapshot</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 </project>

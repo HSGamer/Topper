@@ -15,6 +15,7 @@ import me.hsgamer.topper.spigot.plugin.config.MessageConfig;
 import me.hsgamer.topper.spigot.plugin.hook.TopPlaceholderExpansion;
 import me.hsgamer.topper.spigot.plugin.listener.JoinListener;
 import me.hsgamer.topper.spigot.plugin.manager.TopManager;
+import me.hsgamer.topper.spigot.plugin.manager.TopQueryManager;
 import org.bstats.bukkit.Metrics;
 
 import java.io.File;
@@ -35,6 +36,7 @@ public class TopperPlugin extends BasePlugin {
                 ConfigGenerator.newInstance(MessageConfig.class, new BukkitConfig(this, "messages.yml")),
 
                 new TopManager(this),
+                new TopQueryManager(this),
                 new TopPlaceholderExpansion(this),
 
                 new Permissions(this),
