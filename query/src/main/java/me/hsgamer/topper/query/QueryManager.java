@@ -18,7 +18,7 @@ public abstract class QueryManager<K, V, H extends DataHolder<K, V>, A> {
         actions.put(name, action);
     }
 
-    protected void registerFunction(String name, BiFunction<@NotNull H, @NotNull String[], @Nullable String> function) {
+    protected void registerFunction(String name, BiFunction<@NotNull H, @NotNull String, @Nullable String> function) {
         registerAction(name, (actor, holder, args) -> function.apply(holder, args));
     }
 
@@ -31,7 +31,7 @@ public abstract class QueryManager<K, V, H extends DataHolder<K, V>, A> {
 
     @Nullable
     public String get(@Nullable A actor, String query) {
-        String[] args = query.split(";");
+        String[] args = query.split(";", 3);
         if (args.length < 2) return null;
         Optional<H> optionalHolder = getHolder(args[0]);
         if (!optionalHolder.isPresent()) return null;
@@ -40,8 +40,7 @@ public abstract class QueryManager<K, V, H extends DataHolder<K, V>, A> {
         QueryAction<K, V, H, A> action = actions.get(args[1]);
         if (action == null) return null;
 
-        String[] newArgs = new String[args.length - 2];
-        System.arraycopy(args, 2, newArgs, 0, newArgs.length);
+        String newArgs = args.length > 2 ? args[2] : "";
 
         return action.get(actor, holder, newArgs);
     }

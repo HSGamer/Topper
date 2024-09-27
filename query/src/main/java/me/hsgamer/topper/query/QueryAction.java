@@ -6,5 +6,5 @@ import org.jetbrains.annotations.Nullable;
 
 public interface QueryAction<K, V, H extends DataHolder<K, V>, A> {
     @Nullable
-    String get(@Nullable A actor, @NotNull H holder, @NotNull String[] args);
+    String get(@Nullable A actor, @NotNull H holder, @NotNull String args);
 }

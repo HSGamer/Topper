@@ -11,48 +11,40 @@ public abstract class NumberQueryManager<K, V, H extends DataHolder<K, V>, A> ex
     protected NumberQueryManager() {
         registerFunction("top_name", (holder, args) -> {
             int i = 1;
-            if (args.length > 0) {
-                try {
-                    i = Integer.parseInt(args[0]);
-                } catch (NumberFormatException ignored) {
-                    // IGNORED
-                }
+            try {
+                i = Integer.parseInt(args);
+            } catch (NumberFormatException ignored) {
+                // IGNORED
             }
             K key = getSnapshotAgent(holder).getEntryByIndex(i - 1).map(DataEntry::getKey).orElse(null);
             return getDisplayName(key);
         });
         registerFunction("top_key", (holder, args) -> {
             int i = 1;
-            if (args.length > 0) {
-                try {
-                    i = Integer.parseInt(args[0]);
-                } catch (NumberFormatException ignored) {
-                    // IGNORED
-                }
+            try {
+                i = Integer.parseInt(args);
+            } catch (NumberFormatException ignored) {
+                // IGNORED
             }
             K key = getSnapshotAgent(holder).getEntryByIndex(i - 1).map(DataEntry::getKey).orElse(null);
             return getDisplayKey(key);
         });
         registerFunction("top_value", (holder, args) -> {
             int i = 1;
-            if (args.length > 0) {
-                try {
-                    i = Integer.parseInt(args[0]);
-                } catch (NumberFormatException ignored) {
-                    // IGNORED
-                }
+            try {
+                i = Integer.parseInt(args);
+            } catch (NumberFormatException ignored) {
+                // IGNORED
             }
             V value = getSnapshotAgent(holder).getEntryByIndex(i - 1).map(DataEntry::getValue).orElse(null);
             return getDisplayValue(value);
         });
         registerFunction("top_value_raw", (holder, args) -> {
             int i = 1;
-            if (args.length > 0) {
-                try {
-                    i = Integer.parseInt(args[0]);
-                } catch (NumberFormatException ignored) {
-                    // IGNORED
-                }
+            try {
+                i = Integer.parseInt(args);
+            } catch (NumberFormatException ignored) {
+                // IGNORED
             }
             V value = getSnapshotAgent(holder).getEntryByIndex(i - 1).map(DataEntry::getValue).orElse(null);
             return getDisplayRawValue(value);
