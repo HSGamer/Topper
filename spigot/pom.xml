@@ -16,7 +16,7 @@
         <module>agent-runnable</module>
         <module>agent-storage-simple</module>
         <module>agent-storage-number</module>
-        <module>placeholder-leaderboard</module>
+        <module>plugin</module>
     </modules>
 
     <repositories>
