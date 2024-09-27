@@ -6,6 +6,7 @@ import me.hsgamer.hscore.bukkit.config.BukkitConfig;
 import me.hsgamer.hscore.bukkit.utils.MessageUtils;
 import me.hsgamer.hscore.checker.spigotmc.SpigotVersionChecker;
 import me.hsgamer.hscore.config.proxy.ConfigGenerator;
+import me.hsgamer.topper.placeholderleaderboard.command.GetTopListCommand;
 import me.hsgamer.topper.placeholderleaderboard.command.ReloadCommand;
 import me.hsgamer.topper.placeholderleaderboard.config.MainConfig;
 import me.hsgamer.topper.placeholderleaderboard.config.MessageConfig;
@@ -18,7 +19,6 @@ import org.bstats.bukkit.Metrics;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -38,9 +38,10 @@ public class TopperPlaceholderLeaderboard extends BasePlugin {
                 new TopPlaceholderExpansion(this),
 
                 new Permissions(this),
-                new CommandComponent(this, Collections.singletonList(
-                        new ReloadCommand(this)
-                )),
+                new CommandComponent(this,
+                        new ReloadCommand(this),
+                        new GetTopListCommand(this)
+                ),
                 new JoinListener(this)
         );
     }
