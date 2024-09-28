@@ -67,6 +67,11 @@ public class StorageAgent<K, V> implements Agent<K, V>, Runnable {
     }
 
     @Override
+    public void onUpdate(DataEntry<K, V> entry) {
+        queue.add(entry.getKey());
+    }
+
+    @Override
     public void run() {
         save(false);
     }
