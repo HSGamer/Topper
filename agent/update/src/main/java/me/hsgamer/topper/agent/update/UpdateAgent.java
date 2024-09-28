@@ -4,18 +4,15 @@ import me.hsgamer.topper.agent.core.Agent;
 import me.hsgamer.topper.core.DataEntry;
 import me.hsgamer.topper.core.DataHolder;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Queue;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Function;
 
 public class UpdateAgent<K, V> implements Agent<K, V>, Runnable {
-    public static final String IS_UPDATING = "isUpdating";
-    public static final String IGNORE_UPDATE = "ignoreUpdate";
     private final Queue<K> updateQueue = new ConcurrentLinkedQueue<>();
+    private final Map<K, Boolean> updatingMap = new ConcurrentHashMap<>();
     private final DataHolder<K, V> holder;
     private final Function<K, CompletableFuture<Optional<V>>> updateFunction;
     private int maxEntryPerCall = 10;
@@ -57,12 +54,14 @@ public class UpdateAgent<K, V> implements Agent<K, V>, Runnable {
     }
 
     private void updateEntry(DataEntry<K, V> entry) {
-        if (entry.hasFlag(IGNORE_UPDATE)) return;
-        if (entry.hasFlag(IS_UPDATING)) return;
-        entry.addFlag(IS_UPDATING);
+        K key = entry.getKey();
+        if (updatingMap.getOrDefault(key, false)) {
+            return;
+        }
+        updatingMap.put(key, true);
         updateFunction.apply(entry.getKey()).thenAccept(optional -> {
             optional.ifPresent(entry::setValue);
-            entry.removeFlag(IS_UPDATING);
+            updatingMap.put(key, false);
         });
     }
 }

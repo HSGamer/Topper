@@ -1,14 +1,11 @@
 package me.hsgamer.topper.core;
 
-import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.UnaryOperator;
 
 public final class DataEntry<K, V> {
     private final K key;
     private final DataHolder<K, V> holder;
-    private final Map<String, Boolean> tempFlags = new ConcurrentHashMap<>();
     private volatile V value;
 
     public DataEntry(K key, DataHolder<K, V> holder) {
@@ -45,18 +42,6 @@ public final class DataEntry<K, V> {
 
     public DataHolder<K, V> getHolder() {
         return holder;
-    }
-
-    public boolean hasFlag(String flag) {
-        return tempFlags.getOrDefault(flag, false);
-    }
-
-    public void addFlag(String flag) {
-        tempFlags.put(flag, true);
-    }
-
-    public void removeFlag(String flag) {
-        tempFlags.put(flag, false);
     }
 
     @Override
