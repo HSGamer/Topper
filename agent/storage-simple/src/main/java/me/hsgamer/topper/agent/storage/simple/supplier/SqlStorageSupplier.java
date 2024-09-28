@@ -8,6 +8,7 @@ import me.hsgamer.hscore.logger.provider.LoggerProvider;
 import me.hsgamer.topper.agent.storage.DataStorage;
 import me.hsgamer.topper.agent.storage.simple.converter.SqlEntryConverter;
 import me.hsgamer.topper.core.DataHolder;
+import org.intellij.lang.annotations.Language;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -29,6 +30,7 @@ public abstract class SqlStorageSupplier<K, V> implements DataStorageSupplier<K,
 
     protected abstract void flushConnection(Connection connection);
 
+    @Language("SQL")
     protected abstract String toSaveStatement(String name, String[] keyColumns, String[] valueColumns);
 
     protected abstract Object[] toSaveValues(Object[] keys, Object[] values);
@@ -63,7 +65,7 @@ public abstract class SqlStorageSupplier<K, V> implements DataStorageSupplier<K,
                         String[] keyColumns = converter.getKeyColumns();
                         String[] valueColumns = converter.getValueColumns();
 
-                        String statement = toSaveStatement(dataHolder.getName(), keyColumns, valueColumns);
+                        @Language("SQL") String statement = toSaveStatement(dataHolder.getName(), keyColumns, valueColumns);
 
                         BatchBuilder batchBuilder = BatchBuilder.create(connection, statement);
                         map.forEach((key, value) -> {
