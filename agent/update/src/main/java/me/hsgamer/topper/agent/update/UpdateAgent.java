@@ -12,7 +12,7 @@ import java.util.function.Function;
 
 public class UpdateAgent<K, V> implements Agent<K, V>, Runnable {
     private final Queue<K> updateQueue = new ConcurrentLinkedQueue<>();
-    private final Map<K, Boolean> updatingMap = new ConcurrentHashMap<>();
+    private final Set<K> updatingSet = ConcurrentHashMap.newKeySet();
     private final DataHolder<K, V> holder;
     private final Function<K, CompletableFuture<Optional<V>>> updateFunction;
     private int maxEntryPerCall = 10;
@@ -55,13 +55,11 @@ public class UpdateAgent<K, V> implements Agent<K, V>, Runnable {
 
     private void updateEntry(DataEntry<K, V> entry) {
         K key = entry.getKey();
-        if (updatingMap.getOrDefault(key, false)) {
-            return;
-        }
-        updatingMap.put(key, true);
-        updateFunction.apply(entry.getKey()).thenAccept(optional -> {
+        if (updatingSet.contains(key)) return;
+        updatingSet.add(key);
+        updateFunction.apply(key).thenAccept(optional -> {
             optional.ifPresent(entry::setValue);
-            updatingMap.put(key, false);
+            updatingSet.remove(key);
         });
     }
 }
