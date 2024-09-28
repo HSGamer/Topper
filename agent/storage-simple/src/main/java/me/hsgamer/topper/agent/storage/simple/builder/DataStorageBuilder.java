@@ -2,9 +2,9 @@ package me.hsgamer.topper.agent.storage.simple.builder;
 
 import me.hsgamer.hscore.builder.Builder;
 import me.hsgamer.hscore.config.Config;
-import me.hsgamer.topper.agent.storage.simple.config.DatabaseConfig;
 import me.hsgamer.topper.agent.storage.simple.converter.FlatEntryConverter;
 import me.hsgamer.topper.agent.storage.simple.converter.SqlEntryConverter;
+import me.hsgamer.topper.agent.storage.simple.setting.DatabaseSetting;
 import me.hsgamer.topper.agent.storage.simple.supplier.DataStorageSupplier;
 import me.hsgamer.topper.agent.storage.simple.supplier.FlatStorageSupplier;
 import me.hsgamer.topper.agent.storage.simple.supplier.MySqlStorageSupplier;
@@ -24,7 +24,7 @@ public class DataStorageBuilder<K, V> extends Builder<Void, DataStorageSupplier<
             Executor mainThreadExecutor,
             Function<File, Config> yamlConfigProvider,
             Function<File, Config> jsonConfigProvider,
-            Supplier<DatabaseConfig> databaseConfigSupplier,
+            Supplier<DatabaseSetting> databaseSettingSupplier,
             File holderBaseFolder,
             FlatEntryConverter<K, V> flatEntryConverter,
             SqlEntryConverter<K, V> sqlEntryConverter
@@ -34,8 +34,8 @@ public class DataStorageBuilder<K, V> extends Builder<Void, DataStorageSupplier<
         register(v -> defaultSupplier.get(), "default", "");
         register(v -> yamlSupplier.get(), "yaml", "yml");
         register(v -> new FlatStorageSupplier<>(runTaskFunction, mainThreadExecutor, name -> name + ".json", jsonConfigProvider, holderBaseFolder, flatEntryConverter), "json");
-        register(v -> new SqliteStorageSupplier<>(databaseConfigSupplier.get(), holderBaseFolder, sqlEntryConverter), "sqlite", "sqlite3");
-        register(v -> new MySqlStorageSupplier<>(databaseConfigSupplier.get(), sqlEntryConverter), "mysql", "mysql-connector-java", "mysql-connector");
+        register(v -> new SqliteStorageSupplier<>(databaseSettingSupplier.get(), holderBaseFolder, sqlEntryConverter), "sqlite", "sqlite3");
+        register(v -> new MySqlStorageSupplier<>(databaseSettingSupplier.get(), sqlEntryConverter), "mysql", "mysql-connector-java", "mysql-connector");
     }
 
     public DataStorageSupplier<K, V> buildSupplier(String type) {

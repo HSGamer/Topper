@@ -12,7 +12,6 @@
     <artifactId>topper-spigot</artifactId>
     <packaging>pom</packaging>
     <modules>
-        <module>config</module>
         <module>agent-runnable</module>
         <module>agent-storage-simple</module>
         <module>agent-storage-number</module>

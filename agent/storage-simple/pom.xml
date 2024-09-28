@@ -30,11 +30,6 @@
         </dependency>
         <dependency>
             <groupId>me.hsgamer</groupId>
-            <artifactId>hscore-config-annotation</artifactId>
-            <version>${core.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>me.hsgamer</groupId>
             <artifactId>hscore-database-client-java</artifactId>
             <version>${core.version}</version>
         </dependency>

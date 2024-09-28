@@ -14,12 +14,7 @@
     <dependencies>
         <dependency>
             <groupId>me.hsgamer</groupId>
-            <artifactId>topper-spigot-config</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>me.hsgamer</groupId>
-            <artifactId>hscore-config-proxy</artifactId>
+            <artifactId>hscore-bukkit-config</artifactId>
             <version>${core.version}</version>
         </dependency>
         <dependency>

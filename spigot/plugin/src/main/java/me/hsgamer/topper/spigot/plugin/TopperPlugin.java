@@ -7,9 +7,9 @@ import me.hsgamer.hscore.bukkit.utils.MessageUtils;
 import me.hsgamer.hscore.checker.spigotmc.SpigotVersionChecker;
 import me.hsgamer.hscore.config.proxy.ConfigGenerator;
 import me.hsgamer.topper.spigot.agent.storage.number.NumberStorageBuilder;
-import me.hsgamer.topper.spigot.config.DefaultConverterRegistry;
 import me.hsgamer.topper.spigot.plugin.command.GetTopListCommand;
 import me.hsgamer.topper.spigot.plugin.command.ReloadCommand;
+import me.hsgamer.topper.spigot.plugin.config.DatabaseConfig;
 import me.hsgamer.topper.spigot.plugin.config.MainConfig;
 import me.hsgamer.topper.spigot.plugin.config.MessageConfig;
 import me.hsgamer.topper.spigot.plugin.hook.TopPlaceholderExpansion;
@@ -24,14 +24,14 @@ import java.util.List;
 import java.util.logging.Level;
 
 public class TopperPlugin extends BasePlugin {
-    static {
-        DefaultConverterRegistry.register();
-    }
-
     @Override
     protected List<Object> getComponents() {
         return Arrays.asList(
-                new NumberStorageBuilder(this, new File(getDataFolder(), "top")),
+                new NumberStorageBuilder(
+                        this,
+                        new File(getDataFolder(), "top"),
+                        () -> ConfigGenerator.newInstance(DatabaseConfig.class, new BukkitConfig(this, "database.yml")).toDatabaseSetting()
+                ),
                 ConfigGenerator.newInstance(MainConfig.class, new BukkitConfig(this)),
                 ConfigGenerator.newInstance(MessageConfig.class, new BukkitConfig(this, "messages.yml")),
 

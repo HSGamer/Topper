@@ -1,7 +1,9 @@
-package me.hsgamer.topper.agent.storage.simple.config;
+package me.hsgamer.topper.spigot.plugin.config;
 
 import me.hsgamer.hscore.config.annotation.Comment;
 import me.hsgamer.hscore.config.annotation.ConfigPath;
+import me.hsgamer.topper.agent.storage.simple.setting.DatabaseSetting;
+import me.hsgamer.topper.spigot.plugin.config.converter.StringObjectMapConverter;
 
 import java.util.Collections;
 import java.util.Map;
@@ -43,15 +45,19 @@ public interface DatabaseConfig {
         return false;
     }
 
-    @ConfigPath("driver-properties")
+    @ConfigPath(value = "driver-properties", converter = StringObjectMapConverter.class)
     @Comment("The driver properties")
     default Map<String, Object> getDriverProperties() {
         return Collections.emptyMap();
     }
 
-    @ConfigPath("client-properties")
+    @ConfigPath(value = "client-properties", converter = StringObjectMapConverter.class)
     @Comment("The client properties")
     default Map<String, Object> getClientProperties() {
         return Collections.emptyMap();
+    }
+
+    default DatabaseSetting toDatabaseSetting() {
+        return new DatabaseSetting(getHost(), getPort(), getDatabase(), getUsername(), getPassword(), isUseSSL(), getDriverProperties(), getClientProperties());
     }
 }

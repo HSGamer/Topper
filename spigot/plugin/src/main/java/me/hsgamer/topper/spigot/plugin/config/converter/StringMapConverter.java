@@ -1,4 +1,4 @@
-package me.hsgamer.topper.spigot.config.converter;
+package me.hsgamer.topper.spigot.plugin.config.converter;
 
 import me.hsgamer.hscore.config.annotation.converter.Converter;
 

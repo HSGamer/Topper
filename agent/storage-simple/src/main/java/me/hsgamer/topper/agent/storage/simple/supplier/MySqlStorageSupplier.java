@@ -4,8 +4,8 @@ import me.hsgamer.hscore.database.Setting;
 import me.hsgamer.hscore.database.client.sql.java.JavaSqlClient;
 import me.hsgamer.hscore.database.driver.mysql.MySqlDriver;
 import me.hsgamer.hscore.logger.common.LogLevel;
-import me.hsgamer.topper.agent.storage.simple.config.DatabaseConfig;
 import me.hsgamer.topper.agent.storage.simple.converter.SqlEntryConverter;
+import me.hsgamer.topper.agent.storage.simple.setting.DatabaseSetting;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -13,17 +13,17 @@ import java.sql.SQLException;
 public class MySqlStorageSupplier<K, V> extends SqlStorageSupplier<K, V> {
     private final JavaSqlClient client;
 
-    public MySqlStorageSupplier(DatabaseConfig databaseConfig, SqlEntryConverter<K, V> converter) {
+    public MySqlStorageSupplier(DatabaseSetting databaseSetting, SqlEntryConverter<K, V> converter) {
         super(converter);
         Setting setting = Setting.create(new MySqlDriver())
-                .setDatabaseName(databaseConfig.getDatabase())
-                .setHost(databaseConfig.getHost())
-                .setPort(databaseConfig.getPort())
-                .setUsername(databaseConfig.getUsername())
-                .setPassword(databaseConfig.getPassword())
-                .setClientProperties(databaseConfig.getClientProperties())
-                .setDriverProperties(databaseConfig.getDriverProperties());
-        if (databaseConfig.isUseSSL()) {
+                .setDatabaseName(databaseSetting.getDatabase())
+                .setHost(databaseSetting.getHost())
+                .setPort(databaseSetting.getPort())
+                .setUsername(databaseSetting.getUsername())
+                .setPassword(databaseSetting.getPassword())
+                .setClientProperties(databaseSetting.getClientProperties())
+                .setDriverProperties(databaseSetting.getDriverProperties());
+        if (databaseSetting.isUseSSL()) {
             setting.setDriverProperty("useSSL", "true");
         }
         client = new JavaSqlClient(setting);

@@ -2,12 +2,13 @@ package me.hsgamer.topper.spigot.plugin.config;
 
 import me.hsgamer.hscore.config.annotation.Comment;
 import me.hsgamer.hscore.config.annotation.ConfigPath;
+import me.hsgamer.topper.spigot.plugin.config.converter.StringValueMapConverter;
 
 import java.util.Collections;
 import java.util.Map;
 
 public interface MainConfig {
-    @ConfigPath(value = "placeholders", priority = 1)
+    @ConfigPath(value = "placeholders", converter = StringValueMapConverter.class, priority = 1)
     @Comment({
             "This is where you add placeholders that the plugin will listen for values to store in the leaderboard",
             "Note that the placeholder should have its final value as a number (or else the leaderboard won't update)",

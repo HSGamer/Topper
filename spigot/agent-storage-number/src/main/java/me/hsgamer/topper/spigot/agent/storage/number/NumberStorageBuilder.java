@@ -2,6 +2,7 @@ package me.hsgamer.topper.spigot.agent.storage.number;
 
 import me.hsgamer.topper.agent.storage.simple.converter.FlatEntryConverter;
 import me.hsgamer.topper.agent.storage.simple.converter.SqlEntryConverter;
+import me.hsgamer.topper.agent.storage.simple.setting.DatabaseSetting;
 import me.hsgamer.topper.spigot.agent.storage.simple.SpigotDataStorageBuilder;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -11,10 +12,11 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 public class NumberStorageBuilder extends SpigotDataStorageBuilder<UUID, Double> {
-    public NumberStorageBuilder(JavaPlugin plugin, File holderBaseFolder) {
-        super(plugin, holderBaseFolder, new FlatNumberEntryConverter(), new SqlNumberEntryConverter());
+    public NumberStorageBuilder(JavaPlugin plugin, File holderBaseFolder, Supplier<DatabaseSetting> databaseSettingSupplier) {
+        super(plugin, holderBaseFolder, databaseSettingSupplier, new FlatNumberEntryConverter(), new SqlNumberEntryConverter());
     }
 
     private static class FlatNumberEntryConverter implements FlatEntryConverter<UUID, Double> {

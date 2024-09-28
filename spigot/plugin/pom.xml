@@ -88,11 +88,6 @@
     <dependencies>
         <dependency>
             <groupId>me.hsgamer</groupId>
-            <artifactId>topper-spigot-config</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>me.hsgamer</groupId>
             <artifactId>topper-spigot-agent-storage-number</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -144,6 +139,16 @@
                     <artifactId>gson</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>me.hsgamer</groupId>
+            <artifactId>hscore-common</artifactId>
+            <version>${core.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>me.hsgamer</groupId>
+            <artifactId>hscore-config-proxy</artifactId>
+            <version>${core.version}</version>
         </dependency>
 
         <dependency>
