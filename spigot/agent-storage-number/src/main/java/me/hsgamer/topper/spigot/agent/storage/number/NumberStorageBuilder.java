@@ -1,13 +1,11 @@
 package me.hsgamer.topper.spigot.agent.storage.number;
 
-import me.hsgamer.hscore.database.client.sql.StatementBuilder;
 import me.hsgamer.topper.agent.storage.simple.converter.FlatEntryConverter;
 import me.hsgamer.topper.agent.storage.simple.converter.SqlEntryConverter;
 import me.hsgamer.topper.spigot.agent.storage.simple.SpigotDataStorageBuilder;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -47,40 +45,32 @@ public class NumberStorageBuilder extends SpigotDataStorageBuilder<UUID, Double>
 
     private static class SqlNumberEntryConverter implements SqlEntryConverter<UUID, Double> {
         @Override
-        public StatementBuilder createTable(Connection connection, String name) {
-            return StatementBuilder.create(connection).setStatement("CREATE TABLE IF NOT EXISTS `" + name + "` (`uuid` varchar(36) NOT NULL UNIQUE, `value` double DEFAULT 0);");
+        public String[] getKeyColumns() {
+            return new String[]{"uuid"};
         }
 
         @Override
-        public StatementBuilder selectAll(Connection connection, String name) {
-            return StatementBuilder.create(connection).setStatement("SELECT * FROM `" + name + "`;");
+        public String[] getValueColumns() {
+            return new String[]{"value"};
         }
 
         @Override
-        public StatementBuilder select(Connection connection, String name, UUID uuid) {
-            return StatementBuilder.create(connection)
-                    .setStatement("SELECT * FROM `" + name + "` WHERE `uuid` = ?;")
-                    .addValues(uuid.toString());
+        public String[] getColumnDefinitions() {
+            return new String[]{"`uuid` varchar(36) NOT NULL UNIQUE", "`value` double DEFAULT 0"};
         }
 
         @Override
-        public StatementBuilder insert(Connection connection, String name, UUID uuid, Double value) {
-            return StatementBuilder.create(connection)
-                    .setStatement("INSERT INTO `" + name + "` (`uuid`, `value`) VALUES (?, ?);")
-                    .addValues(uuid.toString())
-                    .addValues(value);
+        public Object[] toKeyQueryValues(UUID key) {
+            return new Object[]{key.toString()};
         }
 
         @Override
-        public StatementBuilder update(Connection connection, String name, UUID uuid, Double value) {
-            return StatementBuilder.create(connection)
-                    .setStatement("UPDATE `" + name + "` SET `value` = ? WHERE `uuid` = ?;")
-                    .addValues(value)
-                    .addValues(uuid.toString());
+        public Object[] toValueQueryValues(Double value) {
+            return new Object[]{value};
         }
 
         @Override
-        public Double getValue(UUID uuid, ResultSet resultSet) throws SQLException {
+        public Double getValue(ResultSet resultSet) throws SQLException {
             return resultSet.getDouble("value");
         }
 

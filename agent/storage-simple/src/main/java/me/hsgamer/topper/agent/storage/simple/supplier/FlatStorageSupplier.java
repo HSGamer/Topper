@@ -41,7 +41,7 @@ public class FlatStorageSupplier<K, V> implements DataStorageSupplier<K, V> {
 
     @Override
     public DataStorage<K, V> getStorage(DataHolder<K, V> holder) {
-        return new DataStorage<K, V>(holder) {
+        return new DataStorage<K, V>() {
             private final AutoSaveConfig config = new AutoSaveConfig(configProvider.apply(new File(holderBaseFolder, configNameProvider.apply(holder.getName()))), runTaskFunction);
 
             @Override
@@ -59,10 +59,10 @@ public class FlatStorageSupplier<K, V> implements DataStorageSupplier<K, V> {
             }
 
             @Override
-            public CompletableFuture<Void> save(K key, V value, boolean urgent) {
+            public CompletableFuture<Void> save(Map<K, V> map, boolean urgent) {
                 CompletableFuture<Void> future = new CompletableFuture<>();
                 Runnable runnable = () -> {
-                    config.set(converter.toRawValue(value), converter.toRawKey(key));
+                    map.forEach((key, value) -> config.set(converter.toRawValue(value), converter.toRawKey(key)));
                     future.complete(null);
                 };
                 if (urgent) {

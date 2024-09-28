@@ -1,24 +1,21 @@
 package me.hsgamer.topper.agent.storage.simple.converter;
 
-import me.hsgamer.hscore.database.client.sql.StatementBuilder;
-
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
 
 public interface SqlEntryConverter<K, V> {
-    StatementBuilder createTable(Connection connection, String name);
+    String[] getKeyColumns();
 
-    StatementBuilder selectAll(Connection connection, String name);
+    String[] getValueColumns();
 
-    StatementBuilder select(Connection connection, String name, K key);
+    String[] getColumnDefinitions();
 
-    StatementBuilder insert(Connection connection, String name, K key, V value);
+    Object[] toKeyQueryValues(K key);
 
-    StatementBuilder update(Connection connection, String name, K key, V value);
+    Object[] toValueQueryValues(V value);
 
-    V getValue(K key, ResultSet resultSet) throws SQLException;
+    V getValue(ResultSet resultSet) throws SQLException;
 
     Map<K, V> getMap(ResultSet resultSet) throws SQLException;
 }

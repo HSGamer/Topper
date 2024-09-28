@@ -9,7 +9,6 @@ import me.hsgamer.topper.agent.storage.simple.converter.SqlEntryConverter;
 
 import java.io.File;
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class SqliteStorageSupplier<K, V> extends SqlStorageSupplier<K, V> {
@@ -22,29 +21,67 @@ public class SqliteStorageSupplier<K, V> extends SqlStorageSupplier<K, V> {
     }
 
     @Override
-    public Connection getConnection(String name) throws SQLException {
-        Connection connection = connectionReference.get();
-        if (connection == null || connection.isClosed()) {
-            connection = client.getConnection();
-            connectionReference.set(connection);
-        }
-        return connection;
+    protected Connection getConnection() {
+        return connectionReference.updateAndGet(connection -> {
+            try {
+                if (connection == null || connection.isClosed()) {
+                    return client.getConnection();
+                } else {
+                    return connection;
+                }
+            } catch (Exception e) {
+                logger.log(LogLevel.ERROR, "Failed to get the connection", e);
+                return null;
+            }
+        });
     }
 
     @Override
-    public void flushConnection(Connection connection) {
+    protected void flushConnection(Connection connection) {
         // EMPTY
     }
 
     @Override
+    protected String toSaveStatement(String name, String[] keyColumns, String[] valueColumns) {
+        StringBuilder statement = new StringBuilder("INSERT OR REPLACE INTO `")
+                .append(name)
+                .append("` (");
+        for (int i = 0; i < keyColumns.length + valueColumns.length; i++) {
+            statement.append("`")
+                    .append(i < keyColumns.length ? keyColumns[i] : valueColumns[i - keyColumns.length])
+                    .append("`");
+            if (i != keyColumns.length + valueColumns.length - 1) {
+                statement.append(", ");
+            }
+        }
+        statement.append(") VALUES (");
+        for (int i = 0; i < keyColumns.length + valueColumns.length; i++) {
+            statement.append("?");
+            if (i != keyColumns.length + valueColumns.length - 1) {
+                statement.append(", ");
+            }
+        }
+        statement.append(");");
+        return statement.toString();
+    }
+
+    @Override
+    protected Object[] toSaveValues(Object[] keys, Object[] values) {
+        Object[] queryValues = new Object[keys.length + values.length];
+        System.arraycopy(keys, 0, queryValues, 0, keys.length);
+        System.arraycopy(values, 0, queryValues, keys.length, values.length);
+        return queryValues;
+    }
+
+    @Override
     public void disable() {
+        Connection connection = connectionReference.getAndSet(null);
         try {
-            Connection connection = connectionReference.get();
             if (connection != null && !connection.isClosed()) {
                 connection.close();
             }
-        } catch (SQLException e) {
-            logger.log(LogLevel.ERROR, "disable()", e);
+        } catch (Exception e) {
+            logger.log(LogLevel.ERROR, "Failed to close the connection", e);
         }
     }
 }

@@ -1,33 +1,21 @@
 package me.hsgamer.topper.agent.storage;
 
-import me.hsgamer.topper.core.DataHolder;
-
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
-public abstract class DataStorage<K, V> {
-    protected final DataHolder<K, V> holder;
+public interface DataStorage<K, V> {
+    Map<K, V> load();
 
-    protected DataStorage(DataHolder<K, V> holder) {
-        this.holder = holder;
-    }
+    CompletableFuture<Void> save(Map<K, V> map, boolean urgent);
 
-    public abstract Map<K, V> load();
+    CompletableFuture<Optional<V>> load(K key, boolean urgent);
 
-    public abstract CompletableFuture<Void> save(K key, V value, boolean urgent);
-
-    public abstract CompletableFuture<Optional<V>> load(K key, boolean urgent);
-
-    public DataHolder<K, V> getHolder() {
-        return holder;
-    }
-
-    public void onRegister() {
+    default void onRegister() {
         // EMPTY
     }
 
-    public void onUnregister() {
+    default void onUnregister() {
         // EMPTY
     }
 }
