@@ -8,8 +8,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public interface SqlNumberEntryConverter<K> extends SqlEntryConverter<K, Double> {
-    String[] getKeyColumnDefinitions();
-
     K getKey(ResultSet resultSet) throws SQLException;
 
     @Override
@@ -18,13 +16,8 @@ public interface SqlNumberEntryConverter<K> extends SqlEntryConverter<K, Double>
     }
 
     @Override
-    default String[] getColumnDefinitions() {
-        String[] keyColumnDefinitions = getKeyColumnDefinitions();
-        String valueColumnDefinition = "`value` double DEFAULT 0";
-        String[] columnDefinitions = new String[keyColumnDefinitions.length + 1];
-        System.arraycopy(keyColumnDefinitions, 0, columnDefinitions, 0, keyColumnDefinitions.length);
-        columnDefinitions[keyColumnDefinitions.length] = valueColumnDefinition;
-        return columnDefinitions;
+    default String[] getValueColumnDefinitions() {
+        return new String[]{"`value` double DEFAULT 0"};
     }
 
     @Override

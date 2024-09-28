@@ -9,7 +9,9 @@ public interface SqlEntryConverter<K, V> {
 
     String[] getValueColumns();
 
-    String[] getColumnDefinitions();
+    String[] getKeyColumnDefinitions();
+
+    String[] getValueColumnDefinitions();
 
     Object[] toKeyQueryValues(K key);
 

@@ -39,7 +39,7 @@ public class NumberStorageBuilder extends SpigotDataStorageBuilder<UUID, Double>
 
                     @Override
                     public String[] getKeyColumnDefinitions() {
-                        return new String[]{"`uuid` varchar(36) NOT NULL UNIQUE"};
+                        return new String[]{"`uuid` varchar(36) NOT NULL"};
                     }
 
                     @Override

@@ -137,13 +137,28 @@ public abstract class SqlStorageSupplier<K, V> implements DataStorageSupplier<K,
                 Connection connection = null;
                 try {
                     connection = getConnection();
-                    String[] columnsDefinition = converter.getColumnDefinitions();
+                    String[] keyColumns = converter.getKeyColumns();
+                    String[] keyColumnDefinitions = converter.getKeyColumnDefinitions();
+                    String[] valueColumnDefinitions = converter.getValueColumnDefinitions();
                     StringBuilder statement = new StringBuilder("CREATE TABLE IF NOT EXISTS `")
                             .append(dataHolder.getName())
                             .append("` (");
-                    for (int i = 0; i < columnsDefinition.length; i++) {
-                        statement.append(columnsDefinition[i]);
-                        if (i != columnsDefinition.length - 1) {
+                    for (int i = 0; i < keyColumnDefinitions.length + valueColumnDefinitions.length; i++) {
+                        if (i < keyColumnDefinitions.length) {
+                            statement.append(keyColumnDefinitions[i]);
+                        } else {
+                            statement.append(valueColumnDefinitions[i - keyColumnDefinitions.length]);
+                        }
+                        if (i != keyColumnDefinitions.length + valueColumnDefinitions.length - 1) {
+                            statement.append(", ");
+                        }
+                    }
+                    statement.append(", PRIMARY KEY (");
+                    for (int i = 0; i < keyColumns.length; i++) {
+                        statement.append("`")
+                                .append(keyColumns[i])
+                                .append("`");
+                        if (i != keyColumns.length - 1) {
                             statement.append(", ");
                         }
                     }
