@@ -164,7 +164,7 @@ public abstract class SqlStorageSupplier<K, V> implements DataStorageSupplier<K,
                             statement.append(", ");
                         }
                     }
-                    statement.append(");");
+                    statement.append(")").append(");");
                     StatementBuilder.create(connection)
                             .setStatement(statement.toString())
                             .update();
