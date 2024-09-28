@@ -10,6 +10,11 @@
     </parent>
 
     <artifactId>topper-query</artifactId>
+    <packaging>pom</packaging>
+    <modules>
+        <module>core</module>
+        <module>snapshot</module>
+    </modules>
 
     <dependencies>
         <dependency>

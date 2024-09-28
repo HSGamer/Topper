@@ -15,7 +15,6 @@
         <module>agent-runnable</module>
         <module>agent-storage-simple</module>
         <module>plugin</module>
-        <module>query-number</module>
     </modules>
 
     <repositories>

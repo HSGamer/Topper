@@ -11,8 +11,8 @@
     <modules>
         <module>core</module>
         <module>agent</module>
-        <module>spigot</module>
         <module>query</module>
+        <module>spigot</module>
     </modules>
 
     <properties>

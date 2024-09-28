@@ -1,6 +1,7 @@
 #!/bin/bash
 UPDATE_DIR="
 agent
+query
 spigot
 "
 

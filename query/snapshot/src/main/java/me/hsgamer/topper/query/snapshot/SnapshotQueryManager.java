@@ -1,14 +1,14 @@
-package me.hsgamer.topper.spigot.query.number;
+package me.hsgamer.topper.query.snapshot;
 
 import me.hsgamer.topper.agent.snapshot.SnapshotAgent;
 import me.hsgamer.topper.core.DataEntry;
 import me.hsgamer.topper.core.DataHolder;
-import me.hsgamer.topper.query.QueryManager;
+import me.hsgamer.topper.query.core.QueryManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class NumberQueryManager<K, V, H extends DataHolder<K, V>, A> extends QueryManager<K, V, H, A> {
-    protected NumberQueryManager() {
+public abstract class SnapshotQueryManager<K, V, H extends DataHolder<K, V>, A> extends QueryManager<K, V, H, A> {
+    protected SnapshotQueryManager() {
         registerFunction("top_name", (holder, args) -> {
             int i = 1;
             try {

@@ -1,4 +1,4 @@
-package me.hsgamer.topper.query;
+package me.hsgamer.topper.query.core;
 
 import me.hsgamer.topper.core.DataHolder;
 import org.jetbrains.annotations.NotNull;
