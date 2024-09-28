@@ -88,11 +88,6 @@
     <dependencies>
         <dependency>
             <groupId>me.hsgamer</groupId>
-            <artifactId>topper-spigot-agent-storage-number</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>me.hsgamer</groupId>
             <artifactId>topper-agent-holder</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -114,6 +109,16 @@
         <dependency>
             <groupId>me.hsgamer</groupId>
             <artifactId>topper-spigot-query-number</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>me.hsgamer</groupId>
+            <artifactId>topper-spigot-agent-storage-simple</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>me.hsgamer</groupId>
+            <artifactId>topper-agent-storage-number</artifactId>
             <version>${project.version}</version>
         </dependency>
 

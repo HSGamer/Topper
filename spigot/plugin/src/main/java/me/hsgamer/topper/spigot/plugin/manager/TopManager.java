@@ -2,8 +2,8 @@ package me.hsgamer.topper.spigot.plugin.manager;
 
 import io.github.projectunified.minelib.plugin.base.Loadable;
 import me.hsgamer.topper.agent.storage.simple.supplier.DataStorageSupplier;
-import me.hsgamer.topper.spigot.agent.storage.number.NumberStorageBuilder;
 import me.hsgamer.topper.spigot.plugin.TopperPlugin;
+import me.hsgamer.topper.spigot.plugin.builder.NumberStorageBuilder;
 import me.hsgamer.topper.spigot.plugin.config.MainConfig;
 import me.hsgamer.topper.spigot.plugin.holder.NumberTopHolder;
 import me.hsgamer.topper.spigot.plugin.provider.PlaceholderValueProvider;

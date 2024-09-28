@@ -6,7 +6,7 @@ import me.hsgamer.hscore.bukkit.config.BukkitConfig;
 import me.hsgamer.hscore.bukkit.utils.MessageUtils;
 import me.hsgamer.hscore.checker.spigotmc.SpigotVersionChecker;
 import me.hsgamer.hscore.config.proxy.ConfigGenerator;
-import me.hsgamer.topper.spigot.agent.storage.number.NumberStorageBuilder;
+import me.hsgamer.topper.spigot.plugin.builder.NumberStorageBuilder;
 import me.hsgamer.topper.spigot.plugin.command.GetTopListCommand;
 import me.hsgamer.topper.spigot.plugin.command.ReloadCommand;
 import me.hsgamer.topper.spigot.plugin.config.DatabaseConfig;

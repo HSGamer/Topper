@@ -5,16 +5,16 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>me.hsgamer</groupId>
-        <artifactId>topper-spigot</artifactId>
+        <artifactId>topper-agent</artifactId>
         <version>3.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>topper-spigot-agent-storage-number</artifactId>
+    <artifactId>topper-agent-storage-number</artifactId>
 
     <dependencies>
         <dependency>
             <groupId>me.hsgamer</groupId>
-            <artifactId>topper-spigot-agent-storage-simple</artifactId>
+            <artifactId>topper-agent-storage-simple</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

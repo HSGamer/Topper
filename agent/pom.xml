@@ -19,6 +19,7 @@
         <module>storage-simple</module>
         <module>core</module>
         <module>holder</module>
+        <module>storage-number</module>
     </modules>
 
     <dependencies>
