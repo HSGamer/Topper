@@ -2,7 +2,6 @@ package me.hsgamer.topper.agent.storage.simple.converter;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Map;
 
 public interface SqlEntryConverter<K, V> {
     String[] getKeyColumns();
@@ -17,7 +16,7 @@ public interface SqlEntryConverter<K, V> {
 
     Object[] toValueQueryValues(V value);
 
-    V getValue(ResultSet resultSet) throws SQLException;
+    K getKey(ResultSet resultSet) throws SQLException;
 
-    Map<K, V> getMap(ResultSet resultSet) throws SQLException;
+    V getValue(ResultSet resultSet) throws SQLException;
 }

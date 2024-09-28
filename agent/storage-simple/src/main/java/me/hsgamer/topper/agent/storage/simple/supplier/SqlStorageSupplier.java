@@ -12,11 +12,13 @@ import org.intellij.lang.annotations.Language;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.AbstractMap;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public abstract class SqlStorageSupplier<K, V> implements DataStorageSupplier<K, V> {
     protected final Logger logger = LoggerProvider.getLogger(getClass());
@@ -45,7 +47,9 @@ public abstract class SqlStorageSupplier<K, V> implements DataStorageSupplier<K,
                     connection = getConnection();
                     return StatementBuilder.create(connection)
                             .setStatement("SELECT * FROM `" + dataHolder.getName() + "`;")
-                            .query(converter::getMap);
+                            .queryList(resultSet -> new AbstractMap.SimpleEntry<>(converter.getKey(resultSet), converter.getValue(resultSet)))
+                            .stream()
+                            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
                 } catch (SQLException e) {
                     logger.log(LogLevel.ERROR, "Failed to load top holder", e);
                     return Collections.emptyMap();
