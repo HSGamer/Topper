@@ -1,7 +1,7 @@
 package me.hsgamer.topper.spigot.plugin.command;
 
 import me.hsgamer.hscore.bukkit.utils.MessageUtils;
-import me.hsgamer.topper.core.DataEntry;
+import me.hsgamer.topper.agent.snapshot.DataSnapshot;
 import me.hsgamer.topper.spigot.plugin.Permissions;
 import me.hsgamer.topper.spigot.plugin.TopperPlugin;
 import me.hsgamer.topper.spigot.plugin.config.MessageConfig;
@@ -63,10 +63,16 @@ public class GetTopListCommand extends Command {
             return false;
         }
 
+        List<DataSnapshot<UUID, Double>> topSnapshot = topHolder.getSnapshotAgent().getSnapshot();
         List<String> topList = new ArrayList<>();
         for (int i = fromIndex; i <= toIndex; i++) {
-            DataEntry<UUID, Double> topEntry = topHolder.getSnapshotAgent().getEntryByIndex(i - 1).orElse(null);
-            String line = instance.get(MessageConfig.class).getTopEntryLine(topEntry);
+            DataSnapshot<UUID, Double> snapshot;
+            if (i - 1 < topSnapshot.size()) {
+                snapshot = topSnapshot.get(i - 1);
+            } else {
+                snapshot = null;
+            }
+            String line = instance.get(MessageConfig.class).getTopEntryLine(i, snapshot);
             topList.add(line);
         }
         if (topList.isEmpty()) {
