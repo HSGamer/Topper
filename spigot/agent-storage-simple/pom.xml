@@ -14,6 +14,11 @@
     <dependencies>
         <dependency>
             <groupId>me.hsgamer</groupId>
+            <artifactId>hscore-config-common</artifactId>
+            <version>${core.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>me.hsgamer</groupId>
             <artifactId>hscore-bukkit-config</artifactId>
             <version>${core.version}</version>
         </dependency>

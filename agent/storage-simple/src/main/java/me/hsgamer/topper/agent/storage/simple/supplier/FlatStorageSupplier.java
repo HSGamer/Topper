@@ -1,101 +1,107 @@
 package me.hsgamer.topper.agent.storage.simple.supplier;
 
-import me.hsgamer.hscore.config.Config;
+import me.hsgamer.hscore.logger.common.LogLevel;
+import me.hsgamer.hscore.logger.common.Logger;
+import me.hsgamer.hscore.logger.provider.LoggerProvider;
 import me.hsgamer.topper.agent.storage.DataStorage;
 import me.hsgamer.topper.agent.storage.simple.converter.FlatEntryConverter;
-import me.hsgamer.topper.agent.storage.simple.util.AutoSaveConfig;
 import me.hsgamer.topper.core.DataHolder;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
-import java.util.function.Function;
-import java.util.function.UnaryOperator;
+import java.util.function.Supplier;
 
 public class FlatStorageSupplier<K, V> implements DataStorageSupplier<K, V> {
-    private final UnaryOperator<Runnable> runTaskFunction;
-    private final Executor mainThreadExecutor;
-    private final UnaryOperator<String> configNameProvider;
-    private final Function<File, Config> configProvider;
+    private final Logger logger = LoggerProvider.getLogger(getClass());
     private final File holderBaseFolder;
     private final FlatEntryConverter<K, V> converter;
 
-    public FlatStorageSupplier(
-            UnaryOperator<Runnable> runTaskFunction,
-            Executor mainThreadExecutor,
-            UnaryOperator<String> configNameProvider,
-            Function<File, Config> configProvider,
-            File holderBaseFolder,
-            FlatEntryConverter<K, V> converter
-    ) {
-        this.runTaskFunction = runTaskFunction;
-        this.mainThreadExecutor = mainThreadExecutor;
-        this.configNameProvider = configNameProvider;
-        this.configProvider = configProvider;
+    public FlatStorageSupplier(File holderBaseFolder, FlatEntryConverter<K, V> converter) {
         this.holderBaseFolder = holderBaseFolder;
         this.converter = converter;
     }
 
     @Override
-    public DataStorage<K, V> getStorage(DataHolder<K, V> holder) {
-        return new DataStorage<K, V>() {
-            private final AutoSaveConfig config = new AutoSaveConfig(configProvider.apply(new File(holderBaseFolder, configNameProvider.apply(holder.getName()))), runTaskFunction);
+    public DataStorage<K, V> getStorage(DataHolder<K, V> dataHolder) {
+        Properties properties = new Properties();
+        File file = new File(holderBaseFolder, dataHolder.getName() + ".properties");
+        Runnable loadRunnable = () -> {
+            try {
+                if (!file.exists()) {
+                    File parent = file.getParentFile();
+                    if (parent != null && !parent.exists()) {
+                        parent.mkdirs();
+                    }
+                    file.createNewFile();
+                }
+                try (FileInputStream fileOutputStream = new FileInputStream(file)) {
+                    properties.load(fileOutputStream);
+                }
+            } catch (IOException e) {
+                logger.log(LogLevel.ERROR, "Failed to load the data", e);
+            }
+        };
+        Runnable saveRunnable = () -> {
+            try {
+                try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
+                    properties.store(fileOutputStream, "Data for " + dataHolder.getName());
+                }
+            } catch (IOException e) {
+                logger.log(LogLevel.ERROR, "Failed to save the data", e);
+            }
+        };
 
+        return new DataStorage<K, V>() {
             @Override
             public Map<K, V> load() {
-                Map<String[], Object> values = config.getValues(false);
                 Map<K, V> map = new HashMap<>();
-                values.forEach((path, value) -> {
-                    V finalValue = converter.toValue(value);
-                    if (finalValue != null) {
-                        K finalKey = converter.toKey(path[0]);
-                        map.put(finalKey, finalValue);
-                    }
+                properties.forEach((key, value) -> {
+                    K k = converter.toKey(key.toString());
+                    V v = converter.toValue(value);
+                    map.put(k, v);
                 });
                 return map;
             }
 
             @Override
             public CompletableFuture<Void> save(Map<K, V> map, boolean urgent) {
-                CompletableFuture<Void> future = new CompletableFuture<>();
                 Runnable runnable = () -> {
-                    map.forEach((key, value) -> config.set(converter.toRawValue(value), converter.toRawKey(key)));
-                    future.complete(null);
+                    map.forEach((k, v) -> properties.put(converter.toRawKey(k), converter.toRawValue(v)));
+                    saveRunnable.run();
                 };
                 if (urgent) {
                     runnable.run();
+                    return CompletableFuture.completedFuture(null);
                 } else {
-                    mainThreadExecutor.execute(runnable);
+                    return CompletableFuture.runAsync(runnable);
                 }
-                return future;
             }
 
             @Override
             public CompletableFuture<Optional<V>> load(K key, boolean urgent) {
-                CompletableFuture<Optional<V>> future = new CompletableFuture<>();
-                Runnable runnable = () -> {
-                    Optional<V> optional = Optional.ofNullable(config.get(converter.toRawKey(key))).map(converter::toValue);
-                    future.complete(optional);
-                };
+                Supplier<Optional<V>> runnable = () -> Optional.ofNullable(properties.getProperty(converter.toRawKey(key))).map(converter::toValue);
                 if (urgent) {
-                    runnable.run();
+                    return CompletableFuture.completedFuture(runnable.get());
                 } else {
-                    mainThreadExecutor.execute(runnable);
+                    return CompletableFuture.supplyAsync(runnable);
                 }
-                return future;
             }
 
             @Override
             public void onRegister() {
-                config.setup();
+                loadRunnable.run();
             }
 
             @Override
             public void onUnregister() {
-                config.finalSave();
+                saveRunnable.run();
             }
         };
     }

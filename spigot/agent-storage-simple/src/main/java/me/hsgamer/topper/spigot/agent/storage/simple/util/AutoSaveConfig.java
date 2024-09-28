@@ -1,4 +1,4 @@
-package me.hsgamer.topper.agent.storage.simple.util;
+package me.hsgamer.topper.spigot.agent.storage.simple.util;
 
 import me.hsgamer.hscore.config.Config;
 import me.hsgamer.hscore.config.DecorativeConfig;
