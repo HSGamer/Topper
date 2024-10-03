@@ -12,10 +12,10 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class SnapshotAgent<K, V> implements Agent<K, V>, Runnable {
-    private final AtomicReference<List<DataSnapshot<K, V>>> topSnapshot = new AtomicReference<>(Collections.emptyList());
+    private final AtomicReference<List<Map.Entry<K, V>>> topSnapshot = new AtomicReference<>(Collections.emptyList());
     private final AtomicReference<Map<K, Integer>> indexMap = new AtomicReference<>(Collections.emptyMap());
     private final DataHolder<K, V> holder;
-    private final List<Predicate<DataSnapshot<K, V>>> filters = new ArrayList<>();
+    private final List<Predicate<Map.Entry<K, V>>> filters = new ArrayList<>();
     private Comparator<V> comparator;
 
     public SnapshotAgent(DataHolder<K, V> holder) {
@@ -24,12 +24,12 @@ public class SnapshotAgent<K, V> implements Agent<K, V>, Runnable {
 
     @Override
     public void run() {
-        List<DataSnapshot<K, V>> list = getUrgentSnapshot();
+        List<Map.Entry<K, V>> list = getUrgentSnapshot();
         topSnapshot.set(getUrgentSnapshot());
 
         Map<K, Integer> map = IntStream.range(0, list.size())
                 .boxed()
-                .collect(Collectors.toMap(i -> list.get(i).key, i -> i));
+                .collect(Collectors.toMap(i -> list.get(i).getKey(), i -> i));
         indexMap.set(map);
     }
 
@@ -39,17 +39,17 @@ public class SnapshotAgent<K, V> implements Agent<K, V>, Runnable {
         indexMap.set(Collections.emptyMap());
     }
 
-    public List<DataSnapshot<K, V>> getUrgentSnapshot() {
-        Stream<DataSnapshot<K, V>> stream = holder.getEntryMap().entrySet().stream()
-                .map(entry -> new DataSnapshot<>(entry.getKey(), entry.getValue().getValue()))
+    public List<Map.Entry<K, V>> getUrgentSnapshot() {
+        Stream<Map.Entry<K, V>> stream = holder.getEntryMap().entrySet().stream()
+                .<Map.Entry<K, V>>map(entry -> new AbstractMap.SimpleImmutableEntry<>(entry.getKey(), entry.getValue().getValue()))
                 .filter(snapshot -> filters.stream().allMatch(filter -> filter.test(snapshot)));
         if (comparator != null) {
-            stream = stream.sorted(Comparator.comparing(snapshot -> snapshot.value, comparator));
+            stream = stream.sorted(Map.Entry.comparingByValue(comparator));
         }
         return stream.collect(Collectors.toList());
     }
 
-    public List<DataSnapshot<K, V>> getSnapshot() {
+    public List<Map.Entry<K, V>> getSnapshot() {
         return topSnapshot.get();
     }
 
@@ -57,21 +57,21 @@ public class SnapshotAgent<K, V> implements Agent<K, V>, Runnable {
         return indexMap.get().getOrDefault(key, -1);
     }
 
-    public Optional<DataSnapshot<K, V>> getSnapshotByIndex(int index) {
-        List<DataSnapshot<K, V>> list = getSnapshot();
+    public Optional<Map.Entry<K, V>> getSnapshotByIndex(int index) {
+        List<Map.Entry<K, V>> list = getSnapshot();
         if (index < 0 || index >= list.size()) return Optional.empty();
         return Optional.of(list.get(index));
     }
 
     public Optional<DataEntry<K, V>> getEntryByIndex(int index) {
-        return getSnapshotByIndex(index).flatMap(snapshot -> holder.getEntry(snapshot.key));
+        return getSnapshotByIndex(index).flatMap(snapshot -> holder.getEntry(snapshot.getKey()));
     }
 
     public void setComparator(Comparator<V> comparator) {
         this.comparator = comparator;
     }
 
-    public void addFilter(Predicate<DataSnapshot<K, V>> filter) {
+    public void addFilter(Predicate<Map.Entry<K, V>> filter) {
         filters.add(filter);
     }
 }

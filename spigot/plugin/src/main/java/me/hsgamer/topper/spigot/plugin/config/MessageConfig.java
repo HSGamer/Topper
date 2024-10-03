@@ -1,12 +1,12 @@
 package me.hsgamer.topper.spigot.plugin.config;
 
 import me.hsgamer.hscore.config.annotation.ConfigPath;
-import me.hsgamer.topper.agent.snapshot.DataSnapshot;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.Nullable;
 
 import java.text.DecimalFormat;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -93,12 +93,12 @@ public interface MessageConfig {
                 .orElse(getDisplayNullValue());
     }
 
-    default String getTopEntryLine(int index, @Nullable DataSnapshot<UUID, Double> dataSnapshot) {
+    default String getTopEntryLine(int index, @Nullable Map.Entry<UUID, Double> dataSnapshot) {
         return getTopEntryLine()
                 .replace("{index}", String.valueOf(index))
-                .replace("{uuid}", getDisplayUuid(dataSnapshot == null ? null : dataSnapshot.key))
-                .replace("{name}", getDisplayName(dataSnapshot == null ? null : dataSnapshot.key))
-                .replace("{value}", getDisplayValue(dataSnapshot == null ? null : dataSnapshot.value))
-                .replace("{raw_value}", getDisplayRawValue(dataSnapshot == null ? null : dataSnapshot.value));
+                .replace("{uuid}", getDisplayUuid(dataSnapshot == null ? null : dataSnapshot.getKey()))
+                .replace("{name}", getDisplayName(dataSnapshot == null ? null : dataSnapshot.getKey()))
+                .replace("{value}", getDisplayValue(dataSnapshot == null ? null : dataSnapshot.getValue()))
+                .replace("{raw_value}", getDisplayRawValue(dataSnapshot == null ? null : dataSnapshot.getValue()));
     }
 }
