@@ -4,20 +4,23 @@ import me.hsgamer.topper.agent.core.Agent;
 import me.hsgamer.topper.core.DataEntry;
 import me.hsgamer.topper.core.DataHolder;
 
-import java.util.*;
+import java.util.Optional;
+import java.util.Queue;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Function;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class UpdateAgent<K, V> implements Agent<K, V>, Runnable {
+    private final Logger logger;
     private final Queue<K> updateQueue = new ConcurrentLinkedQueue<>();
-    private final Set<K> updatingSet = ConcurrentHashMap.newKeySet();
     private final DataHolder<K, V> holder;
     private final Function<K, CompletableFuture<Optional<V>>> updateFunction;
     private int maxEntryPerCall = 10;
 
-    public UpdateAgent(DataHolder<K, V> holder, Function<K, CompletableFuture<Optional<V>>> updateFunction) {
+    public UpdateAgent(Logger logger, DataHolder<K, V> holder, Function<K, CompletableFuture<Optional<V>>> updateFunction) {
+        this.logger = logger;
         this.holder = holder;
         this.updateFunction = updateFunction;
     }
@@ -28,18 +31,20 @@ public class UpdateAgent<K, V> implements Agent<K, V>, Runnable {
 
     @Override
     public void run() {
-        List<K> list = new ArrayList<>();
         for (int i = 0; i < maxEntryPerCall; i++) {
             K k = updateQueue.poll();
             if (k == null) {
                 break;
             }
             DataEntry<K, V> entry = holder.getOrCreateEntry(k);
-            updateEntry(entry);
-            list.add(k);
-        }
-        if (!list.isEmpty()) {
-            updateQueue.addAll(list);
+            updateFunction.apply(k).whenComplete((optional, throwable) -> {
+                if (throwable != null) {
+                    logger.log(Level.WARNING, "An error occurred while updating the entry: " + k, throwable);
+                } else {
+                    optional.ifPresent(entry::setValue);
+                }
+                updateQueue.add(k);
+            });
         }
     }
 
@@ -51,15 +56,5 @@ public class UpdateAgent<K, V> implements Agent<K, V>, Runnable {
     @Override
     public void onRemove(DataEntry<K, V> entry) {
         updateQueue.remove(entry.getKey());
-    }
-
-    private void updateEntry(DataEntry<K, V> entry) {
-        K key = entry.getKey();
-        if (updatingSet.contains(key)) return;
-        updatingSet.add(key);
-        updateFunction.apply(key).thenAccept(optional -> {
-            optional.ifPresent(entry::setValue);
-            updatingSet.remove(key);
-        });
     }
 }
