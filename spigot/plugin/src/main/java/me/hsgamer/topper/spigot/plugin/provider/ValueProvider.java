@@ -5,6 +5,8 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public interface ValueProvider {
+    ValueProvider EMPTY = uuid -> CompletableFuture.completedFuture(Optional.empty());
+
     default Double getDefaultValue() {
         return 0D;
     }

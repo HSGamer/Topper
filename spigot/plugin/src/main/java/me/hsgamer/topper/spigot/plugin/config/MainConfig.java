@@ -1,35 +1,16 @@
 package me.hsgamer.topper.spigot.plugin.config;
 
+import me.hsgamer.hscore.config.Config;
 import me.hsgamer.hscore.config.annotation.Comment;
 import me.hsgamer.hscore.config.annotation.ConfigPath;
-import me.hsgamer.topper.spigot.plugin.config.converter.StringValueMapConverter;
+import me.hsgamer.topper.spigot.plugin.config.converter.StringStringObjectMapConverter;
 
 import java.util.Collections;
 import java.util.Map;
 
 public interface MainConfig {
-    @ConfigPath(value = "placeholders", converter = StringValueMapConverter.class, priority = 1)
-    @Comment({
-            "This is where you add placeholders that the plugin will listen for values to store in the leaderboard",
-            "Note that the placeholder should have its final value as a number (or else the leaderboard won't update)",
-            "",
-            "You can add by adding to the section with the format \"<name>: <placeholder>\"",
-            "This creates a new \"Top Holder\" with the name \"<name>\" and the placeholder \"<placeholder>\"",
-            "You can add \"[ONLINE]\" before the \"<placeholder>\" to indicate that the holder should only get values when the player is online",
-            "You can add \"[ASYNC]\" before the \"<placeholder>\" to indicate that the holder should get values asynchronously",
-            "You can add \"[LENIENT]\" before the \"<placeholder>\" to indicate that the holder should ignore errors while parsing the placeholder. ONLY USE THIS IF YOU ARE SURE THAT THE ERRORS ARE NOT CRITICAL",
-            "",
-            "For example, If you want to create three new leaderboards",
-            "- \"player_x\" listens to the placeholder \"%player_x%\"",
-            "- \"player_y\" listens to the placeholder \"%player_y%\" only when the players are online",
-            "- \"player_z\" listens to the placeholder \"%player_z%\" only when the players are online and get values asynchronously",
-            "Here is how it's set",
-            "placeholders:",
-            "  player_x: '%player_x%'",
-            "  player_y: '[ONLINE] %player_y%' add [ONLINE] before %player_y% to specify that this holder only gets the value from the placeholder when the player is online",
-            "  player_z: '[ASYNC][ONLINE] %player_z%' add [ONLINE] before %player_z% to specify that this holder only gets the value from the placeholder when the player is online, and it should get values asynchronously"
-    })
-    default Map<String, String> getPlaceholders() {
+    @ConfigPath(value = "holders", converter = StringStringObjectMapConverter.class, priority = 1)
+    default Map<String, Map<String, Object>> getHolders() {
         return Collections.emptyMap();
     }
 
@@ -73,4 +54,6 @@ public interface MainConfig {
     }
 
     void reloadConfig();
+
+    Config getConfig();
 }

@@ -10,6 +10,7 @@ import me.hsgamer.topper.agent.update.UpdateAgent;
 import me.hsgamer.topper.core.DataEntry;
 import me.hsgamer.topper.spigot.agent.runnable.SpigotRunnableAgent;
 import me.hsgamer.topper.spigot.plugin.TopperPlugin;
+import me.hsgamer.topper.spigot.plugin.builder.ValueProviderBuilder;
 import me.hsgamer.topper.spigot.plugin.config.MainConfig;
 import me.hsgamer.topper.spigot.plugin.manager.TopManager;
 import me.hsgamer.topper.spigot.plugin.notification.UpdateNotificationManager;
@@ -17,6 +18,7 @@ import me.hsgamer.topper.spigot.plugin.provider.ValueProvider;
 import org.bukkit.OfflinePlayer;
 
 import java.util.Comparator;
+import java.util.Map;
 import java.util.UUID;
 
 public class NumberTopHolder extends AgentDataHolder<UUID, Double> {
@@ -25,9 +27,12 @@ public class NumberTopHolder extends AgentDataHolder<UUID, Double> {
     private final StorageAgent<UUID, Double> storageAgent;
     private final SnapshotAgent<UUID, Double> snapshotAgent;
 
-    public NumberTopHolder(TopperPlugin instance, String name, ValueProvider valueProvider) {
+    public NumberTopHolder(TopperPlugin instance, String name, Map<String, Object> map) {
         super(name);
-        this.valueProvider = valueProvider;
+        this.valueProvider = instance.get(ValueProviderBuilder.class).build(map).orElseGet(() -> {
+            instance.getLogger().warning("No value provider found for " + name);
+            return ValueProvider.EMPTY;
+        });
 
         this.updateAgent = new UpdateAgent<>(instance.getLogger(), this, valueProvider::getValue);
         updateAgent.setMaxEntryPerCall(instance.get(MainConfig.class).getTaskUpdateEntryPerTick());

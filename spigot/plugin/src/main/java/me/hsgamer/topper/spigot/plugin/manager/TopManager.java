@@ -6,7 +6,6 @@ import me.hsgamer.topper.spigot.plugin.TopperPlugin;
 import me.hsgamer.topper.spigot.plugin.builder.NumberStorageBuilder;
 import me.hsgamer.topper.spigot.plugin.config.MainConfig;
 import me.hsgamer.topper.spigot.plugin.holder.NumberTopHolder;
-import me.hsgamer.topper.spigot.plugin.provider.PlaceholderValueProvider;
 
 import java.util.*;
 
@@ -23,7 +22,11 @@ public class TopManager implements Loadable {
     public void enable() {
         storageSupplier = instance.get(NumberStorageBuilder.class).buildSupplier(instance.get(MainConfig.class).getStorageType());
         storageSupplier.enable();
-        instance.get(MainConfig.class).getPlaceholders().forEach((key, value) -> addTopHolder(key, new NumberTopHolder(instance, key, new PlaceholderValueProvider(instance, PlaceholderValueProvider.Input.fromString(value)))));
+        instance.get(MainConfig.class).getHolders().forEach((key, value) -> {
+            NumberTopHolder topHolder = new NumberTopHolder(instance, key, value);
+            topHolder.register();
+            topHolders.put(key, topHolder);
+        });
     }
 
     @Override
@@ -31,12 +34,6 @@ public class TopManager implements Loadable {
         topHolders.values().forEach(NumberTopHolder::unregister);
         topHolders.clear();
         storageSupplier.disable();
-    }
-
-    public void addTopHolder(String key, NumberTopHolder topHolder) {
-        topHolder.register();
-        NumberTopHolder oldHolder = topHolders.put(key, topHolder);
-        if (oldHolder != null) oldHolder.unregister();
     }
 
     public DataStorageSupplier<UUID, Double> getStorageSupplier() {

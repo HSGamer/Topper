@@ -1,13 +1,12 @@
-package me.hsgamer.topper.spigot.plugin.hook;
+package me.hsgamer.topper.spigot.plugin.hook.papi;
 
-import io.github.projectunified.minelib.plugin.base.Loadable;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import me.hsgamer.topper.spigot.plugin.TopperPlugin;
 import me.hsgamer.topper.spigot.plugin.manager.TopQueryManager;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
-public class TopPlaceholderExpansion extends PlaceholderExpansion implements Loadable {
+public class TopPlaceholderExpansion extends PlaceholderExpansion {
     private final TopperPlugin instance;
 
     public TopPlaceholderExpansion(TopperPlugin instance) {
@@ -32,16 +31,6 @@ public class TopPlaceholderExpansion extends PlaceholderExpansion implements Loa
     @Override
     public boolean persist() {
         return true;
-    }
-
-    @Override
-    public void enable() {
-        this.register();
-    }
-
-    @Override
-    public void disable() {
-        this.unregister();
     }
 
     @Override
