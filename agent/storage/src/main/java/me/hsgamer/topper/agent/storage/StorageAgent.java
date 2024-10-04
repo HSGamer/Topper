@@ -4,11 +4,13 @@ import me.hsgamer.topper.agent.core.Agent;
 import me.hsgamer.topper.core.DataEntry;
 import me.hsgamer.topper.core.DataHolder;
 
+import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -16,7 +18,9 @@ public class StorageAgent<K, V> implements Agent<K, V>, Runnable {
     private final Logger logger;
     private final DataHolder<K, V> holder;
     private final DataStorage<K, V> storage;
-    private final Queue<K> queue = new ConcurrentLinkedQueue<>();
+    private final Queue<Map.Entry<K, V>> queue = new ConcurrentLinkedQueue<>();
+    private final AtomicReference<Map<K, V>> savingMap = new AtomicReference<>();
+    private final AtomicBoolean saving = new AtomicBoolean(false);
     private int maxEntryPerCall = 10;
 
     public StorageAgent(Logger logger, DataHolder<K, V> holder, DataStorage<K, V> storage) {
@@ -26,22 +30,37 @@ public class StorageAgent<K, V> implements Agent<K, V>, Runnable {
     }
 
     private void save(boolean urgent) {
-        Map<K, V> map = new HashMap<>();
+        if (saving.get() && !urgent) return;
+        saving.set(true);
+
+        Map<K, V> map = savingMap.get();
+        if (map == null) {
+            map = new HashMap<>();
+        }
+        savingMap.set(map);
+
         for (int i = 0; i < (urgent || maxEntryPerCall <= 0 ? Integer.MAX_VALUE : maxEntryPerCall); i++) {
-            K key = queue.poll();
-            if (key == null) {
+            Map.Entry<K, V> entry = queue.poll();
+            if (entry == null) {
                 break;
             }
-            DataEntry<K, V> entry = holder.getOrCreateEntry(key);
-            map.put(key, entry.getValue());
+            map.put(entry.getKey(), entry.getValue());
         }
-        if (!map.isEmpty()) {
-            storage.save(map, urgent).whenComplete((v, t) -> {
-                if (t != null) {
-                    logger.log(Level.SEVERE, "An error occurred while saving data", t);
-                }
-            });
+
+        if (map.isEmpty()) {
+            savingMap.set(null);
+            saving.set(false);
+            return;
         }
+
+        storage.save(map, urgent).whenComplete((v, throwable) -> {
+            if (throwable != null) {
+                logger.log(Level.SEVERE, "Failed to save entries for " + holder.getName(), throwable);
+            } else {
+                savingMap.set(null);
+            }
+            saving.set(false);
+        });
     }
 
     @Override
@@ -66,7 +85,7 @@ public class StorageAgent<K, V> implements Agent<K, V>, Runnable {
 
     @Override
     public void onUpdate(DataEntry<K, V> entry) {
-        queue.add(entry.getKey());
+        queue.add(new AbstractMap.SimpleImmutableEntry<>(entry.getKey(), entry.getValue()));
     }
 
     @Override
@@ -76,22 +95,6 @@ public class StorageAgent<K, V> implements Agent<K, V>, Runnable {
 
     public DataStorage<K, V> getStorage() {
         return storage;
-    }
-
-    public void loadIfExists(K key, boolean urgent) {
-        Optional<DataEntry<K, V>> optional = holder.getEntry(key);
-        if (!optional.isPresent()) {
-            return;
-        }
-        DataEntry<K, V> entry = optional.get();
-
-        storage.load(key, urgent).whenComplete((result, t) -> {
-            if (t != null) {
-                logger.log(Level.SEVERE, "An error occurred while loading data", t);
-            } else {
-                result.ifPresent(entry::setValue);
-            }
-        });
     }
 
     public void setMaxEntryPerCall(int taskSaveEntryPerTick) {
