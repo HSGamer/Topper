@@ -5,7 +5,6 @@ import me.hsgamer.hscore.logger.common.Logger;
 import me.hsgamer.hscore.logger.provider.LoggerProvider;
 import me.hsgamer.topper.agent.storage.DataStorage;
 import me.hsgamer.topper.agent.storage.simple.converter.FlatEntryConverter;
-import me.hsgamer.topper.core.DataHolder;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -29,9 +28,9 @@ public class FlatStorageSupplier<K, V> implements DataStorageSupplier<K, V> {
     }
 
     @Override
-    public DataStorage<K, V> getStorage(DataHolder<K, V> dataHolder) {
+    public DataStorage<K, V> getStorage(String name) {
         Properties properties = new Properties();
-        File file = new File(holderBaseFolder, dataHolder.getName() + ".properties");
+        File file = new File(holderBaseFolder, name + ".properties");
         Runnable loadRunnable = () -> {
             try {
                 if (!file.exists()) {
@@ -51,7 +50,7 @@ public class FlatStorageSupplier<K, V> implements DataStorageSupplier<K, V> {
         Runnable saveRunnable = () -> {
             try {
                 try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
-                    properties.store(fileOutputStream, "Data for " + dataHolder.getName());
+                    properties.store(fileOutputStream, "Data for " + name);
                 }
             } catch (IOException e) {
                 logger.log(LogLevel.ERROR, "Failed to save the data", e);

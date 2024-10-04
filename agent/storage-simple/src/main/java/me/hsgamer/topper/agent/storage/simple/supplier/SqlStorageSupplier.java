@@ -38,7 +38,7 @@ public abstract class SqlStorageSupplier<K, V> implements DataStorageSupplier<K,
     protected abstract Object[] toSaveValues(Object[] keys, Object[] values);
 
     @Override
-    public DataStorage<K, V> getStorage(DataHolder<K, V> dataHolder) {
+    public DataStorage<K, V> getStorage(String name) {
         return new DataStorage<K, V>() {
             @Override
             public Map<K, V> load() {
@@ -46,7 +46,7 @@ public abstract class SqlStorageSupplier<K, V> implements DataStorageSupplier<K,
                 try {
                     connection = getConnection();
                     return StatementBuilder.create(connection)
-                            .setStatement("SELECT * FROM `" + dataHolder.getName() + "`;")
+                            .setStatement("SELECT * FROM `" + name + "`;")
                             .queryList(resultSet -> new AbstractMap.SimpleEntry<>(converter.getKey(resultSet), converter.getValue(resultSet)))
                             .stream()
                             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
@@ -69,7 +69,7 @@ public abstract class SqlStorageSupplier<K, V> implements DataStorageSupplier<K,
                         String[] keyColumns = converter.getKeyColumns();
                         String[] valueColumns = converter.getValueColumns();
 
-                        @Language("SQL") String statement = toSaveStatement(dataHolder.getName(), keyColumns, valueColumns);
+                        @Language("SQL") String statement = toSaveStatement(name, keyColumns, valueColumns);
 
                         BatchBuilder batchBuilder = BatchBuilder.create(connection, statement);
                         map.forEach((key, value) -> {
@@ -105,7 +105,7 @@ public abstract class SqlStorageSupplier<K, V> implements DataStorageSupplier<K,
                         Object[] keyValues = converter.toKeyQueryValues(key);
 
                         StringBuilder statement = new StringBuilder("SELECT * FROM `")
-                                .append(dataHolder.getName())
+                                .append(name)
                                 .append("` WHERE ");
                         for (int i = 0; i < keyColumns.length; i++) {
                             statement.append("`")
@@ -147,7 +147,7 @@ public abstract class SqlStorageSupplier<K, V> implements DataStorageSupplier<K,
                     String[] keyColumnDefinitions = converter.getKeyColumnDefinitions();
                     String[] valueColumnDefinitions = converter.getValueColumnDefinitions();
                     StringBuilder statement = new StringBuilder("CREATE TABLE IF NOT EXISTS `")
-                            .append(dataHolder.getName())
+                            .append(name)
                             .append("` (");
                     for (int i = 0; i < keyColumnDefinitions.length + valueColumnDefinitions.length; i++) {
                         if (i < keyColumnDefinitions.length) {

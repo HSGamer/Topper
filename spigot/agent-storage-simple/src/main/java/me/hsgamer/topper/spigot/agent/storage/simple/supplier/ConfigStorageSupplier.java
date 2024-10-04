@@ -4,7 +4,6 @@ import me.hsgamer.hscore.config.Config;
 import me.hsgamer.topper.agent.storage.DataStorage;
 import me.hsgamer.topper.agent.storage.simple.converter.FlatEntryConverter;
 import me.hsgamer.topper.agent.storage.simple.supplier.DataStorageSupplier;
-import me.hsgamer.topper.core.DataHolder;
 import me.hsgamer.topper.spigot.agent.storage.simple.util.AutoSaveConfig;
 
 import java.io.File;
@@ -41,9 +40,9 @@ public class ConfigStorageSupplier<K, V> implements DataStorageSupplier<K, V> {
     }
 
     @Override
-    public DataStorage<K, V> getStorage(DataHolder<K, V> holder) {
+    public DataStorage<K, V> getStorage(String name) {
         return new DataStorage<K, V>() {
-            private final AutoSaveConfig config = new AutoSaveConfig(configProvider.apply(new File(holderBaseFolder, configNameProvider.apply(holder.getName()))), runTaskFunction);
+            private final AutoSaveConfig config = new AutoSaveConfig(configProvider.apply(new File(holderBaseFolder, configNameProvider.apply(name))), runTaskFunction);
 
             @Override
             public Map<K, V> load() {
