@@ -15,8 +15,12 @@ public class HookSystem implements Loadable {
         this.instance = instance;
     }
 
+    private boolean isPluginLoaded(String pluginName) {
+        return instance.getServer().getPluginManager().getPlugin(pluginName) != null;
+    }
+
     private void registerHooks() {
-        if (instance.getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
+        if (isPluginLoaded("PlaceholderAPI")) {
             hooks.add(new PlaceholderAPIHook(instance));
         }
     }
