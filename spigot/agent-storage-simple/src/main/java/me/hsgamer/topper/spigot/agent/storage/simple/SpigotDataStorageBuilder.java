@@ -31,8 +31,8 @@ public class SpigotDataStorageBuilder<K, V> extends DataStorageBuilder<K, V> {
             return task::cancel;
         };
         this.mainThreadExecutor = runnable -> GlobalScheduler.get(plugin).run(runnable);
-        register(v -> new ConfigStorageSupplier<>(runTaskFunction, mainThreadExecutor, name -> name + ".yml", BukkitConfig::new, holderBaseFolder, flatEntryConverter), "config", "yaml", "yml");
-        register(v -> new ConfigStorageSupplier<>(runTaskFunction, mainThreadExecutor, name -> name + ".json", BukkitConfig::new, holderBaseFolder, flatEntryConverter), "json");
+        register(v -> new ConfigStorageSupplier<>(mainThreadExecutor, name -> name + ".yml", BukkitConfig::new, holderBaseFolder, flatEntryConverter), "config", "yaml", "yml");
+        register(v -> new ConfigStorageSupplier<>(mainThreadExecutor, name -> name + ".json", BukkitConfig::new, holderBaseFolder, flatEntryConverter), "json");
     }
 
     public UnaryOperator<Runnable> getRunTaskFunction() {

@@ -4,7 +4,6 @@ import me.hsgamer.hscore.config.Config;
 import me.hsgamer.topper.agent.storage.DataStorage;
 import me.hsgamer.topper.agent.storage.simple.converter.FlatEntryConverter;
 import me.hsgamer.topper.agent.storage.simple.supplier.DataStorageSupplier;
-import me.hsgamer.topper.spigot.agent.storage.simple.util.AutoSaveConfig;
 
 import java.io.File;
 import java.util.HashMap;
@@ -16,7 +15,6 @@ import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
 public class ConfigStorageSupplier<K, V> implements DataStorageSupplier<K, V> {
-    private final UnaryOperator<Runnable> runTaskFunction;
     private final Executor mainThreadExecutor;
     private final UnaryOperator<String> configNameProvider;
     private final Function<File, Config> configProvider;
@@ -24,14 +22,12 @@ public class ConfigStorageSupplier<K, V> implements DataStorageSupplier<K, V> {
     private final FlatEntryConverter<K, V> converter;
 
     public ConfigStorageSupplier(
-            UnaryOperator<Runnable> runTaskFunction,
             Executor mainThreadExecutor,
             UnaryOperator<String> configNameProvider,
             Function<File, Config> configProvider,
             File holderBaseFolder,
             FlatEntryConverter<K, V> converter
     ) {
-        this.runTaskFunction = runTaskFunction;
         this.mainThreadExecutor = mainThreadExecutor;
         this.configNameProvider = configNameProvider;
         this.configProvider = configProvider;
@@ -42,7 +38,7 @@ public class ConfigStorageSupplier<K, V> implements DataStorageSupplier<K, V> {
     @Override
     public DataStorage<K, V> getStorage(String name) {
         return new DataStorage<K, V>() {
-            private final AutoSaveConfig config = new AutoSaveConfig(configProvider.apply(new File(holderBaseFolder, configNameProvider.apply(name))), runTaskFunction);
+            private final Config config = configProvider.apply(new File(holderBaseFolder, configNameProvider.apply(name)));
 
             @Override
             public Map<K, V> load() {
@@ -60,32 +56,22 @@ public class ConfigStorageSupplier<K, V> implements DataStorageSupplier<K, V> {
 
             @Override
             public CompletableFuture<Void> save(Map<K, V> map, boolean urgent) {
-                CompletableFuture<Void> future = new CompletableFuture<>();
-                Runnable runnable = () -> {
-                    map.forEach((key, value) -> config.set(converter.toRawValue(value), converter.toRawKey(key)));
-                    future.complete(null);
-                };
-                if (urgent) {
-                    runnable.run();
-                } else {
-                    mainThreadExecutor.execute(runnable);
-                }
-                return future;
+                return CompletableFuture.supplyAsync(
+                        () -> {
+                            map.forEach((key, value) -> config.set(converter.toRawValue(value), converter.toRawKey(key)));
+                            config.save();
+                            return null;
+                        },
+                        urgent ? Runnable::run : mainThreadExecutor
+                );
             }
 
             @Override
             public CompletableFuture<Optional<V>> load(K key, boolean urgent) {
-                CompletableFuture<Optional<V>> future = new CompletableFuture<>();
-                Runnable runnable = () -> {
-                    Optional<V> optional = Optional.ofNullable(config.get(converter.toRawKey(key))).map(converter::toValue);
-                    future.complete(optional);
-                };
-                if (urgent) {
-                    runnable.run();
-                } else {
-                    mainThreadExecutor.execute(runnable);
-                }
-                return future;
+                return CompletableFuture.supplyAsync(
+                        () -> Optional.ofNullable(config.get(converter.toRawKey(key))).map(converter::toValue),
+                        urgent ? Runnable::run : mainThreadExecutor
+                );
             }
 
             @Override
@@ -95,7 +81,7 @@ public class ConfigStorageSupplier<K, V> implements DataStorageSupplier<K, V> {
 
             @Override
             public void onUnregister() {
-                config.finalSave();
+                config.save();
             }
         };
     }
