@@ -17,7 +17,7 @@ public abstract class SnapshotQueryManager<K, V, H extends DataHolder<K, V>, A> 
                 // IGNORED
             }
             K key = getSnapshotAgent(holder).getEntryByIndex(i - 1).map(DataEntry::getKey).orElse(null);
-            return getDisplayName(key);
+            return getDisplayName(key, holder);
         });
         registerFunction("top_key", (holder, args) -> {
             int i = 1;
@@ -27,7 +27,7 @@ public abstract class SnapshotQueryManager<K, V, H extends DataHolder<K, V>, A> 
                 // IGNORED
             }
             K key = getSnapshotAgent(holder).getEntryByIndex(i - 1).map(DataEntry::getKey).orElse(null);
-            return getDisplayKey(key);
+            return getDisplayKey(key, holder);
         });
         registerFunction("top_value", (holder, args) -> {
             int i = 1;
@@ -37,7 +37,7 @@ public abstract class SnapshotQueryManager<K, V, H extends DataHolder<K, V>, A> 
                 // IGNORED
             }
             V value = getSnapshotAgent(holder).getEntryByIndex(i - 1).map(DataEntry::getValue).orElse(null);
-            return getDisplayValue(value);
+            return getDisplayValue(value, holder);
         });
         registerFunction("top_value_raw", (holder, args) -> {
             int i = 1;
@@ -47,7 +47,7 @@ public abstract class SnapshotQueryManager<K, V, H extends DataHolder<K, V>, A> 
                 // IGNORED
             }
             V value = getSnapshotAgent(holder).getEntryByIndex(i - 1).map(DataEntry::getValue).orElse(null);
-            return getDisplayRawValue(value);
+            return getDisplayRawValue(value, holder);
         });
         registerActorFunction("top_rank", (actor, holder) -> {
             int index = getSnapshotAgent(holder).getSnapshotIndex(getKeyFromActor(actor));
@@ -55,11 +55,11 @@ public abstract class SnapshotQueryManager<K, V, H extends DataHolder<K, V>, A> 
         });
         registerActorFunction("value", (actor, holder) -> {
             V value = holder.getEntry(getKeyFromActor(actor)).map(DataEntry::getValue).orElse(null);
-            return getDisplayValue(value);
+            return getDisplayValue(value, holder);
         });
         registerActorFunction("raw_value", (actor, holder) -> {
             V value = holder.getEntry(getKeyFromActor(actor)).map(DataEntry::getValue).orElse(null);
-            return getDisplayRawValue(value);
+            return getDisplayRawValue(value, holder);
         });
     }
 
@@ -67,16 +67,16 @@ public abstract class SnapshotQueryManager<K, V, H extends DataHolder<K, V>, A> 
     protected abstract SnapshotAgent<K, V> getSnapshotAgent(@NotNull H holder);
 
     @NotNull
-    protected abstract String getDisplayName(@Nullable K key);
+    protected abstract String getDisplayName(@Nullable K key, @NotNull H holder);
 
     @NotNull
-    protected abstract String getDisplayValue(@Nullable V value);
+    protected abstract String getDisplayValue(@Nullable V value, @NotNull H holder);
 
     @NotNull
-    protected abstract String getDisplayKey(@Nullable K key);
+    protected abstract String getDisplayKey(@Nullable K key, @NotNull H holder);
 
     @NotNull
-    protected abstract String getDisplayRawValue(@Nullable V value);
+    protected abstract String getDisplayRawValue(@Nullable V value, @NotNull H holder);
 
     @NotNull
     protected abstract K getKeyFromActor(@NotNull A actor);

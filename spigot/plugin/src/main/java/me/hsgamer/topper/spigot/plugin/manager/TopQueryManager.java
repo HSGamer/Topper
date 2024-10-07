@@ -3,7 +3,6 @@ package me.hsgamer.topper.spigot.plugin.manager;
 import me.hsgamer.topper.agent.snapshot.SnapshotAgent;
 import me.hsgamer.topper.query.snapshot.SnapshotQueryManager;
 import me.hsgamer.topper.spigot.plugin.TopperPlugin;
-import me.hsgamer.topper.spigot.plugin.config.MessageConfig;
 import me.hsgamer.topper.spigot.plugin.holder.NumberTopHolder;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
@@ -30,23 +29,23 @@ public class TopQueryManager extends SnapshotQueryManager<UUID, Double, NumberTo
     }
 
     @Override
-    protected @NotNull String getDisplayName(@Nullable UUID key) {
-        return instance.get(MessageConfig.class).getDisplayName(key);
+    protected @NotNull String getDisplayName(@Nullable UUID key, @NotNull NumberTopHolder holder) {
+        return holder.getValueDisplay().getDisplayName(key);
     }
 
     @Override
-    protected @NotNull String getDisplayValue(@Nullable Double value) {
-        return instance.get(MessageConfig.class).getDisplayValue(value);
+    protected @NotNull String getDisplayValue(@Nullable Double value, @NotNull NumberTopHolder holder) {
+        return holder.getValueDisplay().getDisplayValue(value, false);
     }
 
     @Override
-    protected @NotNull String getDisplayKey(@Nullable UUID key) {
-        return instance.get(MessageConfig.class).getDisplayUuid(key);
+    protected @NotNull String getDisplayKey(@Nullable UUID key, @NotNull NumberTopHolder holder) {
+        return holder.getValueDisplay().getDisplayUuid(key);
     }
 
     @Override
-    protected @NotNull String getDisplayRawValue(@Nullable Double value) {
-        return instance.get(MessageConfig.class).getDisplayRawValue(value);
+    protected @NotNull String getDisplayRawValue(@Nullable Double value, @NotNull NumberTopHolder holder) {
+        return holder.getValueDisplay().getDisplayValue(value, true);
     }
 
     @Override

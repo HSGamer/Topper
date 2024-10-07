@@ -5,12 +5,17 @@ import me.hsgamer.topper.spigot.plugin.Permissions;
 import me.hsgamer.topper.spigot.plugin.TopperPlugin;
 import me.hsgamer.topper.spigot.plugin.config.MessageConfig;
 import me.hsgamer.topper.spigot.plugin.holder.NumberTopHolder;
+import me.hsgamer.topper.spigot.plugin.holder.display.ValueDisplay;
 import me.hsgamer.topper.spigot.plugin.manager.TopManager;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static me.hsgamer.hscore.bukkit.utils.MessageUtils.sendMessage;
 
@@ -62,18 +67,8 @@ public class GetTopListCommand extends Command {
             return false;
         }
 
-        List<Map.Entry<UUID, Double>> topSnapshot = topHolder.getSnapshotAgent().getSnapshot();
-        List<String> topList = new ArrayList<>();
-        for (int i = fromIndex; i <= toIndex; i++) {
-            Map.Entry<UUID, Double> entry;
-            if (i - 1 < topSnapshot.size()) {
-                entry = topSnapshot.get(i - 1);
-            } else {
-                entry = null;
-            }
-            String line = instance.get(MessageConfig.class).getTopEntryLine(i, entry);
-            topList.add(line);
-        }
+        ValueDisplay valueDisplay = topHolder.getValueDisplay();
+        List<String> topList = IntStream.rangeClosed(fromIndex, toIndex).mapToObj(valueDisplay::getDisplayLine).collect(Collectors.toList());
         if (topList.isEmpty()) {
             sendMessage(sender, instance.get(MessageConfig.class).getTopEmpty());
         } else {
