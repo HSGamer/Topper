@@ -70,8 +70,8 @@ public class ValueDisplay {
         }
     }
 
-    public String getDisplayLine(int index) {
-        Map.Entry<UUID, Double> dataSnapshot = holder.getSnapshotAgent().getSnapshotByIndex(index).orElse(null);
+    public String getDisplayLine(int index /* 1-based */) {
+        Map.Entry<UUID, Double> dataSnapshot = holder.getSnapshotAgent().getSnapshotByIndex(index - 1).orElse(null);
         String line = this.line
                 .replace("{index}", String.valueOf(index))
                 .replace("{uuid}", getDisplayUuid(dataSnapshot == null ? null : dataSnapshot.getKey()))
