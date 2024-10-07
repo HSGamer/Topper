@@ -1,4 +1,4 @@
-package me.hsgamer.topper.spigot.plugin.provider;
+package me.hsgamer.topper.spigot.plugin.holder.provider;
 
 import java.util.Optional;
 import java.util.UUID;

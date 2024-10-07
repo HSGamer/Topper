@@ -4,7 +4,7 @@ import io.github.projectunified.minelib.scheduler.async.AsyncScheduler;
 import io.github.projectunified.minelib.scheduler.global.GlobalScheduler;
 import me.clip.placeholderapi.PlaceholderAPI;
 import me.hsgamer.topper.spigot.plugin.TopperPlugin;
-import me.hsgamer.topper.spigot.plugin.provider.ValueProvider;
+import me.hsgamer.topper.spigot.plugin.holder.provider.ValueProvider;
 import org.bukkit.OfflinePlayer;
 
 import java.util.Map;

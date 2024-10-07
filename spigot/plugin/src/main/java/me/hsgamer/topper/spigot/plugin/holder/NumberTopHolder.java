@@ -13,9 +13,9 @@ import me.hsgamer.topper.spigot.plugin.TopperPlugin;
 import me.hsgamer.topper.spigot.plugin.builder.ValueProviderBuilder;
 import me.hsgamer.topper.spigot.plugin.config.MainConfig;
 import me.hsgamer.topper.spigot.plugin.holder.display.ValueDisplay;
+import me.hsgamer.topper.spigot.plugin.holder.provider.ValueProvider;
 import me.hsgamer.topper.spigot.plugin.manager.TopManager;
 import me.hsgamer.topper.spigot.plugin.notification.UpdateNotificationManager;
-import me.hsgamer.topper.spigot.plugin.provider.ValueProvider;
 import org.bukkit.OfflinePlayer;
 
 import java.util.Comparator;

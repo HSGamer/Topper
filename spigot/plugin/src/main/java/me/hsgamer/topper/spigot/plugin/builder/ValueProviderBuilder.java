@@ -1,8 +1,8 @@
 package me.hsgamer.topper.spigot.plugin.builder;
 
 import me.hsgamer.hscore.builder.FunctionalMassBuilder;
-import me.hsgamer.topper.spigot.plugin.provider.StatisticValueProvider;
-import me.hsgamer.topper.spigot.plugin.provider.ValueProvider;
+import me.hsgamer.topper.spigot.plugin.holder.provider.StatisticValueProvider;
+import me.hsgamer.topper.spigot.plugin.holder.provider.ValueProvider;
 
 import java.util.Map;
 import java.util.Objects;

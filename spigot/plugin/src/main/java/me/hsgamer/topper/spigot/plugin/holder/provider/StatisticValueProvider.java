@@ -1,4 +1,4 @@
-package me.hsgamer.topper.spigot.plugin.provider;
+package me.hsgamer.topper.spigot.plugin.holder.provider;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
