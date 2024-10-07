@@ -19,6 +19,7 @@ import org.bukkit.OfflinePlayer;
 
 import java.util.Comparator;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 public class NumberTopHolder extends AgentDataHolder<UUID, Double> {
@@ -43,7 +44,8 @@ public class NumberTopHolder extends AgentDataHolder<UUID, Double> {
         addAgent(new SpigotRunnableAgent<>(storageAgent, AsyncScheduler.get(instance), instance.get(MainConfig.class).getTaskSaveDelay()));
 
         this.snapshotAgent = new SnapshotAgent<>(this);
-        snapshotAgent.setComparator(Comparator.reverseOrder());
+        boolean reverseOrder = Optional.ofNullable(map.get("reverse")).map(String::valueOf).map(Boolean::parseBoolean).orElse(true);
+        snapshotAgent.setComparator(reverseOrder ? Comparator.reverseOrder() : Comparator.naturalOrder());
         addAgent(new SpigotRunnableAgent<>(snapshotAgent, AsyncScheduler.get(instance), 20L));
 
         addAgent(new Agent<UUID, Double>() {
