@@ -9,8 +9,12 @@ import java.text.DecimalFormat;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ValueDisplay {
+    private static final Pattern VALUE_PLACEHOLDER_PATTERN = Pattern.compile("\\{value(?:_(.*))?}");
+
     private final NumberTopHolder holder;
     private final String line;
     private final String displayNullName;
@@ -44,19 +48,42 @@ public class ValueDisplay {
                 .orElse(displayNullName);
     }
 
-    public String getDisplayValue(@Nullable Double value, boolean raw) {
-        return Optional.ofNullable(value)
-                .map(v -> raw ? String.valueOf(v) : new DecimalFormat("#.##").format(v))
-                .orElse(displayNullValue);
+    public String getDisplayValue(@Nullable Double value, @Nullable String formatType) {
+        if (value == null) {
+            return displayNullValue;
+        }
+
+        if (formatType == null) {
+            DecimalFormat decimalFormat = new DecimalFormat("#.##");
+            return decimalFormat.format(value);
+        }
+
+        if (formatType.equals("raw")) {
+            return String.valueOf(value);
+        }
+
+        try {
+            DecimalFormat decimalFormat = new DecimalFormat(formatType);
+            return decimalFormat.format(value);
+        } catch (IllegalArgumentException e) {
+            return "INVALID_FORMAT";
+        }
     }
 
     public String getDisplayLine(int index) {
         Map.Entry<UUID, Double> dataSnapshot = holder.getSnapshotAgent().getSnapshotByIndex(index).orElse(null);
-        return line
+        String line = this.line
                 .replace("{index}", String.valueOf(index))
                 .replace("{uuid}", getDisplayUuid(dataSnapshot == null ? null : dataSnapshot.getKey()))
-                .replace("{name}", getDisplayName(dataSnapshot == null ? null : dataSnapshot.getKey()))
-                .replace("{value}", getDisplayValue(dataSnapshot == null ? null : dataSnapshot.getValue(), true))
-                .replace("{raw_value}", getDisplayValue(dataSnapshot == null ? null : dataSnapshot.getValue(), false));
+                .replace("{name}", getDisplayName(dataSnapshot == null ? null : dataSnapshot.getKey()));
+
+        Double value = dataSnapshot == null ? null : dataSnapshot.getValue();
+        Matcher matcher = VALUE_PLACEHOLDER_PATTERN.matcher(line);
+        while (matcher.find()) {
+            String formatType = matcher.group(1);
+            line = line.replace(matcher.group(), getDisplayValue(value, formatType));
+        }
+
+        return line;
     }
 }

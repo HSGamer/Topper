@@ -30,14 +30,18 @@ public abstract class SnapshotQueryManager<K, V, H extends DataHolder<K, V>, A> 
             return getDisplayKey(key, holder);
         });
         registerFunction("top_value", (holder, args) -> {
+            String[] split = args.split(";", 2);
             int i = 1;
             try {
-                i = Integer.parseInt(args);
+                i = Integer.parseInt(split[0]);
             } catch (NumberFormatException ignored) {
                 // IGNORED
             }
+
+            String valueArgs = split.length > 1 ? split[1] : "";
+
             V value = getSnapshotAgent(holder).getEntryByIndex(i - 1).map(DataEntry::getValue).orElse(null);
-            return getDisplayValue(value, holder);
+            return getDisplayValue(value, holder, valueArgs);
         });
         registerFunction("top_value_raw", (holder, args) -> {
             int i = 1;
@@ -53,9 +57,10 @@ public abstract class SnapshotQueryManager<K, V, H extends DataHolder<K, V>, A> 
             int index = getSnapshotAgent(holder).getSnapshotIndex(getKeyFromActor(actor));
             return Integer.toString(index + 1);
         });
-        registerActorFunction("value", (actor, holder) -> {
+        registerAction("value", (actor, holder, args) -> {
+            if (actor == null) return null;
             V value = holder.getEntry(getKeyFromActor(actor)).map(DataEntry::getValue).orElse(null);
-            return getDisplayValue(value, holder);
+            return getDisplayValue(value, holder, args);
         });
         registerActorFunction("raw_value", (actor, holder) -> {
             V value = holder.getEntry(getKeyFromActor(actor)).map(DataEntry::getValue).orElse(null);
@@ -70,7 +75,7 @@ public abstract class SnapshotQueryManager<K, V, H extends DataHolder<K, V>, A> 
     protected abstract String getDisplayName(@Nullable K key, @NotNull H holder);
 
     @NotNull
-    protected abstract String getDisplayValue(@Nullable V value, @NotNull H holder);
+    protected abstract String getDisplayValue(@Nullable V value, @NotNull H holder, @NotNull String args);
 
     @NotNull
     protected abstract String getDisplayKey(@Nullable K key, @NotNull H holder);

@@ -34,8 +34,8 @@ public class TopQueryManager extends SnapshotQueryManager<UUID, Double, NumberTo
     }
 
     @Override
-    protected @NotNull String getDisplayValue(@Nullable Double value, @NotNull NumberTopHolder holder) {
-        return holder.getValueDisplay().getDisplayValue(value, false);
+    protected @NotNull String getDisplayValue(@Nullable Double value, @NotNull NumberTopHolder holder, @NotNull String args) {
+        return holder.getValueDisplay().getDisplayValue(value, args);
     }
 
     @Override
@@ -45,7 +45,7 @@ public class TopQueryManager extends SnapshotQueryManager<UUID, Double, NumberTo
 
     @Override
     protected @NotNull String getDisplayRawValue(@Nullable Double value, @NotNull NumberTopHolder holder) {
-        return holder.getValueDisplay().getDisplayValue(value, true);
+        return holder.getValueDisplay().getDisplayValue(value, "raw");
     }
 
     @Override
