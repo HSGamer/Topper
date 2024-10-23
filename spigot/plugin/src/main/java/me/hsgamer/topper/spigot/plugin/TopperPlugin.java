@@ -261,12 +261,17 @@ public class TopperPlugin extends BasePlugin {
         }
 
         if (blockMigrateSuccess) {
-            getLogger().info("The block config has been migrated");
+            boolean deleteSuccess = false;
             if (signFile.exists()) {
                 signFile.delete();
+                deleteSuccess = true;
             }
             if (skullFile.exists()) {
                 skullFile.delete();
+                deleteSuccess = true;
+            }
+            if (deleteSuccess) {
+                getLogger().info("The block config has been migrated");
             }
             config.remove("formatters");
             config.save();
