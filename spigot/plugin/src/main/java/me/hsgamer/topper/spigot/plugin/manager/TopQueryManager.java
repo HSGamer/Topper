@@ -44,11 +44,6 @@ public class TopQueryManager extends SnapshotQueryManager<UUID, Double, NumberTo
     }
 
     @Override
-    protected @NotNull String getDisplayRawValue(@Nullable Double value, @NotNull NumberTopHolder holder) {
-        return holder.getValueDisplay().getDisplayValue(value, "raw");
-    }
-
-    @Override
     protected @NotNull UUID getKeyFromActor(@NotNull OfflinePlayer actor) {
         return actor.getUniqueId();
     }
