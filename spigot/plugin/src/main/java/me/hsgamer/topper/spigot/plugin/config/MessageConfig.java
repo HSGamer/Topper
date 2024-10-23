@@ -1,5 +1,6 @@
 package me.hsgamer.topper.spigot.plugin.config;
 
+import me.hsgamer.hscore.config.Config;
 import me.hsgamer.hscore.config.annotation.ConfigPath;
 
 public interface MessageConfig {
@@ -34,4 +35,6 @@ public interface MessageConfig {
     }
 
     void reloadConfig();
+
+    Config getConfig();
 }
