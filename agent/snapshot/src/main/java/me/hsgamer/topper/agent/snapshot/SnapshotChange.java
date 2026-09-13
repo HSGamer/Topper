@@ -44,10 +44,12 @@ public class SnapshotChange<K, V> {
         List<Entry<K, V>> all = new ArrayList<>(Math.max(oldSize, newSize));
         List<Entry<K, V>> moved = new ArrayList<>();
 
+        int survivors = 0;
         for (Map.Entry<K, Integer> indexEntry : newSnapshot.indexEntries()) {
             K key = indexEntry.getKey();
             int newIndex = indexEntry.getValue();
             int oldIndex = oldSnapshot.getIndex(key);
+            if (oldIndex >= 0) survivors++;
             Entry<K, V> entry = new Entry<>(
                     key,
                     oldIndex < 0 ? null : oldSnapshot.valueAt(oldIndex),
@@ -62,14 +64,16 @@ public class SnapshotChange<K, V> {
             }
         }
 
-        for (Map.Entry<K, Integer> indexEntry : oldSnapshot.indexEntries()) {
-            K key = indexEntry.getKey();
-            if (newSnapshot.getIndex(key) >= 0) continue;
-            int oldIndex = indexEntry.getValue();
-            Entry<K, V> entry = new Entry<>(key, oldSnapshot.valueAt(oldIndex), null, oldIndex, -1);
-            changeMap.put(key, entry);
-            all.add(entry);
-            moved.add(entry);
+        if (survivors < oldSize) {
+            for (Map.Entry<K, Integer> indexEntry : oldSnapshot.indexEntries()) {
+                K key = indexEntry.getKey();
+                if (newSnapshot.getIndex(key) >= 0) continue;
+                int oldIndex = indexEntry.getValue();
+                Entry<K, V> entry = new Entry<>(key, oldSnapshot.valueAt(oldIndex), null, oldIndex, -1);
+                changeMap.put(key, entry);
+                all.add(entry);
+                moved.add(entry);
+            }
         }
 
         return new ChangeSet<>(Collections.unmodifiableMap(changeMap), all, moved);
