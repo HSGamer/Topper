@@ -53,7 +53,7 @@ public class NumberTopHolder extends SimpleDataHolder<UUID, Double> implements A
         this.valueDisplay = new NumberDisplay<UUID, Double>() {
             @Override
             public @NotNull String getDisplayName(@Nullable UUID uuid) {
-                return Optional.ofNullable(uuid).map(template.getNameProviderManager()::getName).orElse(settings.displayNullName());
+                return Optional.ofNullable(uuid).map(template::getName).orElse(settings.displayNullName());
             }
 
             @Override

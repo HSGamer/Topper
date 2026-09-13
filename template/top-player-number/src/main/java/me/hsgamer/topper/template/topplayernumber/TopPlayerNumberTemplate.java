@@ -3,7 +3,10 @@ package me.hsgamer.topper.template.topplayernumber;
 import me.hsgamer.topper.agent.core.AgentHolder;
 import me.hsgamer.topper.storage.core.DataStorage;
 import me.hsgamer.topper.template.topplayernumber.holder.NumberTopHolder;
-import me.hsgamer.topper.template.topplayernumber.manager.*;
+import me.hsgamer.topper.template.topplayernumber.manager.EntryConsumeManager;
+import me.hsgamer.topper.template.topplayernumber.manager.QueryForwardManager;
+import me.hsgamer.topper.template.topplayernumber.manager.TopManager;
+import me.hsgamer.topper.template.topplayernumber.manager.TopQueryManager;
 import me.hsgamer.topper.value.core.ValueProvider;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,7 +21,6 @@ public abstract class TopPlayerNumberTemplate {
     private final TopQueryManager topQueryManager;
     private final EntryConsumeManager entryConsumeManager;
     private final QueryForwardManager queryForwardManager;
-    private final NameProviderManager nameProviderManager;
 
     protected TopPlayerNumberTemplate(Settings settings) {
         this.settings = settings;
@@ -26,7 +28,6 @@ public abstract class TopPlayerNumberTemplate {
         this.topQueryManager = new TopQueryManager(this);
         this.entryConsumeManager = new EntryConsumeManager(this);
         this.queryForwardManager = new QueryForwardManager(this);
-        this.nameProviderManager = new NameProviderManager();
     }
 
     public abstract Function<String, DataStorage<UUID, Double>> getStorageSupplier();
@@ -37,9 +38,7 @@ public abstract class TopPlayerNumberTemplate {
 
     public abstract void logWarning(String message, @Nullable Throwable throwable);
 
-    public String getName(UUID uuid) {
-        return this.nameProviderManager.getName(uuid);
-    }
+    public abstract String getName(UUID uuid);
 
     public void logWarning(String message) {
         logWarning(message, null);
@@ -79,10 +78,6 @@ public abstract class TopPlayerNumberTemplate {
 
     public QueryForwardManager getQueryForwardManager() {
         return queryForwardManager;
-    }
-
-    public NameProviderManager getNameProviderManager() {
-        return nameProviderManager;
     }
 
     public interface Settings {
