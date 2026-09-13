@@ -80,15 +80,7 @@ public class SnapshotChange<K, V> {
     }
 
     public Relative<K, V> getRelative(K key) {
-        if (key == null) {
-            return computeRelative(null);
-        }
-        return relatives.computeIfAbsent(key, k -> {
-            if (!getChanges().containsKey(k)) {
-                return Relative.empty(k);
-            }
-            return computeRelative(k);
-        });
+        return relatives.computeIfAbsent(key, this::computeRelative);
     }
 
     public Map<K, Relative<K, V>> getRelatives() {
