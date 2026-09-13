@@ -83,14 +83,12 @@ public class SnapshotChange<K, V> {
         if (key == null) {
             return computeRelative(null);
         }
-        Relative<K, V> cached = relatives.get(key);
-        if (cached == null) {
-            if (!getChanges().containsKey(key)) {
-                return Relative.empty(key);
+        return relatives.computeIfAbsent(key, k -> {
+            if (!getChanges().containsKey(k)) {
+                return Relative.empty(k);
             }
-            cached = relatives.computeIfAbsent(key, this::computeRelative);
-        }
-        return cached;
+            return computeRelative(k);
+        });
     }
 
     public Map<K, Relative<K, V>> getRelatives() {
@@ -102,7 +100,7 @@ public class SnapshotChange<K, V> {
                 }
             } else {
                 for (K key : changeMap.keySet()) {
-                    getRelative(key);
+                    relatives.computeIfAbsent(key, this::computeRelative);
                 }
             }
         }
