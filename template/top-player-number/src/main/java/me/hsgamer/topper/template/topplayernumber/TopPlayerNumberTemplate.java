@@ -3,7 +3,6 @@ package me.hsgamer.topper.template.topplayernumber;
 import me.hsgamer.topper.agent.core.AgentHolder;
 import me.hsgamer.topper.storage.core.DataStorage;
 import me.hsgamer.topper.template.topplayernumber.holder.NumberTopHolder;
-import me.hsgamer.topper.template.topplayernumber.manager.EntryConsumeManager;
 import me.hsgamer.topper.template.topplayernumber.manager.TopManager;
 import me.hsgamer.topper.template.topplayernumber.manager.TopQueryManager;
 import me.hsgamer.topper.value.core.ValueProvider;
@@ -18,13 +17,11 @@ public abstract class TopPlayerNumberTemplate {
     private final Settings settings;
     private final TopManager topManager;
     private final TopQueryManager topQueryManager;
-    private final EntryConsumeManager entryConsumeManager;
 
     protected TopPlayerNumberTemplate(Settings settings) {
         this.settings = settings;
         this.topManager = new TopManager(this);
         this.topQueryManager = new TopQueryManager(this);
-        this.entryConsumeManager = new EntryConsumeManager(this);
     }
 
     public abstract Function<String, DataStorage<UUID, Double>> getStorageSupplier();
@@ -47,11 +44,9 @@ public abstract class TopPlayerNumberTemplate {
 
     public void enable() {
         topManager.enable();
-        entryConsumeManager.enable();
     }
 
     public void disable() {
-        entryConsumeManager.disable();
         topManager.disable();
     }
 
@@ -65,10 +60,6 @@ public abstract class TopPlayerNumberTemplate {
 
     public TopQueryManager getTopQueryManager() {
         return topQueryManager;
-    }
-
-    public EntryConsumeManager getEntryConsumeManager() {
-        return entryConsumeManager;
     }
 
     public interface Settings {
