@@ -20,6 +20,8 @@ me.hsgamer.topper.storage.sql.converter
 me.hsgamer.topper.storage.sql.core
 me.hsgamer.topper.storage.sql.mysql
 me.hsgamer.topper.storage.sql.sqlite
+me.hsgamer.topper.template.holdersupplier
+me.hsgamer.topper.template.nameprovider
 me.hsgamer.topper.template.snapshotdisplayline
 me.hsgamer.topper.template.storagesupplier
 me.hsgamer.topper.template.storagesupplier.storage
