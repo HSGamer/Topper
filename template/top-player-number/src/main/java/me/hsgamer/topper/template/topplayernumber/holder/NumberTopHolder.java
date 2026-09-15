@@ -11,7 +11,6 @@ import me.hsgamer.topper.agent.update.UpdateAgent;
 import me.hsgamer.topper.data.simple.SimpleDataHolder;
 import me.hsgamer.topper.query.display.number.NumberDisplay;
 import me.hsgamer.topper.template.topplayernumber.TopPlayerNumberTemplate;
-import me.hsgamer.topper.template.topplayernumber.manager.EntryConsumeManager;
 import me.hsgamer.topper.value.core.ValueProvider;
 import me.hsgamer.topper.value.core.ValueWrapper;
 import org.jetbrains.annotations.NotNull;
@@ -115,18 +114,6 @@ public class NumberTopHolder extends SimpleDataHolder<UUID, Double> implements A
         snapshotAgent.bindTo(this);
         bindAutoTask(template, snapshotAgent, TaskType.SNAPSHOT, settings.valueProvider());
 
-        getEntryNotifier().addListener(e -> {
-            if (e.kind != EntryEvent.Kind.UPDATED) {
-                return;
-            }
-            template.getEntryConsumeManager().consume(new EntryConsumeManager.Context(
-                    GROUP,
-                    name,
-                    e.entry.getKey(),
-                    e.oldValue,
-                    e.newValue
-            ));
-        });
         template.modifyNotifiers(this);
     }
 
