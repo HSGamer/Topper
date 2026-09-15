@@ -56,11 +56,6 @@
         </dependency>
         <dependency>
             <groupId>me.hsgamer</groupId>
-            <artifactId>topper-query-forward</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>me.hsgamer</groupId>
             <artifactId>topper-storage-core</artifactId>
             <version>${project.version}</version>
         </dependency>

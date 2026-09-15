@@ -4,7 +4,6 @@ import me.hsgamer.topper.agent.core.AgentHolder;
 import me.hsgamer.topper.storage.core.DataStorage;
 import me.hsgamer.topper.template.topplayernumber.holder.NumberTopHolder;
 import me.hsgamer.topper.template.topplayernumber.manager.EntryConsumeManager;
-import me.hsgamer.topper.template.topplayernumber.manager.QueryForwardManager;
 import me.hsgamer.topper.template.topplayernumber.manager.TopManager;
 import me.hsgamer.topper.template.topplayernumber.manager.TopQueryManager;
 import me.hsgamer.topper.value.core.ValueProvider;
@@ -20,14 +19,12 @@ public abstract class TopPlayerNumberTemplate {
     private final TopManager topManager;
     private final TopQueryManager topQueryManager;
     private final EntryConsumeManager entryConsumeManager;
-    private final QueryForwardManager queryForwardManager;
 
     protected TopPlayerNumberTemplate(Settings settings) {
         this.settings = settings;
         this.topManager = new TopManager(this);
         this.topQueryManager = new TopQueryManager(this);
         this.entryConsumeManager = new EntryConsumeManager(this);
-        this.queryForwardManager = new QueryForwardManager(this);
     }
 
     public abstract Function<String, DataStorage<UUID, Double>> getStorageSupplier();
@@ -51,11 +48,9 @@ public abstract class TopPlayerNumberTemplate {
     public void enable() {
         topManager.enable();
         entryConsumeManager.enable();
-        queryForwardManager.enable();
     }
 
     public void disable() {
-        queryForwardManager.disable();
         entryConsumeManager.disable();
         topManager.disable();
     }
@@ -74,10 +69,6 @@ public abstract class TopPlayerNumberTemplate {
 
     public EntryConsumeManager getEntryConsumeManager() {
         return entryConsumeManager;
-    }
-
-    public QueryForwardManager getQueryForwardManager() {
-        return queryForwardManager;
     }
 
     public interface Settings {
